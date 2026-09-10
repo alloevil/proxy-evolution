@@ -4,6 +4,17 @@
 
 **[▶ 在线演示](https://alloevil.github.io/proxy-evolution/)** · 单文件 · 零依赖 · 无需构建
 
+![主界面:第五代 REALITY,数据包流经审查节点](./screenshot-main.png)
+
+<details>
+<summary>▲ 主界面:数据包以各代协议的真实速度流经「审查节点」</summary>
+
+点击「发射探测」会触发**主动探测剧场**——REALITY 把无密码的探测连接原样转给真实网站,审查者拿到真实 CA 签发的证书,无从证伪:
+
+![主动探测剧场:REALITY 把探测连接中继给真实网站](./screenshot-probe.png)
+
+</details>
+
 ---
 
 ## 这是什么

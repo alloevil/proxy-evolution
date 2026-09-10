@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>翻墙协议五代演进 · 交互图解</title>
+<title>翻墙协议六代演进 · 交互图解</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2306080f'/%3E%3Cpath d='M4 16h6l3-7 4 14 3-7h8' fill='none' stroke='%23fbbf24' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-<meta name="description" content="五代翻墙协议(SS → VMess → VLESS/Trojan → QUIC → REALITY)的可交互图解:数据包流动、弱网模拟、主动探测剧场、审查环境剧本。单文件、零依赖。">
-<meta property="og:title" content="翻墙协议五代演进 · 交互图解">
-<meta property="og:description" content="从 Shadowsocks 到 REALITY:五代抗审查协议的演进,做成一个可以玩的页面。">
+<meta name="description" content="六代翻墙协议(SS → VMess → VLESS/Trojan → QUIC → REALITY → XHTTP/抗量子)的可交互图解:数据包流动、弱网模拟、主动探测剧场、审查环境剧本。单文件、零依赖。">
+<meta property="og:title" content="翻墙协议六代演进 · 交互图解">
+<meta property="og:description" content="从 Shadowsocks 到 XHTTP:六代抗审查协议的演进,做成一个可以玩的页面。">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#06080f">
 <style>
@@ -294,10 +294,10 @@
 <header>
   <div>
     <div class="kicker">Protocol Evolution · Anti-Censorship</div>
-    <h1>翻墙协议<em>五代演进</em>交互图解</h1>
+    <h1>翻墙协议<em>六代演进</em>交互图解</h1>
   </div>
   <div class="header-meta">
-    <div><b>2012</b> —— <b>NOW</b></div>
+    <div><b>2012</b> —— <b>NOW</b> · <a href="https://github.com/alloevil/proxy-evolution#readme" target="_blank" rel="noopener" style="color:var(--mut);text-decoration:none;border-bottom:1px dotted var(--faint)">EN docs</a></div>
     <div>从「加密流量」到「看起来就是真实网站」</div>
   </div>
 </header>
@@ -368,7 +368,7 @@
             <div class="d">审查者伪装客户端直连服务器</div>
           </div>
           <div class="ph-btns">
-            <button class="ctl" id="chainBtn" style="padding:6px 12px;white-space:nowrap">五代连测</button>
+            <button class="ctl" id="chainBtn" style="padding:6px 12px;white-space:nowrap">六代连测</button>
             <div class="tip">
               <button class="ctl primary" id="probeBtn" style="padding:6px 12px;white-space:nowrap">发射探测</button>
               <div class="tip-text">审查者拿到的响应,决定了这个协议能否通过「证书验证 + 网页抓取 + 指纹比对」三板斧——这是 REALITY 一类协议的核心考场。</div>
@@ -382,7 +382,7 @@
 </div>
 
 <div class="glass compare rise d4">
-  <div class="card-label">Comparison · 五代横向对比</div>
+  <div class="card-label">Comparison · 六代横向对比</div>
   <div class="cmp-grid" id="cmpGrid"></div>
   <div class="foot">
     <b>弱网表现</b>取决于拥塞控制与传输层——TCP(TLS 系)丢包时整条连接队头阻塞、退避重传;QUIC(Hysteria2 / TUIC)在 UDP 上按流独立重传,
@@ -488,6 +488,25 @@ const GENS = [
   anim:{speed:88, weak:55, loss:0.15, label:"REALITY TLS 记录", color:"#c084fc", retrans:true},
   probe:{level:"safe", text:"🟢 探测者的连接被中继给真实网站:拿到真实 CA 签发的证书和真实网页内容,指纹与直接访问完全一致 → 探测无法区分,当前最强抗探测方案。"},
   cmp:{fast:[88,"TLS 单层"], weak:[55,"TCP 仍限速"], hide:[95,"证书/内容全真"], real:[98,"就是真实网站"]}
+},
+{
+  key:"xhttp", color:"#f97316", gen:"第六代", year:"2024–", name:"XHTTP + 抗量子 REALITY", proto:"XHTTP",
+  innovation:"核心创新:<b>把代理流量拆成普通 HTTP 请求,藏进 CDN 的正常访客里</b>;叠加<b>抗量子密钥交换与 ECH</b>,让流量在协议、统计、密码三个层面同时消失。",
+  layers:[
+    {t:"enc", c:"#f97316", n:"VLESS 指令 + ECH(加密 SNI)", d:"请求域名也被加密,审查者看不到你在访问哪个站点"},
+    {t:"tls", c:"#f97316", n:"XHTTP 传输:X25519MLKEM768 + ML-DSA-65", d:"上下行走不同 HTTP 连接,抗量子密钥交换 + 后量子证书验证"},
+    {t:"net", c:"#3c4a64", n:"TCP 443 · CDN 边缘节点", d:"源站 IP 隐藏在 Cloudflare 等 CDN 之后"}
+  ],
+  encWhere:"加密职责:<b>外层 TLS + CDN 代管身份</b>。流量混在 CDN 的海量正常访客里,连「目标 IP 是代理」这个事实都不存在。",
+  badges:["内容加密 ✅","CDN 分流 ✅","抗量子密钥 ✅","抗主动探测 ✅"],
+  points:[
+    "XHTTP(前身 SplitHTTP,2024.12 发布)把上行和下行拆到不同的 HTTP 请求里,可直接走 CDN 回源——借的是 CDN 边缘节点的真实证书与真实流量画像。",
+    "REALITY 在 v25.5.16 起支持 <code>X25519MLKEM768</code> 抗量子密钥交换、v25.7.26 起支持 <code>ML-DSA-65</code> 后量子证书验证:防的是「现在记录、以后解密」。",
+    "ECH 加密 ClientHello 里的 SNI,审查者连你在访问哪个域名都看不到;配合 CDN 后,「封锁代理 IP」这个手段直接失效。"
+  ],
+  anim:{speed:86, weak:58, loss:0.12, label:"XHTTP 请求", color:"#f97316", retrans:true},
+  probe:{level:"safe", text:"🟢 无正确凭证的请求被 CDN 边缘当成普通访客:返回 CDN 的真实证书与缓存内容;源站不可见 → 探测目标不存在,无从封起。"},
+  cmp:{fast:[86,"经 CDN 一跳"], weak:[58,"受 CDN 质量影响"], hide:[92,"混入海量正常流量"], real:[96,"CDN 真实身份"]}
 }
 ];
 
@@ -495,12 +514,13 @@ const GENS = [
 let cur = 0, playing = true, weakNet = false, auto = false, autoTimer = null;
 const $ = id => document.getElementById(id);
 const track = $("track");
+const ROMAN = ["I","II","III","IV","V","VI"];
 
 /* ══════════════════ 世代时间轴 ══════════════════ */
 GENS.forEach((g, i) => {
   const b = document.createElement("button");
   b.className = "gen-btn";
-  b.innerHTML = `<div class="node">${["I","II","III","IV","V"][i]}</div>
+  b.innerHTML = `<div class="node">${ROMAN[i]}</div>
                  <div class="nm">${g.name}</div><div class="yr">${g.year}</div>`;
   b.onclick = () => { stopAuto(); select(i); };
   $("timeline").appendChild(b);
@@ -526,7 +546,7 @@ function renderStack(g) {
 }
 
 function renderInfo(g) {
-  $("gNum").textContent = ["01","02","03","04","05"][cur];
+  $("gNum").textContent = String(cur + 1).padStart(2, "0");
   $("gName").textContent = g.name;
   $("gYear").textContent = `${g.gen} · ${g.year}`;
   $("gInnov").innerHTML = g.innovation;
@@ -543,7 +563,8 @@ function renderInfo(g) {
 }
 
 const CMP_ROWS = [["峰值速度","fast"],["弱网表现","weak"],["抗主动探测","hide"],["伪装真实度","real"]];
-let cmpOrder = [0,1,2,3,4], cmpSortKey = null;
+const allIdx = () => GENS.map((_, i) => i);
+let cmpOrder = allIdx(), cmpSortKey = null;
 
 function renderCompare(animate) {
   const grid = $("cmpGrid");
@@ -557,7 +578,7 @@ function renderCompare(animate) {
     const g = GENS[gi];
     const h = document.createElement("div");
     h.className = "cmp-h" + (gi === cur ? " act" : "");
-    h.innerHTML = `<div class="g">${["I","II","III","IV","V"][gi]}</div><div class="p">${g.proto}</div>`;
+    h.innerHTML = `<div class="g">${ROMAN[gi]}</div><div class="p">${g.proto}</div>`;
     grid.appendChild(h);
   });
   CMP_ROWS.forEach(([label,key]) => {
@@ -602,7 +623,7 @@ function renderCompare(animate) {
     const l = e.target.closest(".cmp-l.sortable");
     if (!l) return;
     cmpSortKey = l.dataset.key;
-    cmpOrder = [0,1,2,3,4].sort((a,b) => GENS[b].cmp[cmpSortKey][0] - GENS[a].cmp[cmpSortKey][0]);
+    cmpOrder = allIdx().sort((a,b) => GENS[b].cmp[cmpSortKey][0] - GENS[a].cmp[cmpSortKey][0]);
     renderCompare(true);
   };
 
@@ -616,9 +637,11 @@ function renderCompare(animate) {
       if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
       c.style.transition = "none";
       c.style.transform = `translate(${dx}px,${dy}px)`;
+      const done = () => { c.style.transition = ""; c.style.transform = ""; };
       requestAnimationFrame(() => {
-        c.style.transition = "";
-        c.style.transform = "";
+        c.style.transition = "";          /* 启用过渡 */
+        c.addEventListener("transitionend", done, { once: true });
+        setTimeout(done, 600);            /* 兜底:即使 rAF/transitionend 失效也清理 */
       });
     });
   }
@@ -764,7 +787,7 @@ function runProbe() {
   animateProbe(GENS[cur]).finally(() => { probing = false; });
 }
 
-/* 五代连测:依次探测,判定串成一条演进线 */
+/* 六代连测:依次探测,判定串成一条演进线 */
 let scenMul = 1;
 const SCEN_LEVELS = { risk:"可被识别", mid:"部分暴露", safe:"无法区分" };
 const PROBE_PKTS = {
@@ -780,7 +803,8 @@ const PRESETS = [
   { gen:2, wait:800, probe:"vless", level:"mid", v:"拿到 ACME 证书链,域名与落地 IP 不符 → 关联分析命中,端口被重点关照" },
   { gen:3, wait:800, probe:"quic", level:"mid", v:"QUIC Retry 无有效语义 → 无法证实,但 UDP 443 直接被限速处理" },
   { gen:4, wait:800, probe:"reality", level:"safe", v:"探测连接被中继给真实网站:真实 CA 证书 + 真实网页 → 探测者无功而返" },
-  { status:"五代测完:只有 REALITY 让探测者拿到了「正常网站」", last:true } ] },
+  { gen:5, wait:800, level:"safe", v:"请求被 CDN 边缘当成普通访客,返回 CDN 的真实证书与缓存内容 → 源站不可见,探测目标不存在" },
+  { status:"六代测完:REALITY 与 XHTTP 让探测者拿到了「正常网站」", last:true } ] },
 
 { id:"dpi", t:"深度包检测", d:"统计分类器扫包长/时序/握手特征", net:"weak", steps:[
   { wait:900, status:"DPI 集群上线:对流做包长分布、时序不对称、TLS 指纹(JA3/JA4)分类" },
@@ -789,7 +813,8 @@ const PRESETS = [
   { gen:2, wait:1100, level:"mid", v:"真 TLS 握手,分类器难以定罪;JA3 指纹库命中少数派实现 → 存疑,持续观察" },
   { gen:3, wait:1100, level:"mid", v:"QUIC 指纹小众 + UDP 443 显眼 → 按协议特征处置,不看内容" },
   { gen:4, wait:1100, level:"safe", v:"握手指纹 = 真实浏览器,证书 = 真实网站 → 与访问真实网站不可区分" },
-  { status:"DPI 结论:统计特征是 SS/SSR 的死穴,真 TLS 起步即可免疫", last:true } ] },
+  { gen:5, wait:1100, level:"safe", v:"流量混入 CDN 海量正常访客,SNI 被 ECH 加密 → 分类器连「这是代理流量」的特征都无从提取" },
+  { status:"DPI 结论:统计特征是 SS/SSR 的死穴;真 TLS 起步即可免疫,CDN + ECH 让检测目标本身消失", last:true } ] },
 
 { id:"udp", t:"UDP 封锁", d:"第四代被按协议打击,不看内容", net:"weak", steps:[
   { wait:800, status:"正常运行中…" },
@@ -806,6 +831,7 @@ const PRESETS = [
   { gen:2, wait:2400, level:"mid", v:"真 TLS 省掉一层加密,略好;但 TCP 的队头阻塞仍在" },
   { gen:4, wait:2400, level:"mid", v:"REALITY 同为 TCP 栈,表现与 VLESS 相当 → 加密不是瓶颈,传输层才是" },
   { gen:3, watch:2800, level:"safe", v:"QUIC 按流独立重传 + Brutal 拥塞控制不退让 → 速度几乎不受影响,对比肉眼可见" },
+  { gen:5, watch:2400, level:"mid", v:"XHTTP 经 CDN 一跳,受 CDN 节点质量影响 → 表现中等,但源站隐藏带来的稳定性是额外收益" },
   { status:"结论:弱网下拉开差距的是传输层(QUIC vs TCP),不是加密强度", last:true } ] }
 ];
 
@@ -948,7 +974,7 @@ $("autoBtn").onclick = () => {
   if (auto) { stopAuto(); return; }
   auto = true;
   $("autoBtn").textContent = "⏸ 停止播放";
-  cmpSortKey = null; cmpOrder = [0,1,2,3,4];
+  cmpSortKey = null; cmpOrder = allIdx();
   select(0, true);
   autoTimer = setInterval(() => {
     if (cur >= GENS.length - 1) { stopAuto(); return; }

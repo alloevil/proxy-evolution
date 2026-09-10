@@ -1,0 +1,42 @@
+# 翻墙协议六代演进 · 交互图解 (proxy-evolution)
+
+> An interactive, single-file web visualization explaining six generations of anti-censorship proxy protocols — from Shadowsocks (2012) to XHTTP with post-quantum REALITY (2024). Packets flow past a simulated "censor node" at each protocol's real speed; users can trigger active-probe attacks, enable packet-loss simulation, and play four canned censorship scenarios.
+
+Live demo: https://alloevil.github.io/proxy-evolution/
+Source: https://github.com/alloevil/proxy-evolution
+Language: Chinese (zh-CN), English docs in README.en.md
+License: MIT · Single HTML file · Zero dependencies · Works offline
+
+## The six generations
+
+1. **Shadowsocks (SS, 2012)** — disguises proxy traffic as ordinary encrypted traffic. Lightweight SOCKS5 encryption, but statistical features (packet-length distribution, handshake timing) let ML classifiers identify it.
+2. **ShadowsocksR / VMess (2015)** — adds obfuscation (HTTP/TLS disguise, WebSocket) and replay protection (VMess timestamps). Weakness: "TLS-in-TLS" record-length nesting is a detection signature.
+3. **VLESS / Trojan (2020)** — moves encryption to outer TLS 1.3; VLESS itself is just instructions. Trojan impersonates a real HTTPS site; unauthenticated visitors get reverse-proxied to a real website. Weakness: certificate fingerprints (JA3/JA4) can be cross-checked.
+4. **Hysteria2 / TUIC (2021)** — QUIC-based (UDP). No head-of-line blocking; per-stream retransmission. Hysteria2's Brutal congestion control refuses to back off on packet loss, so it barely slows down on weak networks. Weakness: UDP/443 is conspicuous and easily throttled or blocked by protocol.
+5. **REALITY / AnyTLS (2023)** — REALITY completes the X25519 handshake using a real target site's public key; legitimate clients are handed to the proxy, while probers are relayed to the real website and receive its real CA-signed certificate. Certificate validation, page fetching, and fingerprint comparison all fail. AnyTLS randomizes TLS record sizes to defeat statistical detection.
+6. **XHTTP + post-quantum REALITY (2024)** — XHTTP (formerly SplitHTTP, released Dec 2024, Xray-core) splits upstream and downstream into separate HTTP requests that traverse a CDN, borrowing the CDN edge's real certificate and traffic profile. Combined with X25519MLKEM768 post-quantum key exchange (Xray v25.5.16+), ML-DSA-65 post-quantum certificate verification (v25.7.26+), and ECH (Encrypted Client Hello), the origin server is hidden behind the CDN and the SNI itself is encrypted.
+
+## Key concepts explained
+
+- **Active probing**: a censor connects directly to a suspected proxy server, pretending to be a client, and inspects the returned certificate and page content. Each generation's defense escalates: meaningless ciphertext (SS) → fake HTTP shape (SSR) → real TLS but checkable certificate (VLESS/Trojan) → relay to real website (REALITY) → CDN treats it as an ordinary visitor (XHTTP).
+- **Head-of-line blocking**: in TCP+TLS, one lost packet stalls the entire connection. QUIC retransmits per-stream over UDP, so a loss on one stream doesn't block others.
+- **Brutal congestion control** (Hysteria2): does not reduce sending rate on packet loss; claims a fixed share of bandwidth. Excellent on lossy links, aggressive on shared ones.
+- **ECH (Encrypted Client Hello)**: encrypts the SNI in the TLS ClientHello, so a network observer cannot see which domain is being visited.
+- **Post-quantum TLS**: X25519MLKEM768 hybrid key exchange and ML-DSA-65 signature verification defend against "record now, decrypt later" attacks by future quantum computers.
+
+## Interactive features
+
+- Six-generation selector (click / arrow keys / deep links like #reality, #xhttp)
+- Real-time packet animation whose speed *is* the data: SS 80px/s vs QUIC 95px/s; with "weak network" on, TCP stacks halve and show retransmit markers while QUIC speeds up
+- Active probe experiment with a dedicated REALITY "relay theater" (probe forwarded to a real-website node)
+- Six-generation sweep: probe all six sequentially, stringing verdicts into one evolutionary line
+- Four censorship scenario scripts: active probe attack, deep packet inspection, UDP blockade, weak long-haul link (RTT 300ms + 8% loss)
+- Comparison panel: four metrics (peak speed, weak-network performance, probe resistance, realism) with hover highlight and click-to-sort
+
+## Technical
+
+Single `index.html`, vanilla JS + CSS, no dependencies, no build step. Animation uses requestAnimationFrame with a watchdog that self-heals if the loop dies. All six generations' data (speed, loss rate, verdicts, scenario steps) lives in a single GENS / PRESETS array.
+
+## Caveats
+
+Comparison scores are relative illustrative values for building intuition, not benchmark data. This project is for studying technical principles only.

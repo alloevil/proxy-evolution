@@ -3,13 +3,137 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>翻墙协议六代演进 · 交互图解</title>
+<title>翻墙协议六代演进 · 交互图解(Shadowsocks → REALITY → XHTTP)</title>
+<link rel="canonical" href="https://alloevil.github.io/proxy-evolution/">
+<link rel="alternate" hreflang="zh-CN" href="https://alloevil.github.io/proxy-evolution/">
+<link rel="alternate" hreflang="en" href="https://github.com/alloevil/proxy-evolution/blob/main/README.en.md">
+<link rel="alternate" hreflang="x-default" href="https://alloevil.github.io/proxy-evolution/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2306080f'/%3E%3Cpath d='M4 16h6l3-7 4 14 3-7h8' fill='none' stroke='%23fbbf24' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <meta name="description" content="六代翻墙协议(SS → VMess → VLESS/Trojan → QUIC → REALITY → XHTTP/抗量子)的可交互图解:数据包流动、弱网模拟、主动探测剧场、审查环境剧本。单文件、零依赖。">
-<meta property="og:title" content="翻墙协议六代演进 · 交互图解">
-<meta property="og:description" content="从 Shadowsocks 到 XHTTP:六代抗审查协议的演进,做成一个可以玩的页面。">
+<meta name="keywords" content="翻墙协议,Shadowsocks,VMess,VLESS,Trojan,Hysteria2,TUIC,REALITY,AnyTLS,XHTTP,Xray,sing-box,抗审查,主动探测,QUIC,TLS,CDN,抗量子,ECH,X25519MLKEM768,交互式可视化">
+<meta name="author" content="gaoruilin">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta property="og:title" content="翻墙协议六代演进 · 交互图解(Shadowsocks → REALITY → XHTTP)">
+<meta property="og:description" content="从 Shadowsocks 到 XHTTP:六代抗审查协议的演进,做成一个可以玩的页面。数据包流动、弱网模拟、主动探测剧场、审查环境剧本。">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://alloevil.github.io/proxy-evolution/">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:site_name" content="proxy-evolution">
+<meta property="og:image" content="https://alloevil.github.io/proxy-evolution/screenshot-main.png">
+<meta property="og:image:width" content="1024">
+<meta property="og:image:height" content="644">
+<meta property="og:image:alt" content="主界面:第六代 XHTTP,数据包流经审查节点">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="翻墙协议六代演进 · 交互图解">
+<meta name="twitter:description" content="六代抗审查协议(Shadowsocks → XHTTP)的可交互图解:速度即证据、主动探测剧场、审查环境剧本。单文件零依赖。">
+<meta name="twitter:image" content="https://alloevil.github.io/proxy-evolution/screenshot-main.png">
 <meta name="theme-color" content="#06080f">
+<link type="text/plain" rel="alternate" href="https://alloevil.github.io/proxy-evolution/llms.txt" title="LLM-friendly summary">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://alloevil.github.io/proxy-evolution/#app",
+      "name": "翻墙协议六代演进 · 交互图解",
+      "alternateName": "proxy-evolution",
+      "url": "https://alloevil.github.io/proxy-evolution/",
+      "description": "六代翻墙协议(Shadowsocks → VMess → VLESS/Trojan → QUIC → REALITY → XHTTP/抗量子)的可交互图解:数据包流动、弱网模拟、主动探测剧场、审查环境剧本。",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Any (Web Browser)",
+      "browserRequirements": "Requires JavaScript",
+      "inLanguage": ["zh-CN", "en"],
+      "datePublished": "2026-09-10",
+      "dateModified": "2026-09-11",
+      "author": { "@type": "Person", "name": "gaoruilin", "url": "https://github.com/alloevil" },
+      "license": "https://opensource.org/licenses/MIT",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "image": "https://alloevil.github.io/proxy-evolution/screenshot-main.png",
+      "screenshot": [
+        "https://alloevil.github.io/proxy-evolution/screenshot-main.png",
+        "https://alloevil.github.io/proxy-evolution/screenshot-probe.png"
+      ]
+    },
+    {
+      "@type": "LearningResource",
+      "@id": "https://alloevil.github.io/proxy-evolution/#learning",
+      "name": "六代翻墙协议演进图解",
+      "description": "从第一代 Shadowsocks 到第六代 XHTTP + 抗量子 REALITY 的六代抗审查协议演进,通过交互式动画讲解每代的核心创新、抗探测能力与弱网表现。",
+      "educationalLevel": "Intermediate to Advanced",
+      "learningResourceType": "Interactive simulation / visualization",
+      "teaches": [
+        "六代翻墙协议的演进脉络与每代核心创新",
+        "主动探测(active probing)的原理与各代协议的抵抗方式",
+        "QUIC 与 TCP 在弱网环境下的拥塞控制差异",
+        "REALITY 协议借用真实网站 TLS 身份抗探测的原理",
+        "XHTTP 如何把代理流量藏进 CDN 的正常访客流量",
+        "抗量子密钥交换(X25519MLKEM768)与后量子证书验证(ML-DSA-65)"
+      ],
+      "inLanguage": "zh-CN",
+      "isAccessibleForFree": true,
+      "url": "https://alloevil.github.io/proxy-evolution/"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://alloevil.github.io/proxy-evolution/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "翻墙协议有哪六代?各代的核心创新是什么?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "六代翻墙协议演进:第一代 Shadowsocks(2012)把代理流量伪装成普通加密流量;第二代 SSR/VMess(2015)增加混淆和防重放;第三代 VLESS/Trojan(2020)把加密交给外层 TLS,Trojan 伪装成真实 HTTPS 网站;第四代 Hysteria2/TUIC(2021)基于 QUIC,弱网/高延迟下速度大幅领先 TCP 系;第五代 REALITY/AnyTLS(2023)借用真实网站的 TLS 身份对抗主动探测;第六代 XHTTP + 抗量子 REALITY(2024)把代理流量拆成普通 HTTP 请求藏进 CDN 的正常访客流量,叠加抗量子密钥交换(X25519MLKEM768)与 ECH 加密 SNI。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "REALITY 协议为什么能抵抗主动探测?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "REALITY 的原理:握手时用真实目标站(如 cloudflare.com)的公钥完成 X25519 密钥协商;合法客户端被服务器接管进代理,而探测者的连接被原样转给真实网站。于是审查者「验证证书」「抓取网页」「比对指纹」三板斧全部失效——探测者看到的就是那个真实网站本身,拿到的是真实 CA 签发的证书。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "为什么 QUIC 协议(Hysteria2/TUIC)在弱网下比 TCP 快?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "TCP + TLS 在丢包时整个连接等待重传(队头阻塞),吞吐崩塌;QUIC 在 UDP 上按流独立处理,一条流丢包不影响其他流。Hysteria2 的 Brutal 拥塞控制更激进:不因丢包降速,固定抢占带宽,因此在高丢包、高延迟环境下速度几乎不受影响。代价是 UDP 443 本身显眼,容易被按协议限速或封锁,需要 TCP 回落方案兜底。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "XHTTP 协议是什么?为什么说它代表第六代?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "XHTTP(前身 SplitHTTP,2024 年 12 月发布)是 Xray-core 的传输层方案:把上行和下行拆到不同的 HTTP 请求里,可直接走 CDN 回源,借 CDN 边缘节点的真实证书与真实流量画像。配合抗量子密钥交换 X25519MLKEM768(Xray v25.5.16 起支持)、后量子证书验证 ML-DSA-65(v25.7.26 起支持)和 ECH 加密 SNI,审查者不仅无法证伪证书,连你在访问哪个域名都看不到;「封锁代理 IP」这一手段因为源站隐藏在 CDN 之后而失效。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "什么是主动探测(active probing)?各代协议如何应对?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "主动探测指审查者伪装成合法客户端直连疑似代理服务器,观察返回的证书与网页内容来判定是否为代理。应对方式逐代升级:SS/SSR 返回无语义加密乱码,无网站结构,统计特征可识别(判定为可被识别);VLESS/Trojan 有真 TLS 但证书链可被指纹比对(部分暴露);REALITY 把探测连接中继给真实网站,返回真实证书与真实内容(无法区分);XHTTP 让 CDN 边缘把无凭证请求当成普通访客,源站根本不可见(探测目标不存在)。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "这个交互式页面怎么玩?有哪些功能?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "点顶部世代卡片或按左右方向键切换六代;空格键暂停流量动画;「弱网」开关可看到 TCP 系重传与 QUIC 不退让的对比;「发射探测」触发主动探测剧场;「六代连测」把六种判定串成一条演进线;四个审查环境剧本(主动探测攻击、深度包检测、UDP 封锁、弱网远距离)自动播放并实时叙事。URL hash 支持深链分享,如 #reality 直接落在第五代。"
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
 <style>
   :root{
     --bg:#06080f; --glass:rgba(255,255,255,.032); --glass2:rgba(255,255,255,.055);
@@ -83,7 +207,8 @@
     background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent)}
   .card{padding:20px 22px}
   .card-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.3em;color:var(--mut);
-              text-transform:uppercase;display:flex;align-items:center;gap:10px;margin-bottom:16px}
+              text-transform:uppercase;display:flex;align-items:center;gap:10px;margin:0 0 16px;
+              font-weight:inherit}
   .card-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
 
   /* 入场动效 */
@@ -287,6 +412,16 @@
   .scen-card .sd{font-size:10px;color:var(--mut);margin-top:3px;line-height:1.5}
   .scen-card.on{border-color:var(--accent);background:var(--accent-soft)}
   .scen-card.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent)}
+
+  /* ── FAQ ── */
+  .faq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 26px}
+  @media(max-width:900px){.faq-grid{grid-template-columns:1fr}}
+  .faq-item{border-left:2px solid var(--line);padding-left:14px}
+  .faq-q{font-size:13px;font-weight:650;margin:0 0 6px;letter-spacing:.2px}
+  .faq-a p{font-size:11.5px;line-height:1.85;color:var(--dim);margin:0}
+  .faq-a b{color:var(--txt);font-weight:600}
+  .faq-a code{font-family:var(--mono);font-size:10.5px;background:rgba(255,255,255,.05);
+    border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:#a9bdd8}
 </style>
 </head>
 <body>
@@ -302,14 +437,15 @@
   </div>
 </header>
 
-<div class="gennav" id="timeline"></div>
+<nav class="gennav" id="timeline" aria-label="协议世代导航"></nav>
 <div class="autoplay-bar" id="autoplayBar"><i></i></div>
 
+<main>
 <div class="layout">
   <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
     <!-- 链路动画 -->
     <div class="glass card rise d1" id="flowCard">
-      <div class="card-label">Live Traffic · 链路实时流量</div>
+      <h2 class="card-label">Live Traffic · 链路实时流量</h2>
       <div class="track" id="track">
         <div class="grid-tex"></div>
         <div class="wire"></div>
@@ -336,13 +472,13 @@
     </div>
 
     <div class="glass card rise d2">
-      <div class="card-label">Stack · 加密发生在哪一层</div>
+      <h2 class="card-label">Stack · 加密发生在哪一层</h2>
       <div class="stack-wrap">
         <div class="stack" id="stack"></div>
         <div class="enc-where" id="encWhere"></div>
       </div>
       <div class="scen-block">
-        <div class="card-label" style="margin-bottom:10px">Scenarios · 审查环境剧本</div>
+        <h2 class="card-label" style="margin-bottom:10px">Scenarios · 审查环境剧本</h2>
         <div class="scen-cards" id="scenCards"></div>
         <div class="scen-note" id="scenNote">播放一段罐装攻击/网络事件序列,观察各代协议的实际反应。</div>
       </div>
@@ -351,7 +487,7 @@
 
   <!-- 讲解栏 -->
   <div class="glass card info rise d2" id="infoCard">
-    <div class="card-label">Generation · 本代要点</div>
+    <h2 class="card-label">Generation · 本代要点</h2>
     <div class="gennum" id="gNum"></div>
     <div class="title-row">
       <div class="big" id="gName"></div>
@@ -382,7 +518,7 @@
 </div>
 
 <div class="glass compare rise d4">
-  <div class="card-label">Comparison · 六代横向对比</div>
+  <h2 class="card-label">Comparison · 六代横向对比</h2>
   <div class="cmp-grid" id="cmpGrid"></div>
   <div class="foot">
     <b>弱网表现</b>取决于拥塞控制与传输层——TCP(TLS 系)丢包时整条连接队头阻塞、退避重传;QUIC(Hysteria2 / TUIC)在 UDP 上按流独立重传,
@@ -390,6 +526,56 @@
     分值为相对示意,用于建立直觉,非实测数据。&nbsp;&nbsp;操作:<kbd>←</kbd> <kbd>→</kbd> 切换世代 · <kbd>Space</kbd> 暂停流量
   </div>
 </div>
+
+<section class="glass card rise d4" id="faq" style="margin-top:18px" itemscope itemtype="https://schema.org/FAQPage">
+  <h2 class="card-label">FAQ · 常见问题</h2>
+  <div class="faq-grid" itemprop="mainEntity" itemscope itemtype="https://schema.org/Question">
+    <div class="faq-item">
+      <h3 class="faq-q" itemprop="name">六代协议各自的核心创新是什么?</h3>
+      <div class="faq-a" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
+        <p itemprop="text">第一代 <b>Shadowsocks</b>(2012)把代理流量伪装成普通加密流量;第二代 <b>SSR/VMess</b>(2015)增加混淆和防重放;第三代 <b>VLESS/Trojan</b>(2020)把加密交给外层 TLS,Trojan 伪装成真实 HTTPS 网站;第四代 <b>Hysteria2/TUIC</b>(2021)基于 QUIC,弱网/高延迟下速度大幅领先;第五代 <b>REALITY/AnyTLS</b>(2023)借用真实网站的 TLS 身份对抗主动探测;第六代 <b>XHTTP + 抗量子 REALITY</b>(2024)把代理流量拆成普通 HTTP 请求藏进 CDN 的正常访客流量,叠加抗量子密钥交换与 ECH。</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-q" itemprop="name">REALITY 为什么能抵抗主动探测?</h3>
+      <div class="faq-a" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
+        <p itemprop="text">握手时用真实目标站(如 cloudflare.com)的公钥完成 X25519 密钥协商;合法客户端被服务器接管进代理,而<b>探测者的连接被原样转给真实网站</b>。于是「验证证书」「抓取网页」「比对指纹」三板斧全部失效——探测者看到的就是那个真实网站,拿到的是真实 CA 签发的证书。</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-q" itemprop="name">为什么 QUIC 在弱网下比 TCP 快?</h3>
+      <div class="faq-a" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
+        <p itemprop="text">TCP + TLS 在丢包时整个连接等待重传(<b>队头阻塞</b>),吞吐崩塌;QUIC 在 UDP 上按流独立处理,一条流丢包不影响其他流。Hysteria2 的 Brutal 拥塞控制更激进:不因丢包降速、固定抢占带宽,高丢包环境下速度几乎不受影响。代价是 UDP 443 显眼,容易被按协议限速或封锁,需要 TCP 回落兜底。</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-q" itemprop="name">XHTTP 是什么?为什么说它代表第六代?</h3>
+      <div class="faq-a" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
+        <p itemprop="text">XHTTP(前身 SplitHTTP,2024.12 发布)是 Xray-core 的传输层:把上行和下行拆到不同的 HTTP 请求里,直接走 CDN 回源,借 CDN 边缘节点的真实证书与流量画像。配合 <code>X25519MLKEM768</code> 抗量子密钥交换(Xray v25.5.16 起)、<code>ML-DSA-65</code> 后量子证书验证(v25.7.26 起)和 ECH 加密 SNI,审查者不仅无法证伪证书,连你在访问哪个域名都看不到;「封锁代理 IP」因源站隐藏在 CDN 之后而失效。</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-q" itemprop="name">什么是主动探测(active probing)?</h3>
+      <div class="faq-a" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
+        <p itemprop="text">审查者伪装成合法客户端直连疑似代理服务器,观察返回的证书与网页内容来判定是否为代理。应对方式逐代升级:SS/SSR 返回无语义加密乱码(可被识别);VLESS/Trojan 有真 TLS 但证书可被指纹比对(部分暴露);REALITY 把探测连接中继给真实网站(无法区分);XHTTP 让 CDN 边缘把无凭证请求当成普通访客,源站不可见(探测目标不存在)。</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-q" itemprop="name">这个页面怎么玩?</h3>
+      <div class="faq-a" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
+        <p itemprop="text">点顶部世代卡片或按 <kbd>←</kbd> <kbd>→</kbd> 切换六代;<kbd>Space</kbd> 暂停流量动画;「弱网」开关可看到 TCP 系重传与 QUIC 不退让的对比;「发射探测」触发主动探测剧场;「六代连测」把六种判定串成一条演进线;四个审查环境剧本(主动探测攻击/深度包检测/UDP 封锁/弱网远距离)自动播放并实时叙事。</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot" style="max-width:1100px;margin:18px auto 0;padding:16px 24px 0">
+  <b>proxy-evolution</b> · <a href="https://github.com/alloevil/proxy-evolution" target="_blank" rel="noopener" style="color:var(--mut)">GitHub</a> ·
+  <a href="https://github.com/alloevil/proxy-evolution/blob/main/LICENSE" target="_blank" rel="noopener" style="color:var(--mut)">MIT License</a> ·
+  <a href="llms.txt" style="color:var(--mut)">llms.txt</a><br>
+  对比区各项分值为相对示意值,用于建立直觉,非基准测试数据。本项目仅用于技术原理学习与研究。
+</footer>
 
 <script>
 "use strict";

@@ -2,7 +2,7 @@
 
 > 从 Shadowsocks 到 REALITY:五代抗审查协议的演进,做成一个可以玩的页面。
 
-**[▶ 在线演示](../../)** · 单文件 · 零依赖 · 无需构建
+**[▶ 在线演示](https://alloevil.github.io/proxy-evolution/)** · 单文件 · 零依赖 · 无需构建
 
 ---
 
@@ -78,7 +78,7 @@ python3 -m http.server 8000
 # → http://localhost:8000
 
 # 方式三:部署到 GitHub Pages
-# push 后在仓库 Settings → Pages → Source 选 main 分支即可
+# 本仓库已开启 Pages(Settings → Pages → main 分支),push 即自动部署
 ```
 
 ## 操作

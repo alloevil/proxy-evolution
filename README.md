@@ -38,11 +38,11 @@
    ↓
 第二代  SSR / VMess (2015)            增加混淆和防重放
    ↓
-第三代  VLESS / Trojan (2020)         加密交给外层 TLS;Trojan 伪装成真实 HTTPS 站
+第三代  VLESS (2020) / Trojan (2018)         加密交给外层 TLS;Trojan 回落到预设站点(常配成真实 HTTPS 站)
    ↓
-第四代  Hysteria2 / TUIC (2021)       基于 QUIC,弱网/高延迟下速度碾压 TCP 系
+第四代  Hysteria2 / TUIC (2022–2023)       基于 QUIC,弱网/高延迟下速度碾压 TCP 系
    ↓
-第五代  REALITY / AnyTLS (2023)       借用真实网站的 TLS 身份,对抗主动探测
+第五代  REALITY (2023) / AnyTLS (2025)       借用真实网站的 TLS 身份,对抗主动探测
    ↓
 第六代  XHTTP + 抗量子 REALITY (2024) 拆成普通 HTTP 请求藏进 CDN;抗量子密钥 + ECH
 ```
@@ -50,7 +50,7 @@
 ## 交互功能
 
 ### 实时流量动画
-数据包持续流经「审查节点」。**速度即证据**:SS 80px/s、QUIC 95px/s、弱网下 TCP 系腰斩并出现 `⚠ 重传` 标记,而 QUIC 反而加速 —— Brutal 拥塞控制不因丢包退让。打开「弱网」开关,差异肉眼可见。
+数据包持续流经「审查节点」。**速度即证据**:SS 80px/s、QUIC 95px/s、弱网下 TCP 系腰斩并出现 `⚠ 重传` 标记,而 QUIC 反而加速 —— Brutal 拥塞控制不因丢包退让,而是按设定带宽略微超发补偿(仅在配置了带宽时启用)。打开「弱网」开关,差异肉眼可见。
 
 ### 主动探测实验
 点击「发射探测」,观察审查者伪装成客户端直连服务器能拿到什么响应。判定分三档:
@@ -71,7 +71,7 @@ REALITY 一代有专属剧场:探测包被转发到真实网站节点,返回「�
 |---|---|---|
 | 主动探测攻击 | 审查者逐代直连,比对证书与内容 | 前四代 🔴/🟡,REALITY 与 XHTTP 🟢 |
 | 深度包检测 | 分类器扫包长分布/时序/JA3 指纹 | SS/SSR 🔴,真 TLS + ECH/CDN 让检测目标消失 |
-| UDP 封锁 | udp/443 限速 50kbps | Hysteria2 掉线 → 回落 REALITY/XHTTP(TCP)恢复 |
+| UDP 封锁 | udp/443 限速 50kbps | Hysteria2 被限速/封锁 → 客户端切到 REALITY/XHTTP(TCP)节点恢复(手动/回落配置,非协议自动降级) |
 | 弱网远距离 | RTT 300ms + 8% 丢包 | TCP 系崩塌,QUIC 几乎不受影响 |
 
 ### 协议栈面板
@@ -128,8 +128,10 @@ python3 build-data.py    # 修改 index.html 数据后重新生成 data.json
 
 ## 说明与免责
 
+- 机制层断言(各代协议「做了什么」)已于 2026-09-11 对照一手来源逐条核实:Shadowsocks 规范(sip004 / sip022)、SSR 与 VMess 源码及文档、Trojan 协议文档、Xray-core(VLESS / REALITY / XHTTP 及其发布说明)、XTLS/REALITY、anytls-go、Hysteria、TUIC、RFC 9000。本轮修正了:REALITY 握手密钥来源(服务器自身密钥对,不是目标站公钥)、Trojan 回落语义(预设端点,非「真实网站」)、JA3/JA4 的归属(ClientHello 指纹,不是证书)、QUIC 队头阻塞的粒度(按流而非按包)、Brutal 语义(按设定带宽略超发,仅在配置带宽时启用)、AnyTLS 年代(2025,不是 2023)、VLESS/Trojan/Hysteria2/TUIC 的年份,以及 SS 条目的时代错位(2012 原版是流密码,AEAD 与重放防护分别在 2017 / 2022 才加入)。
 - 对比区各项分值为**相对示意值**,用于建立直觉,非基准测试数据。
-- 弱网表现基于各协议的拥塞控制与传输层差异:TCP(TLS 系)丢包时整条连接队头阻塞、退避重传;QUIC(Hysteria2 / TUIC)在 UDP 上按流独立重传,Hysteria2 的 Brutal 拥塞控制不因丢包降速。
+- 弱网表现基于各协议的拥塞控制与传输层差异:TCP(TLS 系)丢包时整条连接队头阻塞、退避重传;QUIC(Hysteria2 / TUIC)在 UDP 上按流独立重传,Hysteria2 的 Brutal 拥塞控制不因丢包降速(按设定带宽略微超发补偿)。
+- 四个剧本的结局同为示意,不构成对任何协议在真实审查环境下的成败承诺。
 - 「抗主动探测」指服务器被直连时能否返回与真实网站完全一致的响应。
 - 本项目仅用于技术原理学习与研究。
 

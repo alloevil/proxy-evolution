@@ -166,17 +166,19 @@
   header{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;
          padding-bottom:18px;border-bottom:1px solid var(--line)}
   .kicker{font-family:var(--mono);font-size:10px;letter-spacing:.34em;color:var(--mut);text-transform:uppercase}
-  h1{font-size:26px;font-weight:750;letter-spacing:-.4px;margin-top:8px;line-height:1.25}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.4px;margin-top:8px;line-height:1.25}
   h1 em{font-style:normal;color:var(--accent)}
   .header-meta{font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.12em;text-align:right;line-height:1.9}
   .header-meta b{color:var(--dim);font-weight:500}
 
   /* ── 世代时间轴 ── */
-  .gennav{display:flex;gap:0;margin:26px 0 22px;position:relative}
+  .gennav{display:flex;gap:0;margin:26px 0 22px;position:relative;
+          overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+  .gennav::-webkit-scrollbar{display:none}
   .gennav::before{content:"";position:absolute;top:15px;left:6%;right:6%;height:1px;
                   background:linear-gradient(90deg,transparent,var(--line2) 12%,var(--line2) 88%,transparent)}
   .gen-btn{
-    flex:1;background:none;border:none;cursor:pointer;color:inherit;font-family:inherit;
+    flex:1 1 0;min-width:132px;background:none;border:none;cursor:pointer;color:inherit;font-family:inherit;
     display:flex;flex-direction:column;align-items:center;gap:0;padding:0 6px;position:relative;
   }
   .gen-btn .node{
@@ -184,7 +186,7 @@
     display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;
     color:var(--mut);position:relative;z-index:1;transition:all .4s cubic-bezier(.22,1,.36,1);
   }
-  .gen-btn .nm{font-size:13px;font-weight:650;color:var(--dim);margin-top:11px;transition:color .3s;letter-spacing:.2px}
+  .gen-btn .nm{font-size:13px;font-weight:600;color:var(--dim);margin-top:11px;transition:color .3s;letter-spacing:.2px}
   .gen-btn .yr{font-family:var(--mono);font-size:9.5px;color:var(--faint);margin-top:4px;letter-spacing:.08em;transition:color .3s}
   .gen-btn:hover .node{border-color:var(--dim);color:var(--txt);transform:translateY(-2px)}
   .gen-btn:hover .nm{color:var(--txt)}
@@ -241,7 +243,7 @@
     border:1px solid var(--line2);box-shadow:0 10px 30px -12px rgba(0,0,0,.8)}
   .endnode.server .ico{border-color:color-mix(in srgb,var(--accent) 45%,transparent);
     box-shadow:0 0 34px -10px var(--accent),0 10px 30px -12px rgba(0,0,0,.8)}
-  .endnode .lb{font-size:11px;color:var(--dim);font-weight:550}
+  .endnode .lb{font-size:11px;color:var(--dim);font-weight:500}
   .endnode .sb{font-family:var(--mono);font-size:8.5px;color:var(--faint);margin-top:2px;letter-spacing:.1em}
   .endnode.client{left:14px} .endnode.server{right:14px}
   .watcher{
@@ -249,10 +251,10 @@
     border:1px dashed rgba(248,113,113,.30);border-radius:10px;
     background:linear-gradient(180deg,rgba(248,113,113,.075),rgba(248,113,113,.015));
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
-  .watcher .wl{font-size:10.5px;color:#fca5a5;font-weight:650;letter-spacing:.5px}
+  .watcher .wl{font-size:10.5px;color:#fca5a5;font-weight:600;letter-spacing:.5px}
   .watcher .wd{font-family:var(--mono);font-size:8.5px;color:var(--mut);text-align:center;line-height:1.6;letter-spacing:.05em}
   .packet{
-    position:absolute;z-index:4;padding:4px 10px;border-radius:99px;font-size:10px;font-weight:550;
+    position:absolute;z-index:4;padding:4px 10px;border-radius:99px;font-size:10px;font-weight:500;
     white-space:nowrap;pointer-events:none;transform:translate(-50%,-50%);letter-spacing:.3px;
     background:rgba(9,12,22,.78);backdrop-filter:blur(6px);border:1px solid;
     box-shadow:0 4px 18px -6px rgba(0,0,0,.7)}
@@ -276,7 +278,7 @@
     backdrop-filter:blur(8px)}
   button.ctl:hover{border-color:var(--line2);color:var(--txt);background:rgba(255,255,255,.09)}
   button.ctl.primary{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 45%,transparent);
-    background:var(--accent-soft);font-weight:650}
+    background:var(--accent-soft);font-weight:600}
   button.ctl.primary:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
   .net-toggle{display:flex;align-items:center;gap:8px;margin-left:auto;font-size:11px;color:var(--mut)}
   .switch{width:40px;height:21px;border-radius:99px;background:rgba(255,255,255,.08);position:relative;
@@ -293,7 +295,7 @@
     border:1px solid var(--line);border-radius:10px;padding:11px 13px;position:relative;overflow:hidden;
     background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(255,255,255,.008));transition:all .35s}
   .layer::before{content:"";position:absolute;left:0;top:14%;bottom:14%;width:2px;border-radius:2px;background:var(--lc,var(--faint));opacity:.8}
-  .layer .ln{font-size:12.5px;font-weight:650;letter-spacing:.2px}
+  .layer .ln{font-size:12.5px;font-weight:600;letter-spacing:.2px}
   .layer .ld{font-size:10.5px;color:var(--mut);margin-top:4px;line-height:1.6}
   .layer.pulse{animation:pulse 1.15s ease-in-out 2}
   @keyframes pulse{
@@ -301,7 +303,7 @@
     50%{box-shadow:0 0 26px -6px var(--accent);border-color:color-mix(in srgb,var(--accent) 55%,transparent)}}
   .enc-where{margin-top:14px;font-size:11px;color:var(--dim);line-height:1.75;
     border-top:1px solid var(--line);padding-top:12px}
-  .enc-where b{color:var(--accent);font-weight:650}
+  .enc-where b{color:var(--accent);font-weight:600}
 
   /* ── 讲解栏 ── */
   .info{display:flex;flex-direction:column}
@@ -309,12 +311,12 @@
     color:transparent;-webkit-text-stroke:1px color-mix(in srgb,var(--accent) 55%,transparent);
     letter-spacing:-3px;user-select:none}
   .title-row{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:10px}
-  .title-row .big{font-size:21px;font-weight:750;letter-spacing:-.3px}
+  .title-row .big{font-size:21px;font-weight:700;letter-spacing:-.3px}
   .title-row .yr{font-family:var(--mono);font-size:10.5px;color:var(--mut);letter-spacing:.12em}
   .innov{margin-top:13px;padding:11px 14px;border-left:2px solid var(--accent);
     background:linear-gradient(90deg,var(--accent-soft),transparent 85%);border-radius:0 10px 10px 0;
     font-size:12.5px;line-height:1.75}
-  .innov b{color:var(--accent);font-weight:650}
+  .innov b{color:var(--accent);font-weight:600}
   .points{margin-top:15px;list-style:none;display:flex;flex-direction:column;gap:11px}
   .points li{font-size:12px;line-height:1.8;color:#c6d3e6;padding-left:17px;position:relative}
   .points li::before{content:"";position:absolute;left:2px;top:9px;width:5px;height:5px;
@@ -327,7 +329,7 @@
     background:linear-gradient(160deg,rgba(255,255,255,.035),rgba(255,255,255,.006))}
   .probe-box .ph{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
   .ph-txt .k{font-family:var(--mono);font-size:9px;letter-spacing:.26em;color:var(--mut);text-transform:uppercase}
-  .ph-txt .t{font-size:12.5px;font-weight:650;margin-top:5px;letter-spacing:.2px}
+  .ph-txt .t{font-size:12.5px;font-weight:600;margin-top:5px;letter-spacing:.2px}
   .ph-txt .d{font-size:10px;color:var(--faint);margin-top:3px;line-height:1.5}
   .tip{position:relative}
   .tip .tip-text{
@@ -375,10 +377,11 @@
   .cmp-h .g{font-family:var(--mono);font-size:9px;color:var(--faint);letter-spacing:.14em}
   .cmp-h .p{font-size:11px;color:var(--dim);font-weight:600;margin-top:2px}
   .cmp-h.act .g{color:var(--accent)} .cmp-h.act .p{color:var(--txt)}
-  .cmp-l{font-size:11.5px;color:var(--dim);font-weight:550}
+  .cmp-l{font-size:11.5px;color:var(--dim);font-weight:500}
   .cmp-l.sortable{cursor:pointer;user-select:none;transition:color .25s;display:flex;align-items:center;gap:6px}
   .cmp-l.sortable:hover{color:var(--txt)}
-  .cmp-l .sortmark{font-family:var(--mono);font-size:8px;color:var(--accent);opacity:0;transition:opacity .25s}
+  .cmp-l .sortmark{font-family:var(--mono);font-size:8px;color:var(--faint);opacity:.55;transition:all .25s}
+  .cmp-l:hover .sortmark{opacity:1;color:var(--dim)}
   .cmp-l.sorted .sortmark{opacity:1}
   .cmp-l.sorted{color:var(--accent)}
   .cmp-grid.hov .bar i{opacity:.22!important}
@@ -399,29 +402,48 @@
   kbd{font-family:var(--mono);font-size:9px;background:rgba(255,255,255,.06);border:1px solid var(--line2);
     border-bottom-width:2px;border-radius:4px;padding:1px 5px;color:var(--dim)}
 
-  /* ── 场景剧本 ── */
-  .scen-block{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
-  .scen-note{font-size:10.5px;color:var(--faint);margin-top:10px;line-height:1.6;min-height:16px;transition:color .3s}
+  /* ── 场景剧本(全宽面板) ── */
+  .scen-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media(max-width:1000px){.scen-cards{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.scen-cards{grid-template-columns:1fr}}
+  .scen-note{font-size:10.5px;color:var(--faint);margin-top:12px;line-height:1.6;min-height:16px;transition:color .3s}
   .scen-note.live{color:var(--accent)}
-  .scen-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
   .scen-card{
-    text-align:left;background:rgba(255,255,255,.028);border:1px solid var(--line);border-radius:10px;
-    padding:10px 12px;cursor:pointer;color:inherit;font-family:inherit;transition:all .25s;position:relative;overflow:hidden}
-  .scen-card:hover{border-color:var(--line2);background:rgba(255,255,255,.06);transform:translateY(-1px)}
-  .scen-card .st{font-size:12px;font-weight:650;letter-spacing:.2px}
-  .scen-card .sd{font-size:10px;color:var(--mut);margin-top:3px;line-height:1.5}
+    text-align:left;background:rgba(255,255,255,.028);border:1px solid var(--line);border-radius:12px;
+    padding:14px 16px;cursor:pointer;color:inherit;font-family:inherit;transition:all .25s;position:relative;overflow:hidden}
+  .scen-card:hover{border-color:var(--line2);background:rgba(255,255,255,.06);transform:translateY(-2px)}
+  .scen-card .sk{font-family:var(--mono);font-size:8.5px;letter-spacing:.22em;color:var(--faint);text-transform:uppercase}
+  .scen-card .st{font-size:13px;font-weight:600;letter-spacing:.2px;margin-top:5px}
+  .scen-card .sd{font-size:10.5px;color:var(--mut);margin-top:5px;line-height:1.65}
   .scen-card.on{border-color:var(--accent);background:var(--accent-soft)}
   .scen-card.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent)}
+  .scen-card.on .sk{color:var(--accent)}
 
   /* ── FAQ ── */
   .faq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 26px}
   @media(max-width:900px){.faq-grid{grid-template-columns:1fr}}
   .faq-item{border-left:2px solid var(--line);padding-left:14px}
-  .faq-q{font-size:13px;font-weight:650;margin:0 0 6px;letter-spacing:.2px}
+  .faq-q{font-size:13px;font-weight:600;margin:0 0 6px;letter-spacing:.2px}
   .faq-a p{font-size:11.5px;line-height:1.85;color:var(--dim);margin:0}
   .faq-a b{color:var(--txt);font-weight:600}
   .faq-a code{font-family:var(--mono);font-size:10.5px;background:rgba(255,255,255,.05);
     border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:#a9bdd8}
+
+  /* ── 首访引导 ── */
+  .tour{display:flex;align-items:center;gap:14px;margin:16px 0 0;padding:11px 16px;border-radius:12px;
+    background:linear-gradient(90deg,var(--accent-soft),transparent 70%);border:1px solid var(--line);
+    font-size:11.5px;color:var(--dim);line-height:1.6}
+  .tour b{color:var(--accent);font-weight:600}
+  .tour .x{margin-left:auto;background:none;border:none;color:var(--faint);cursor:pointer;
+    font-size:15px;line-height:1;padding:4px 8px;border-radius:6px;font-family:inherit}
+  .tour .x:hover{color:var(--txt);background:rgba(255,255,255,.07)}
+
+  /* ── 减少动态效果 ── */
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
+      transition-duration:.01ms!important;scroll-behavior:auto!important}
+    .autoplay-bar i{display:none}
+  }
 </style>
 </head>
 <body>
@@ -439,6 +461,11 @@
 
 <nav class="gennav" id="timeline" aria-label="协议世代导航"></nav>
 <div class="autoplay-bar" id="autoplayBar"><i></i></div>
+
+<div class="tour" id="tour" hidden>
+  <span>👋 点顶部<b>世代卡片</b>(或按 <kbd>←</kbd><kbd>→</kbd>)逐代看演进 · 开<b>弱网开关</b>看 TCP 重传 vs QUIC 不退让 · 点<b>发射探测</b>看审查者拿到了什么 · <b>审查环境剧本</b>自动播放攻击全过程</span>
+  <button class="x" id="tourClose" aria-label="关闭引导">×</button>
+</div>
 
 <main>
 <div class="layout">
@@ -471,16 +498,11 @@
       </div>
     </div>
 
-    <div class="glass card rise d2">
+    <div class="glass card rise d2" id="stackCard">
       <h2 class="card-label">Stack · 加密发生在哪一层</h2>
       <div class="stack-wrap">
         <div class="stack" id="stack"></div>
         <div class="enc-where" id="encWhere"></div>
-      </div>
-      <div class="scen-block">
-        <h2 class="card-label" style="margin-bottom:10px">Scenarios · 审查环境剧本</h2>
-        <div class="scen-cards" id="scenCards"></div>
-        <div class="scen-note" id="scenNote">播放一段罐装攻击/网络事件序列,观察各代协议的实际反应。</div>
       </div>
     </div>
   </div>
@@ -517,6 +539,12 @@
   </div>
 </div>
 
+<section class="glass card rise d3" id="scenPanel">
+  <h2 class="card-label">Scenarios · 审查环境剧本</h2>
+  <div class="scen-cards" id="scenCards"></div>
+  <div class="scen-note" id="scenNote">播放一段罐装攻击/网络事件序列,观察各代协议的实际反应。</div>
+</section>
+
 <div class="glass compare rise d4">
   <h2 class="card-label">Comparison · 六代横向对比</h2>
   <div class="cmp-grid" id="cmpGrid"></div>
@@ -527,43 +555,43 @@
   </div>
 </div>
 
-<section class="glass card rise d4" id="faq" style="margin-top:18px" itemscope itemtype="https://schema.org/FAQPage">
+<section class="glass card rise d4" id="faq" style="margin-top:18px">
   <h2 class="card-label">FAQ · 常见问题</h2>
-  <div class="faq-grid" itemprop="mainEntity" itemscope itemtype="https://schema.org/Question">
+  <div class="faq-grid">
     <div class="faq-item">
-      <h3 class="faq-q" itemprop="name">六代协议各自的核心创新是什么?</h3>
-      <div class="faq-a" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
-        <p itemprop="text">第一代 <b>Shadowsocks</b>(2012)把代理流量伪装成普通加密流量;第二代 <b>SSR/VMess</b>(2015)增加混淆和防重放;第三代 <b>VLESS/Trojan</b>(2020)把加密交给外层 TLS,Trojan 伪装成真实 HTTPS 网站;第四代 <b>Hysteria2/TUIC</b>(2021)基于 QUIC,弱网/高延迟下速度大幅领先;第五代 <b>REALITY/AnyTLS</b>(2023)借用真实网站的 TLS 身份对抗主动探测;第六代 <b>XHTTP + 抗量子 REALITY</b>(2024)把代理流量拆成普通 HTTP 请求藏进 CDN 的正常访客流量,叠加抗量子密钥交换与 ECH。</p>
+      <h3 class="faq-q">六代协议各自的核心创新是什么?</h3>
+      <div class="faq-a">
+        <p>第一代 <b>Shadowsocks</b>(2012)把代理流量伪装成普通加密流量;第二代 <b>SSR/VMess</b>(2015)增加混淆和防重放;第三代 <b>VLESS/Trojan</b>(2020)把加密交给外层 TLS,Trojan 伪装成真实 HTTPS 网站;第四代 <b>Hysteria2/TUIC</b>(2021)基于 QUIC,弱网/高延迟下速度大幅领先;第五代 <b>REALITY/AnyTLS</b>(2023)借用真实网站的 TLS 身份对抗主动探测;第六代 <b>XHTTP + 抗量子 REALITY</b>(2024)把代理流量拆成普通 HTTP 请求藏进 CDN 的正常访客流量,叠加抗量子密钥交换与 ECH。</p>
       </div>
     </div>
     <div class="faq-item">
-      <h3 class="faq-q" itemprop="name">REALITY 为什么能抵抗主动探测?</h3>
-      <div class="faq-a" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
-        <p itemprop="text">握手时用真实目标站(如 cloudflare.com)的公钥完成 X25519 密钥协商;合法客户端被服务器接管进代理,而<b>探测者的连接被原样转给真实网站</b>。于是「验证证书」「抓取网页」「比对指纹」三板斧全部失效——探测者看到的就是那个真实网站,拿到的是真实 CA 签发的证书。</p>
+      <h3 class="faq-q">REALITY 为什么能抵抗主动探测?</h3>
+      <div class="faq-a">
+        <p>握手时用真实目标站(如 cloudflare.com)的公钥完成 X25519 密钥协商;合法客户端被服务器接管进代理,而<b>探测者的连接被原样转给真实网站</b>。于是「验证证书」「抓取网页」「比对指纹」三板斧全部失效——探测者看到的就是那个真实网站,拿到的是真实 CA 签发的证书。</p>
       </div>
     </div>
     <div class="faq-item">
-      <h3 class="faq-q" itemprop="name">为什么 QUIC 在弱网下比 TCP 快?</h3>
-      <div class="faq-a" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
-        <p itemprop="text">TCP + TLS 在丢包时整个连接等待重传(<b>队头阻塞</b>),吞吐崩塌;QUIC 在 UDP 上按流独立处理,一条流丢包不影响其他流。Hysteria2 的 Brutal 拥塞控制更激进:不因丢包降速、固定抢占带宽,高丢包环境下速度几乎不受影响。代价是 UDP 443 显眼,容易被按协议限速或封锁,需要 TCP 回落兜底。</p>
+      <h3 class="faq-q">为什么 QUIC 在弱网下比 TCP 快?</h3>
+      <div class="faq-a">
+        <p>TCP + TLS 在丢包时整个连接等待重传(<b>队头阻塞</b>),吞吐崩塌;QUIC 在 UDP 上按流独立处理,一条流丢包不影响其他流。Hysteria2 的 Brutal 拥塞控制更激进:不因丢包降速、固定抢占带宽,高丢包环境下速度几乎不受影响。代价是 UDP 443 显眼,容易被按协议限速或封锁,需要 TCP 回落兜底。</p>
       </div>
     </div>
     <div class="faq-item">
-      <h3 class="faq-q" itemprop="name">XHTTP 是什么?为什么说它代表第六代?</h3>
-      <div class="faq-a" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
-        <p itemprop="text">XHTTP(前身 SplitHTTP,2024.12 发布)是 Xray-core 的传输层:把上行和下行拆到不同的 HTTP 请求里,直接走 CDN 回源,借 CDN 边缘节点的真实证书与流量画像。配合 <code>X25519MLKEM768</code> 抗量子密钥交换(Xray v25.5.16 起)、<code>ML-DSA-65</code> 后量子证书验证(v25.7.26 起)和 ECH 加密 SNI,审查者不仅无法证伪证书,连你在访问哪个域名都看不到;「封锁代理 IP」因源站隐藏在 CDN 之后而失效。</p>
+      <h3 class="faq-q">XHTTP 是什么?为什么说它代表第六代?</h3>
+      <div class="faq-a">
+        <p>XHTTP(前身 SplitHTTP,2024.12 发布)是 Xray-core 的传输层:把上行和下行拆到不同的 HTTP 请求里,直接走 CDN 回源,借 CDN 边缘节点的真实证书与流量画像。配合 <code>X25519MLKEM768</code> 抗量子密钥交换(Xray v25.5.16 起)、<code>ML-DSA-65</code> 后量子证书验证(v25.7.26 起)和 ECH 加密 SNI,审查者不仅无法证伪证书,连你在访问哪个域名都看不到;「封锁代理 IP」因源站隐藏在 CDN 之后而失效。</p>
       </div>
     </div>
     <div class="faq-item">
-      <h3 class="faq-q" itemprop="name">什么是主动探测(active probing)?</h3>
-      <div class="faq-a" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
-        <p itemprop="text">审查者伪装成合法客户端直连疑似代理服务器,观察返回的证书与网页内容来判定是否为代理。应对方式逐代升级:SS/SSR 返回无语义加密乱码(可被识别);VLESS/Trojan 有真 TLS 但证书可被指纹比对(部分暴露);REALITY 把探测连接中继给真实网站(无法区分);XHTTP 让 CDN 边缘把无凭证请求当成普通访客,源站不可见(探测目标不存在)。</p>
+      <h3 class="faq-q">什么是主动探测(active probing)?</h3>
+      <div class="faq-a">
+        <p>审查者伪装成合法客户端直连疑似代理服务器,观察返回的证书与网页内容来判定是否为代理。应对方式逐代升级:SS/SSR 返回无语义加密乱码(可被识别);VLESS/Trojan 有真 TLS 但证书可被指纹比对(部分暴露);REALITY 把探测连接中继给真实网站(无法区分);XHTTP 让 CDN 边缘把无凭证请求当成普通访客,源站不可见(探测目标不存在)。</p>
       </div>
     </div>
     <div class="faq-item">
-      <h3 class="faq-q" itemprop="name">这个页面怎么玩?</h3>
-      <div class="faq-a" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
-        <p itemprop="text">点顶部世代卡片或按 <kbd>←</kbd> <kbd>→</kbd> 切换六代;<kbd>Space</kbd> 暂停流量动画;「弱网」开关可看到 TCP 系重传与 QUIC 不退让的对比;「发射探测」触发主动探测剧场;「六代连测」把六种判定串成一条演进线;四个审查环境剧本(主动探测攻击/深度包检测/UDP 封锁/弱网远距离)自动播放并实时叙事。</p>
+      <h3 class="faq-q">这个页面怎么玩?</h3>
+      <div class="faq-a">
+        <p>点顶部世代卡片或按 <kbd>←</kbd> <kbd>→</kbd> 切换六代;<kbd>Space</kbd> 暂停流量动画;「弱网」开关可看到 TCP 系重传与 QUIC 不退让的对比;「发射探测」触发主动探测剧场;「六代连测」把六种判定串成一条演进线;四个审查环境剧本(主动探测攻击/深度包检测/UDP 封锁/弱网远距离)自动播放并实时叙事。</p>
       </div>
     </div>
   </div>
@@ -709,7 +737,7 @@ GENS.forEach((g, i) => {
   b.className = "gen-btn";
   b.innerHTML = `<div class="node">${ROMAN[i]}</div>
                  <div class="nm">${g.name}</div><div class="yr">${g.year}</div>`;
-  b.onclick = () => { stopAuto(); select(i); };
+  b.onclick = () => { stopAuto(); select(i, false, false, true); };
   $("timeline").appendChild(b);
 });
 
@@ -835,8 +863,9 @@ function renderCompare(animate) {
 }
 
 /* ══════════════════ 流量动画引擎 ══════════════════ */
-let packets = [], fadingPackets = [], rafId = null, lastT = 0, spawnAcc = 0;
+let packets = [], fadingPackets = [], rafId = null, lastT = 0, spawnAcc = 0, nextBurst = 0, burstLeft = 0;
 const P = { W: 0, left: 100, right: 0 };
+const RM = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 function measure() {
   P.W = track.clientWidth;
@@ -861,17 +890,43 @@ function spawn() {
     stall: retrans ? 700 : 0 });
 }
 
+/* 减少动态效果:把当前世代画成一张静态快照,不移动、不循环 */
+function staticSnapshot() {
+  clearAllPackets();
+  const a = GENS[cur].anim;
+  for (let i = 0; i < 4; i++) {
+    const div = document.createElement("div");
+    div.className = "packet p-out";
+    div.textContent = a.label;
+    div.style.color = a.color;
+    div.style.borderColor = a.color + "88";
+    div.style.left = (P.left + 60 + i * 190) + "px";
+    div.style.opacity = ".85";
+    track.appendChild(div);
+    packets.push({ el: div, x: P.left + 60 + i * 190, dir: 1, speed: 0, stall: 0 });
+  }
+}
+
 function tick(t) {
   rafId = requestAnimationFrame(tick);
   try {
     if (!P.W) measure();
     if (!lastT) { lastT = t; return; }
     const dt = Math.min(t - lastT, 60); lastT = t;
-    if (playing) {
+    if (playing && !RM.matches) {
       const base = (weakNet ? GENS[cur].anim.weak : GENS[cur].anim.speed) * (scenMul || 1);
       spawnAcc += dt;
+      /* 突发式:按平均节奏攒够配额后,一次放出 1-3 个包,更像真实请求-响应 */
       const interval = 1100 / base * 100;
-      while (spawnAcc >= interval) { spawnAcc -= interval; spawn(); }
+      while (spawnAcc >= interval) {
+        spawnAcc -= interval;
+        burstLeft += 1 + Math.floor(Math.random() * 3);
+        nextBurst = 90 + Math.random() * 260;
+      }
+      if (burstLeft > 0) {
+        nextBurst -= dt;
+        if (nextBurst <= 0) { spawn(); burstLeft--; nextBurst = 90 + Math.random() * 260; }
+      }
     }
     for (let i = fadingPackets.length - 1; i >= 0; i--) {
       const f = fadingPackets[i];
@@ -969,7 +1024,14 @@ async function animateProbe(g) {
 }
 
 function runProbe() {
-  if (probing || chain) return;
+  if (chain) return;
+  if (probing || theaterBusy) {
+    const btn = $("probeBtn");
+    const orig = btn.textContent;
+    btn.textContent = "⏳ 进行中…";
+    setTimeout(() => { btn.textContent = orig; }, 900);
+    return;
+  }
   probing = true;
   animateProbe(GENS[cur]).finally(() => { probing = false; });
 }
@@ -1080,10 +1142,11 @@ async function runScen(p) {
 }
 
 /* 场景卡片 */
+const SCEN_NET = { normal:"正常网络", weak:"弱网 · 高丢包" };
 PRESETS.forEach(p => {
   const b = document.createElement("button");
   b.className = "scen-card"; b.dataset.id = p.id;
-  b.innerHTML = `<div class="st">${p.t}</div><div class="sd">${p.d}</div>`;
+  b.innerHTML = `<div class="sk">${SCEN_NET[p.net] || ""}${p.mul ? " · 0.5x" : ""}</div><div class="st">${p.t}</div><div class="sd">${p.d}</div>`;
   b.onclick = () => runScen(p);
   $("scenCards").appendChild(b);
 });
@@ -1114,7 +1177,7 @@ function unlockProbeBtns() {
   $("probeBtn").disabled = false;
 }
 
-function select(i, keepChain, fromScen) {
+function select(i, keepChain, fromScen, fromUser) {
   if (scenRun && !fromScen) stopScen();
   if (chain && !keepChain) { chain = false; unlockProbeBtns(); }
   cur = ((i % GENS.length) + GENS.length) % GENS.length;
@@ -1126,11 +1189,25 @@ function select(i, keepChain, fromScen) {
   $("realsite").classList.remove("show");
   renderStack(g); renderInfo(g); renderCompare(); replayRise();
   history.replaceState(null, "", "#" + g.key);
+  if (RM.matches) setTimeout(staticSnapshot, 120);
+  else if (fromUser && cur === 4 && booted) maybeAutoTheater();
+}
+
+/* REALITY 剧场自动演示:切到第五代时放一次(仅一次),这是全站最有说服力的时刻 */
+let theaterSeen = false, theaterBusy = false;
+function maybeAutoTheater() {
+  if (theaterSeen || theaterBusy || probing || chain || scenRun) return;
+  theaterSeen = true; theaterBusy = true;
+  const vd = $("verdict");
+  vd.className = "verdict";
+  vd.textContent = "🎬 自动演示:审查者正在探测这台服务器…";
+  probing = true;
+  animateProbe(GENS[4]).finally(() => { probing = false; theaterBusy = false; });
 }
 
 /* ══════════════════ 控件 ══════════════════ */
-$("prevBtn").onclick = () => { stopAuto(); select(cur - 1); };
-$("nextBtn").onclick = () => { stopAuto(); select(cur + 1); };
+$("prevBtn").onclick = () => { stopAuto(); select(cur - 1, false, false, true); };
+$("nextBtn").onclick = () => { stopAuto(); select(cur + 1, false, false, true); };
 $("playBtn").onclick = () => {
   playing = !playing;
   $("playBtn").textContent = playing ? "⏸ 暂停流量" : "▶ 继续流量";
@@ -1172,18 +1249,32 @@ $("autoBtn").onclick = () => {
   bar.classList.add("running"); fill.style.width = "100%";
 };
 document.addEventListener("keydown", e => {
-  if (e.key === "ArrowLeft") { stopAuto(); select(cur - 1); }
-  else if (e.key === "ArrowRight") { stopAuto(); select(cur + 1); }
+  if (e.key === "ArrowLeft") { stopAuto(); select(cur - 1, false, false, true); }
+  else if (e.key === "ArrowRight") { stopAuto(); select(cur + 1, false, false, true); }
   else if (e.key === " ") { e.preventDefault(); $("playBtn").click(); }
 });
 
+/* ══════════════════ 首访引导 ══════════════════ */
+try {
+  if (!localStorage.getItem("pe-tour-seen")) {
+    $("tour").hidden = false;
+    localStorage.setItem("pe-tour-seen", "1");
+  }
+} catch (e) { /* 隐私模式下 localStorage 可能抛错,忽略 */ }
+$("tourClose").onclick = () => { $("tour").hidden = true; };
+
 /* ══════════════════ 启动 ══════════════════ */
+let booted = false;
 measure();
 const hashIdx = GENS.findIndex(g => g.key === location.hash.slice(1));
 select(hashIdx === -1 ? 0 : hashIdx, true);
+if (RM.matches) setTimeout(staticSnapshot, 200);
 rafId = requestAnimationFrame(tick);
+booted = true;
+/* 深链落在第五代时也放一次剧场(启动后延时触发,避开 hash 导航) */
+if (!RM.matches && cur === 4) setTimeout(maybeAutoTheater, 800);
 /* 字体/布局稳定后重新测量,防止 P.W 初值为 0 或过时 */
-window.addEventListener("load", () => { measure(); lastT = 0; });
+window.addEventListener("load", () => { measure(); lastT = 0; if (RM.matches) staticSnapshot(); });
 </script>
 </body>
 </html>

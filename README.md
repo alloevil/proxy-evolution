@@ -6,6 +6,10 @@
 
 **[▶ 在线演示](https://alloevil.github.io/proxy-evolution/)** · 单文件 · 零依赖 · 无需构建
 
+<p align="center">
+  <img src="./assets/readme/hero.svg" width="100%" alt="六代抗审查协议:数据包沿轨道流经审查节点 —— Shadowsocks(2012)、SSR / VMess(2015–2019)、VLESS / Trojan(2018–2020)、Hysteria2 / TUIC(2022–2023)、REALITY / AnyTLS(2023–)、XHTTP + 抗量子 REALITY(2024–)">
+</p>
+
 ![主界面:第六代 XHTTP,数据包流经审查节点](./screenshot-main.png)
 
 <details>

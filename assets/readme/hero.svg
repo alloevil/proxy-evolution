@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="heroTitle heroDesc">
+  <title id="heroTitle">翻墙协议六代演进 · Proxy Protocols: Six Generations of Evolution</title>
+  <desc id="heroDesc">Six packets labelled I to VI travel along a rail that crosses a dashed red censor node: Shadowsocks (2012), SSR / VMess (2015–2019), VLESS / Trojan (2018–2020), Hysteria2 / TUIC (2022–2023), REALITY / AnyTLS (2023–) and XHTTP + 抗量子 REALITY (2024–).</desc>
+
+  <defs>
+    <linearGradient id="wireFade" gradientUnits="userSpaceOnUse" x1="72" y1="0" x2="1128" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="0.08" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="0.92" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="panelFill" gradientUnits="userSpaceOnUse" x1="0" y1="196" x2="0" y2="404">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.022"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gateFill" gradientUnits="userSpaceOnUse" x1="0" y1="204" x2="0" y2="396">
+      <stop offset="0" stop-color="#f87171" stop-opacity="0.075"/>
+      <stop offset="1" stop-color="#f87171" stop-opacity="0.015"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="420" rx="24" fill="#06080f"/>
+
+  <g id="title-block">
+    <text x="64" y="60" font-family="'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace" font-size="18" letter-spacing="4.5" fill="#5d6d89">SIX GENERATIONS · ANTI-CENSORSHIP PROTOCOLS</text>
+    <text x="62" y="120" font-family="Inter, -apple-system, 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', sans-serif" font-size="54" font-weight="700" fill="#eaeffa">翻墙协议六代演进</text>
+    <text x="64" y="156" font-family="Inter, -apple-system, 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', sans-serif" font-size="22" fill="#93a5c2">Proxy Protocols: Six Generations of Evolution</text>
+    <text x="64" y="186" font-family="Inter, -apple-system, 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#5d6d89">Packets on a rail past the censor node · speed is evidence</text>
+  </g>
+
+  <g id="meta-block" text-anchor="end">
+    <text x="1136" y="60" font-family="'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace" font-size="18" fill="#93a5c2">2012 → 2024</text>
+    <text x="1136" y="86" font-family="'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace" font-size="18" fill="#5d6d89">Single file · Zero dependencies · No build step</text>
+  </g>
+
+  <g id="rail">
+    <rect x="48" y="196" width="1104" height="208" rx="14" fill="url(#panelFill)" stroke="#ffffff" stroke-opacity="0.075"/>
+    <line x1="72" y1="300" x2="1128" y2="300" stroke="url(#wireFade)" stroke-width="1"/>
+    <line x1="72" y1="300" x2="1128" y2="300" stroke="url(#wireFade)" stroke-width="1" stroke-dasharray="7 11"/>
+  </g>
+
+  <g id="censor-node">
+    <rect x="533" y="204" width="112" height="192" rx="10" fill="url(#gateFill)" stroke="#f87171" stroke-opacity="0.35" stroke-dasharray="5 4"/>
+    <text x="589" y="252" text-anchor="middle" font-family="Inter, -apple-system, 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', sans-serif" font-size="20" font-weight="600" fill="#fca5a5">审查节点</text>
+    <text x="589" y="278" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace" font-size="18" fill="#93a5c2">CENSOR</text>
+    <ellipse cx="589" cy="332" rx="20" ry="11" fill="none" stroke="#f87171" stroke-opacity="0.8" stroke-width="1.5"/>
+    <circle cx="589" cy="332" r="5" fill="#f87171"/>
+  </g>
+
+  <g id="beats">
+    <g id="beat-1">
+      <text x="129" y="240" text-anchor="middle" font-family="Inter, -apple-system, 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#eaeffa">Shadowsocks</text>
+      <text x="129" y="266" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace" font-size="20" fill="#fbbf24">2012</text>
+      <rect x="97" y="284" width="64" height="32" rx="16" fill="#090c16" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="129" y="307" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace" font-size="20" fill="#fbbf24">I</text>
+    </g>
+    <g id="beat-2">
+      <text x="289" y="338" text-anchor="middle" font-family="Inter, -apple-system, 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#eaeffa">SSR / VMess</text>
+      <text x="289" y="390" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace" font-size="20" fill="#fb7185">2015–2019</text>
+      <rect x="257" y="284" width="64" height="32" rx="16" fill="#090c16" stroke="#fb7185" stroke-width="1.5"/>
+      <text x="289" y="307" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace" font-size="20" fill="#fb7185">II</text>
+    </g>
+    <g id="beat-3">
+      <text x="449" y="240" text-anchor="middle" font-family="Inter, -apple-system, 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#eaeffa">VLESS / Trojan</text>
+      <text x="449" y="266" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace" font-size="20" fill="#34d399">2018–2020</text>
+      <rect x="417" y="284" width="64" height="32" rx="16" fill="#090c16" stroke="#34d399" stroke-width="1.5"/>
+      <text x="449" y="307" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace" font-size="20" fill="#34d399">III</text>
+    </g>
+    <g id="beat-4">
+      <text x="735" y="338" text-anchor="middle" font-family="Inter, -apple-system, 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#eaeffa">Hysteria2 / TUIC</text>
+      <text x="735" y="390" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace" font-size="20" fill="#60a5fa">2022–2023</text>
+      <rect x="703" y="284" width="64" height="32" rx="16" fill="#090c16" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="735" y="307" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace" font-size="20" fill="#60a5fa">IV</text>
+    </g>
+    <g id="beat-5">
+      <text x="895" y="240" text-anchor="middle" font-family="Inter, -apple-system, 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#eaeffa">REALITY / AnyTLS</text>
+      <text x="895" y="266" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace" font-size="20" fill="#c084fc">2023–</text>
+      <rect x="863" y="284" width="64" height="32" rx="16" fill="#090c16" stroke="#c084fc" stroke-width="1.5"/>
+      <text x="895" y="307" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace" font-size="20" fill="#c084fc">V</text>
+    </g>
+    <g id="beat-6">
+      <text x="1055" y="338" text-anchor="middle" font-family="Inter, -apple-system, 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#eaeffa">XHTTP + 抗量子</text>
+      <text x="1055" y="364" text-anchor="middle" font-family="Inter, -apple-system, 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#eaeffa">REALITY</text>
+      <text x="1055" y="390" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace" font-size="20" fill="#f97316">2024–</text>
+      <rect x="1023" y="284" width="64" height="32" rx="16" fill="#090c16" stroke="#f97316" stroke-width="1.5"/>
+      <text x="1055" y="307" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace" font-size="20" fill="#f97316">VI</text>
+    </g>
+  </g>
+</svg>

@@ -6,6 +6,10 @@
 
 **[▶ Live Demo](https://alloevil.github.io/proxy-evolution/)** · Single file · Zero dependencies · No build step
 
+<p align="center">
+  <img src="./assets/readme/hero.svg" width="100%" alt="Six generations of anti-censorship protocols: packets on a rail past the censor node — Shadowsocks (2012), SSR / VMess (2015–2019), VLESS / Trojan (2018–2020), Hysteria2 / TUIC (2022–2023), REALITY / AnyTLS (2023–) and XHTTP + post-quantum REALITY (2024–)">
+</p>
+
 ![Main view: 6th generation XHTTP, packets flowing past the censor node](./screenshot-main.png)
 
 <details>

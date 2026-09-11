@@ -1,0 +1,473 @@
+{
+  "$comment": "机制层断言的收据。每条 claim 带一手来源(规范/源码/RFC/官方发布说明)的原文引用,以及三个面向文档的 check(哪个文件里必须出现/必须不出现什么)。verify.py 执行这些检查,并额外做 data.json 漂移与禁用措辞检查。",
+  "project": "proxy-evolution",
+  "checked_on": "2026-09-11",
+  "sources_note": "一手来源:shadowsocks-org 规范(sip004/sip022/aead/stream/what-is-shadowsocks)、shadowsocksrr/shadowsocksr(manyuser 分支源码)、v2fly 文档与 v2ray-core 源码(vmess validator.go / encoding/server.go)、trojan-gfw/trojan protocol.md、XTLS/Xray-core(发布说明、REALITY 文档、splithttp 传输)、XTLS/REALITY、anytls/anytls-go、apernet(HyNetworks)/hysteria、tuic-protocol/tuic、RFC 9000、madeye/sssniff、salesforce/ja3。未能取得原文的:gfw.report(超时)、NDSS 2019 Frolov & Wustrow PDF(404)——相关表述已改为源码可直接佐证的说法,不引用该论文。",
+  "banned_phrases": [
+    "机器学习分类器",
+    "握手时序",
+    "YaRN ×16",
+    "证书的指纹可被 JA3",
+    "用真实目标站(如 cloudflare.com)的公钥",
+    "固定速率抢占带宽",
+    "40 层里 33 层是 Reuse",
+    "分类器置信度 0.97",
+    "任何连接都返回无语义的加密乱码"
+  ],
+  "claims": [
+    {
+      "id": "ssl.layer",
+      "generation": "1 Shadowsocks",
+      "claim": "2012 原版是流密码;AEAD 是 2017 年 SIP004 才加入。",
+      "verdict": "confirmed",
+      "source": {
+        "url": "https://github.com/shadowsocks/shadowsocks-org/blob/main/docs/doc/stream.md",
+        "quote": "'Stream ciphers are completely broken and will be removed soon.' · aead.md: 'The way Shadowsocks using AEAD ciphers is specified in [SIP004]'"
+      },
+      "fix": "",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "Shadowsocks 流密码密文(2012 原版)",
+            "2017 年 SIP004 才加入"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ssl.replay",
+      "generation": "1 Shadowsocks",
+      "claim": "完整的重放防护到 SIP022(2022)才强制;徽章「防重放 ✗」对 2012 与 2017 两代都成立。",
+      "verdict": "confirmed",
+      "source": {
+        "url": "https://github.com/shadowsocks/shadowsocks-org/blob/main/docs/doc/sip022.md",
+        "quote": "'Compared to previous editions of the protocol family, Shadowsocks 2022 allows and mandates full replay protection.' · 'Servers MUST store all incoming salts for 60 seconds.'"
+      },
+      "fix": "",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "完整的重放防护要到 SIP022(2022)才被强制"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ssl.no_imitation",
+      "generation": "1 Shadowsocks",
+      "claim": "SS 不模拟任何真实协议外形,只是把 SOCKS5 明文转发改为加密转发。",
+      "verdict": "imprecise -> fixed",
+      "source": {
+        "url": "https://github.com/shadowsocks/shadowsocks-org/blob/main/docs/doc/what-is-shadowsocks.md",
+        "quote": "'Shadowsocks is a secure split proxy loosely based on SOCKS5.' 规范全文没有任何协议外形模拟"
+      },
+      "fix": "创新句、README.md、README.en.md、llms.txt 一并改写",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "不模拟任何真实协议的外形"
+          ]
+        },
+        {
+          "file": "README.md",
+          "must_contain": [
+            "不模拟真实协议外形"
+          ]
+        },
+        {
+          "file": "README.en.md",
+          "must_contain": [
+            "no protocol imitation"
+          ]
+        },
+        {
+          "file": "llms.txt",
+          "must_contain": [
+            "imitates no real protocol"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ssl.detect",
+      "generation": "1 Shadowsocks",
+      "claim": "识别依据是包长熵,不是「机器学习分类器」也不是「握手时序」。",
+      "verdict": "unsupported -> fixed",
+      "source": {
+        "url": "https://github.com/madeye/sssniff",
+        "quote": "'It computes entropy of the first 32 packet lengths of each TCP connection. When the entropy is larger than a threshold, the connection is detected as a SSR connection.'"
+      },
+      "fix": "index 与 llms.txt 改写,剧本里的「置信度 0.97」删除",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "正是用包长熵检测"
+          ]
+        },
+        {
+          "file": "llms.txt",
+          "must_contain": [
+            "sssniff tool detects SS/SSR"
+          ]
+        },
+        {
+          "file": "llms.txt",
+          "must_not_contain": [
+            "ML classifiers",
+            "handshake timing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ssl.probe_response",
+      "generation": "1 Shadowsocks",
+      "claim": "服务端对无法解密的连接不做有效响应;没有可伪装的回落站点。",
+      "verdict": "unsupported -> fixed",
+      "source": {
+        "url": "https://github.com/shadowsocks/shadowsocks-org/blob/main/docs/doc/aead.md",
+        "quote": "'If any of the input is tampered with, decryption will fail.' 规范未定义任何未认证连接下的响应"
+      },
+      "fix": "points[2] 与 probe 文案改写",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "不做任何有效响应"
+          ],
+          "must_not_contain": [
+            "返回无语义的加密乱码"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ssr.year",
+      "generation": "2 SSR / VMess",
+      "claim": "SSR 是 2015 年的分支,不是 2017 年才出现。",
+      "verdict": "confirmed",
+      "source": {
+        "url": "https://github.com/shadowsocksrr/shadowsocksr",
+        "quote": "'Copyright 2015-2015 breakwa11' 出现在 SSR 专有插件 shadowsocks/obfsplugin/auth.py 与 obfs_tls.py"
+      },
+      "fix": "",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "2015–2019"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ssr.cdn",
+      "generation": "2 SSR / VMess",
+      "claim": "WebSocket + CDN 是约 2018 年起的部署实践,不是 2015 年的协议能力。",
+      "verdict": "imprecise -> fixed",
+      "source": {
+        "url": "https://www.v2fly.org/config/transport.html",
+        "quote": "一手文档列出 WebSocket 传输层,但从未提及 CDN 前置"
+      },
+      "fix": "层与要点都注明时间与性质",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "约 2018 年起的部署实践"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ssr.tlsintls",
+      "generation": "2 SSR / VMess",
+      "claim": "弱点表述改为源码可证的版本:obfs 手工拼 ClientHello/记录分帧,与真实 TLS 状态机不一致。",
+      "verdict": "imprecise -> fixed",
+      "source": {
+        "url": "https://github.com/shadowsocksrr/shadowsocksr/blob/manyuser/shadowsocks/obfsplugin/obfs_tls.py",
+        "quote": "obfs_tls.py 手工拼装 ClientHello 字节串与 '\\x17'+version+size 记录分帧,自造状态机"
+      },
+      "fix": "",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "手工拼装 ClientHello 与记录分帧"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ssr.verdict",
+      "generation": "2 SSR / VMess",
+      "claim": "SSR 的主动探测判定统一为 mid(与自身 probe 文案、徽章、剧本一致)。",
+      "verdict": "contradicted -> fixed",
+      "source": {
+        "url": "https://github.com/shadowsocksrr/shadowsocksr/blob/manyuser/shadowsocks/obfsplugin/obfs_tls.py",
+        "quote": "decode_error_return() 对握手不匹配返回固定 'E'*2048 —— 可指纹化,故为「部分暴露」而非「可被识别」"
+      },
+      "fix": "llms.txt 参数表 risk → mid;PRESETS probe 步骤 risk → mid",
+      "check": [
+        {
+          "file": "llms.txt",
+          "must_contain": [
+            "mid — partially exposed"
+          ]
+        },
+        {
+          "file": "index.html",
+          "must_contain": [
+            "probe:{level:\"mid\"",
+            "level:\"mid\", v:\"伪装层响应"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trojan.fallback",
+      "generation": "3 VLESS / Trojan",
+      "claim": "Trojan 把未认证连接送到预设端点(默认本机 HTTP 服务),不保证是真实网站。",
+      "verdict": "imprecise -> fixed",
+      "source": {
+        "url": "https://github.com/trojan-gfw/trojan/blob/master/docs/protocol.md",
+        "quote": "'All connection without correct structure and password will be redirected to a preset endpoint' (default 127.0.0.1:80)"
+      },
+      "fix": "层、要点、probe 文案统一",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "回落到预设站点",
+            "预设站点(默认本机 HTTP 服务"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vless.ja3",
+      "generation": "3 VLESS / Trojan",
+      "claim": "JA3/JA4 是 ClientHello 指纹,不是证书比对。",
+      "verdict": "contradicted -> fixed",
+      "source": {
+        "url": "https://github.com/salesforce/ja3",
+        "quote": "'JA3 is a method for creating SSL/TLS client fingerprints' —— 取自 ClientHello 字段"
+      },
+      "fix": "",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "基于 ClientHello 而非证书"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vless.year",
+      "generation": "3 VLESS / Trojan",
+      "claim": "VLESS 2020,Trojan 2018(v1.0.0,2018-03)。",
+      "verdict": "imprecise -> fixed",
+      "source": {
+        "url": "https://github.com/trojan-gfw/trojan/releases/tag/v1.0.0",
+        "quote": "v1.0.0 tag 2018-03-21;Xray v1.0.0(2020-11)发布说明含 'VLESS & Trojan XTLS 支持'"
+      },
+      "fix": "",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "2018–2020"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quic.year",
+      "generation": "4 Hysteria2 / TUIC",
+      "claim": "TUIC 0.1.0 是 2022-03,Hysteria2 首发 2023-09-02,不是 2021。",
+      "verdict": "contradicted -> fixed",
+      "source": {
+        "url": "https://github.com/tuic-protocol/tuic/commits/0.1.0",
+        "quote": "TUIC tag 0.1.0 提交于 2022-03;Hysteria app/v2.0.0 tag 提交于 2023-09-02"
+      },
+      "fix": "",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "2022–2023"
+          ]
+        },
+        {
+          "file": "llms.txt",
+          "must_contain": [
+            "Hysteria2 / TUIC (2022–2023)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quic.hol",
+      "generation": "4 Hysteria2 / TUIC",
+      "claim": "QUIC 的队头阻塞自由度是按流而非按包。",
+      "verdict": "imprecise -> fixed",
+      "source": {
+        "url": "https://www.rfc-editor.org/rfc/rfc9000.html#section-13.3",
+        "quote": "'when data from multiple streams is included in a single QUIC packet, loss of that packet blocks all those streams.'"
+      },
+      "fix": "",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "同一 UDP 包内的多条流会一起被阻塞",
+            "丢包只阻塞该包携带数据的流"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quic.brutal",
+      "generation": "4 Hysteria2 / TUIC",
+      "claim": "Brutal 按设定带宽发送、丢包时略超发;仅在配置带宽时启用。",
+      "verdict": "imprecise -> fixed",
+      "source": {
+        "url": "https://hysteria.network/docs/advanced/Full-Server-Config/",
+        "quote": "'Brutal congestion control has a \"loss compensation\" mechanism: when there is packet loss, it attempts to send slightly faster than the set bandwidth'"
+      },
+      "fix": "",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "按设定带宽略微超发补偿",
+            "仅在配置了带宽时启用"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quic.udp_fallback",
+      "generation": "4 Hysteria2 / TUIC",
+      "claim": "UDP 封锁剧本是客户端切到 TCP 节点,不是 Hysteria2 自动降级。",
+      "verdict": "imprecise -> fixed",
+      "source": {
+        "url": "https://v1.hysteria.network/docs/advanced-usage/",
+        "quote": "一手文档提供 Salamander/Gecko 混淆与 faketcp,没有内建自动 TCP 回落"
+      },
+      "fix": "",
+      "check": [
+        {
+          "file": "README.md",
+          "must_contain": [
+            "客户端切到 REALITY/XHTTP(TCP)节点恢复"
+          ]
+        },
+        {
+          "file": "index.html",
+          "must_contain": [
+            "切换 REALITY(TCP 443)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reality.handshake",
+      "generation": "5 REALITY / AnyTLS",
+      "claim": "REALITY 的 X25519 用服务器自身密钥对(客户端 password 即服务器公钥);目标站真实证书只到被中继的连接。",
+      "verdict": "contradicted -> fixed",
+      "source": {
+        "url": "https://xtls.github.io/config/transports/reality.html",
+        "quote": "password 是服务器私钥对应的公钥;目标站提供 TLS 外观并接收被中继的探测连接"
+      },
+      "fix": "JSON-LD / FAQ / 面板三处全部改写",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "客户端用服务器公钥",
+            "探测者的连接被转发给真实目标站"
+          ],
+          "must_not_contain": [
+            "用真实目标站(如 cloudflare.com)的公钥"
+          ]
+        },
+        {
+          "file": "llms.txt",
+          "must_contain": [
+            "the server's own keypair"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "anytls.year",
+      "generation": "5 REALITY / AnyTLS",
+      "claim": "AnyTLS 是 2025 年的协议,不是 2023。",
+      "verdict": "imprecise -> fixed",
+      "source": {
+        "url": "https://github.com/anytls/anytls-go/tags",
+        "quote": "最早 tag v0.0.7(2025-03)、v0.0.8(2025-04);protocol v2 记为 2025-04"
+      },
+      "fix": "",
+      "check": [
+        {
+          "file": "README.md",
+          "must_contain": [
+            "REALITY (2023) / AnyTLS (2025)"
+          ]
+        },
+        {
+          "file": "llms.txt",
+          "must_contain": [
+            "REALITY (2023) / AnyTLS (2025)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "xhttp.intro",
+      "generation": "6 XHTTP + post-quantum REALITY",
+      "claim": "XHTTP 前身 SplitHTTP,2024.12 更名;上下行拆成不同 HTTP 请求,可走 CDN。",
+      "verdict": "confirmed",
+      "source": {
+        "url": "https://github.com/XTLS/Xray-core/discussions/4113",
+        "quote": "SplitHTTP mid-2024, renamed XHTTP Dec 2024;代码里的 Go 协议名仍是 splithttp"
+      },
+      "fix": "",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "2024.12 发布"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "xhttp.pq",
+      "generation": "6 XHTTP + post-quantum REALITY",
+      "claim": "REALITY 自 v25.5.16 支持 X25519MLKEM768;v25.7.26 前后加入 ECH 与 ML-DSA-65。",
+      "verdict": "confirmed",
+      "source": {
+        "url": "https://github.com/XTLS/Xray-core/releases/tag/v25.5.16",
+        "quote": "'REALITY practice: Support X25519MLKEM768 for TLS' communication'(v25.5.16, 2025-05-16);v25.7.26 说明含 ML-DSA-65 验证与 TLS ECH"
+      },
+      "fix": "",
+      "check": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "v25.5.16 起支持",
+            "v25.7.26 起支持"
+          ]
+        }
+      ]
+    }
+  ]
+}

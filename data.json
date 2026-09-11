@@ -1,0 +1,699 @@
+{
+  "$schema-note": "proxy-evolution 数据集。single source of truth 是 index.html 内嵌的 GENS/PRESETS 数组;本文件由 build-data.py 生成,勿手改。",
+  "project": {
+    "name": "proxy-evolution",
+    "title": "翻墙协议六代演进 · 交互图解",
+    "titleEn": "Proxy Protocols: Six Generations of Evolution",
+    "demo": "https://alloevil.github.io/proxy-evolution/",
+    "repo": "https://github.com/alloevil/proxy-evolution",
+    "license": "MIT",
+    "updated": "2026-09-11"
+  },
+  "verdictLevels": {
+    "risk": "可被识别 —— 审查者能判定这是代理流量",
+    "mid": "部分暴露 —— 有真 TLS,但证书/指纹可被比对",
+    "safe": "无法区分 —— 审查者看到的就是一个真实网站"
+  },
+  "metrics": {
+    "fast": "峰值速度(0-100,相对示意值)",
+    "weak": "弱网表现(0-100,相对示意值)",
+    "hide": "抗主动探测(0-100,相对示意值)",
+    "real": "伪装真实度(0-100,相对示意值)"
+  },
+  "generations": [
+    {
+      "key": "ss",
+      "color": "#fbbf24",
+      "gen": "第一代",
+      "year": "2012",
+      "name": "Shadowsocks",
+      "proto": "SS",
+      "innovation": "核心创新:<b>把代理流量伪装成普通加密流量</b>——SOCKS5 的轻量加密转发,内容不可读。",
+      "layers": [
+        {
+          "t": "enc",
+          "c": "#fbbf24",
+          "n": "Shadowsocks AEAD 密文",
+          "d": "ChaCha20 / AES-GCM,每个包独立认证加密"
+        },
+        {
+          "t": "net",
+          "c": "#3c4a64",
+          "n": "TCP",
+          "d": "与普通 HTTPS 流量共用传输形态"
+        }
+      ],
+      "encWhere": "加密职责:<b>协议自身</b>。外层没有 TLS,流量长得像「一段无法解读的 TCP」。",
+      "badges": [
+        "内容加密 ✅",
+        "身份认证 ✗",
+        "防重放 ✗",
+        "抗主动探测 ✗"
+      ],
+      "points": [
+        "把 SOCKS5 流量用对称密钥加密后转发,服务器无状态、开销极小,速度快。",
+        "但「像加密流量」≠「像正常的加密流量」:<code>包长分布 / 握手时序 / 上下行不对称</code> 等统计特征可被机器学习分类器识别。",
+        "服务器对任何连接都返回无语义的加密乱码——真实 HTTPS 站点不会这样,这本身就是一个特征。"
+      ],
+      "anim": {
+        "speed": 80,
+        "weak": 44,
+        "loss": 0.2,
+        "label": "SS 密文包",
+        "color": "#fbbf24",
+        "retrans": true
+      },
+      "probe": {
+        "level": "risk",
+        "text": "🔴 探测者拿到一段「有意义但无语义」的加密响应,且不呈现任何网站结构。统计 + 主动探测可判定为代理 → 风险:端口被封。"
+      },
+      "cmp": {
+        "fast": [
+          80,
+          "TCP 裸跑"
+        ],
+        "weak": [
+          45,
+          "丢包整队重传"
+        ],
+        "hide": [
+          25,
+          "特征统计可辨"
+        ],
+        "real": [
+          15,
+          "无网站语义"
+        ]
+      },
+      "index": 1,
+      "innovationText": "核心创新:把代理流量伪装成普通加密流量--SOCKS5 的轻量加密转发,内容不可读。",
+      "encWhereText": "加密职责:协议自身。外层没有 TLS,流量长得像「一段无法解读的 TCP」。",
+      "pointsText": [
+        "把 SOCKS5 流量用对称密钥加密后转发,服务器无状态、开销极小,速度快。",
+        "但「像加密流量」≠「像正常的加密流量」:包长分布 / 握手时序 / 上下行不对称 等统计特征可被机器学习分类器识别。",
+        "服务器对任何连接都返回无语义的加密乱码--真实 HTTPS 站点不会这样,这本身就是一个特征。"
+      ],
+      "probeText": "探测者拿到一段「有意义但无语义」的加密响应,且不呈现任何网站结构。统计 + 主动探测可判定为代理 -> 风险:端口被封。"
+    },
+    {
+      "key": "ssr",
+      "color": "#fb7185",
+      "gen": "第二代",
+      "year": "2015–2019",
+      "name": "SSR / VMess",
+      "proto": "VMess",
+      "innovation": "核心创新:<b>增加混淆和防重放</b>——让流量连「这是 SS」都看不出来,并封死重放攻击。",
+      "layers": [
+        {
+          "t": "enc",
+          "c": "#fb7185",
+          "n": "混淆层 · HTTP / TLS 伪装 / WebSocket",
+          "d": "把密文再包成看似 HTTP 的形态"
+        },
+        {
+          "t": "enc",
+          "c": "#fb7185",
+          "n": "VMess 载荷 + 时间戳",
+          "d": "时间戳绑定请求,窗口外直接丢弃 → 防重放"
+        },
+        {
+          "t": "net",
+          "c": "#3c4a64",
+          "n": "TCP(常配合 WebSocket / mKCP)",
+          "d": "WS 伪装可套 CDN 中转"
+        }
+      ],
+      "encWhere": "加密职责:<b>协议自身 + 一层伪装壳</b>。加密仍在内层,混淆只改「外貌」,不改本质。",
+      "badges": [
+        "内容加密 ✅",
+        "混淆伪装 ⚠️",
+        "防重放 ✅",
+        "抗主动探测 ✗"
+      ],
+      "points": [
+        "SSR 引入协议混淆与流量伪装;VMess 加入用户 ID + 时间戳,重放请求会被时间窗直接拒绝。",
+        "配合 <code>WebSocket + CDN</code> 后,流量可混入 CDN 的正常 HTTPS 流量中,被动识别难度大增。",
+        "致命弱点仍在:<b>套了 TLS 壳却不是真 TLS</b>——「双层 TLS」的记录长度与时序,成为新一代检测点。"
+      ],
+      "anim": {
+        "speed": 75,
+        "weak": 40,
+        "loss": 0.22,
+        "label": "混淆密文包",
+        "color": "#fb7185",
+        "retrans": true
+      },
+      "probe": {
+        "level": "mid",
+        "text": "🟡 伪装层让响应「像 HTTP」,但握手不遵循真实 TLS 状态机;深度主动探测(伪造 ClientHello / 异常帧)仍可暴露。"
+      },
+      "cmp": {
+        "fast": [
+          75,
+          "叠加开销"
+        ],
+        "weak": [
+          40,
+          "TCP 队头阻塞"
+        ],
+        "hide": [
+          50,
+          "混淆但非真TLS"
+        ],
+        "real": [
+          30,
+          "模仿 HTTP"
+        ]
+      },
+      "index": 2,
+      "innovationText": "核心创新:增加混淆和防重放--让流量连「这是 SS」都看不出来,并封死重放攻击。",
+      "encWhereText": "加密职责:协议自身 + 一层伪装壳。加密仍在内层,混淆只改「外貌」,不改本质。",
+      "pointsText": [
+        "SSR 引入协议混淆与流量伪装;VMess 加入用户 ID + 时间戳,重放请求会被时间窗直接拒绝。",
+        "配合 WebSocket + CDN 后,流量可混入 CDN 的正常 HTTPS 流量中,被动识别难度大增。",
+        "致命弱点仍在:套了 TLS 壳却不是真 TLS--「双层 TLS」的记录长度与时序,成为新一代检测点。"
+      ],
+      "probeText": "伪装层让响应「像 HTTP」,但握手不遵循真实 TLS 状态机;深度主动探测(伪造 ClientHello / 异常帧)仍可暴露。"
+    },
+    {
+      "key": "vless",
+      "color": "#34d399",
+      "gen": "第三代",
+      "year": "2020–2021",
+      "name": "VLESS / Trojan",
+      "proto": "VLESS+TLS",
+      "innovation": "核心创新:<b>加密职责上移,交给外层 TLS</b>;Trojan 干脆<b>伪装成真实 HTTPS 网站</b>。",
+      "layers": [
+        {
+          "t": "enc",
+          "c": "#34d399",
+          "n": "VLESS 指令头 / Trojan 密码分流",
+          "d": "VLESS 自身不加密、只做路由;Trojan 用密码决定转发还是回真实站点"
+        },
+        {
+          "t": "tls",
+          "c": "#34d399",
+          "n": "TLS 1.3(真正的 TLS)",
+          "d": "标准协议栈实现,握手指纹 = 正常浏览器"
+        },
+        {
+          "t": "net",
+          "c": "#3c4a64",
+          "n": "TCP 443",
+          "d": "与真实网站完全同端口同形态"
+        }
+      ],
+      "encWhere": "加密职责:<b>外层 TLS 全权负责</b>。内层协议退化成「纯指令」,开销更小,且 TLS 是如假包换的。",
+      "badges": [
+        "内容加密 ✅",
+        "真实 TLS ✅",
+        "防重放 ✅ TLS",
+        "抗主动探测 ⚠️"
+      ],
+      "points": [
+        "VLESS 去掉 VMess 自带的加密层,加密与完整性全部交给 TLS 1.3 → 协议极简、速度更快、没有双层 TLS。",
+        "Trojan 的哲学更激进:<b>不是「像」HTTPS,而是「就是」HTTPS</b>。无密码访问会被反代到真正的网站,内容完全正常。",
+        "残留问题:自签或普通 ACME 证书的<b>指纹</b>可被 JA3 / JA4 匹配;证书域名与落地 IP 不符也会被关联分析。"
+      ],
+      "anim": {
+        "speed": 88,
+        "weak": 55,
+        "loss": 0.15,
+        "label": "TLS 1.3 记录",
+        "color": "#34d399",
+        "retrans": true
+      },
+      "probe": {
+        "level": "mid",
+        "text": "🟡 Trojan:探测者无密码 → 看到前置的真实网站,内容正常;但证书由自签 / ACME 签发,与主流 CA 背书的站点仍有指纹差异,可被进阶探测比对。"
+      },
+      "cmp": {
+        "fast": [
+          88,
+          "TLS 单层开销小"
+        ],
+        "weak": [
+          55,
+          "仍受 TCP 限制"
+        ],
+        "hide": [
+          70,
+          "真TLS但证书可疑"
+        ],
+        "real": [
+          70,
+          "内容真·证书半真"
+        ]
+      },
+      "index": 3,
+      "innovationText": "核心创新:加密职责上移,交给外层 TLS;Trojan 干脆伪装成真实 HTTPS 网站。",
+      "encWhereText": "加密职责:外层 TLS 全权负责。内层协议退化成「纯指令」,开销更小,且 TLS 是如假包换的。",
+      "pointsText": [
+        "VLESS 去掉 VMess 自带的加密层,加密与完整性全部交给 TLS 1.3 -> 协议极简、速度更快、没有双层 TLS。",
+        "Trojan 的哲学更激进:不是「像」HTTPS,而是「就是」HTTPS。无密码访问会被反代到真正的网站,内容完全正常。",
+        "残留问题:自签或普通 ACME 证书的指纹可被 JA3 / JA4 匹配;证书域名与落地 IP 不符也会被关联分析。"
+      ],
+      "probeText": "Trojan:探测者无密码 -> 看到前置的真实网站,内容正常;但证书由自签 / ACME 签发,与主流 CA 背书的站点仍有指纹差异,可被进阶探测比对。"
+    },
+    {
+      "key": "quic",
+      "color": "#60a5fa",
+      "gen": "第四代",
+      "year": "2021–2023",
+      "name": "Hysteria2 / TUIC",
+      "proto": "QUIC",
+      "innovation": "核心创新:<b>换到 QUIC(UDP)</b>,多路复用 + 现代拥塞控制,弱网 / 高延迟下速度碾压 TCP 系。",
+      "layers": [
+        {
+          "t": "enc",
+          "c": "#60a5fa",
+          "n": "应用数据 · 多路并发流",
+          "d": "一条连接内多条 stream,互不阻塞"
+        },
+        {
+          "t": "quic",
+          "c": "#60a5fa",
+          "n": "QUIC:内建 TLS 1.3 + 拥塞控制",
+          "d": "Hysteria2 用 Brutal 固定速率抢占带宽;TUIC 支持 0-RTT 恢复"
+        },
+        {
+          "t": "net",
+          "c": "#3c4a64",
+          "n": "UDP(通常 443)",
+          "d": "握手 1-RTT,会话恢复 0-RTT"
+        }
+      ],
+      "encWhere": "加密职责:<b>QUIC 内建 TLS 1.3</b>。真正的收益在传输层:没有 TCP 队头阻塞,丢包只影响单条流。",
+      "badges": [
+        "内容加密 ✅",
+        "多路复用 ✅",
+        "0-RTT 恢复 ✅",
+        "抗主动探测 ⚠️"
+      ],
+      "points": [
+        "TCP + TLS 丢包时整个连接等待重传(队头阻塞);QUIC 在 UDP 上按流独立处理,重传不拖累其他流。",
+        "Hysteria2 的 <code>Brutal</code> 拥塞控制不因丢包降速,弱网下仍固定抢占带宽 → 高延迟环境提速最明显。",
+        "代价:UDP 443 本身显眼,部分网络直接限速或封锁 UDP;混淆能力弱于专门的 TLS 伪装。"
+      ],
+      "anim": {
+        "speed": 95,
+        "weak": 128,
+        "loss": 0.03,
+        "label": "QUIC 数据包",
+        "color": "#60a5fa",
+        "retrans": false
+      },
+      "probe": {
+        "level": "mid",
+        "text": "🟡 QUIC 握手是标准 TLS 1.3,但传输在 UDP 上;审查者常不细查内容,直接<b>限速 / 封锁 UDP 443</b>——被「按协议」而非「按内容」打击。"
+      },
+      "cmp": {
+        "fast": [
+          95,
+          "UDP+多路复用"
+        ],
+        "weak": [
+          92,
+          "Brutal 不退让"
+        ],
+        "hide": [
+          55,
+          "UDP 本身显眼"
+        ],
+        "real": [
+          45,
+          "QUIC 可探测"
+        ]
+      },
+      "index": 4,
+      "innovationText": "核心创新:换到 QUIC(UDP),多路复用 + 现代拥塞控制,弱网 / 高延迟下速度碾压 TCP 系。",
+      "encWhereText": "加密职责:QUIC 内建 TLS 1.3。真正的收益在传输层:没有 TCP 队头阻塞,丢包只影响单条流。",
+      "pointsText": [
+        "TCP + TLS 丢包时整个连接等待重传(队头阻塞);QUIC 在 UDP 上按流独立处理,重传不拖累其他流。",
+        "Hysteria2 的 Brutal 拥塞控制不因丢包降速,弱网下仍固定抢占带宽 -> 高延迟环境提速最明显。",
+        "代价:UDP 443 本身显眼,部分网络直接限速或封锁 UDP;混淆能力弱于专门的 TLS 伪装。"
+      ],
+      "probeText": "QUIC 握手是标准 TLS 1.3,但传输在 UDP 上;审查者常不细查内容,直接限速 / 封锁 UDP 443--被「按协议」而非「按内容」打击。"
+    },
+    {
+      "key": "reality",
+      "color": "#c084fc",
+      "gen": "第五代",
+      "year": "2023–",
+      "name": "REALITY / AnyTLS",
+      "proto": "XTLS-Reality",
+      "innovation": "核心创新:<b>借用真实网站的 TLS 身份</b>(REALITY),或<b>随机化分帧消除双层 TLS 特征</b>(AnyTLS),对抗主动探测。",
+      "layers": [
+        {
+          "t": "enc",
+          "c": "#c084fc",
+          "n": "VLESS 指令 / AnyTLS 随机化记录",
+          "d": "AnyTLS 动态调整记录大小,打散流量形状统计"
+        },
+        {
+          "t": "tls",
+          "c": "#c084fc",
+          "n": "REALITY:伪装成真实网站的 TLS",
+          "d": "密钥协商借用真实目标站,证书是真实 CA 签发"
+        },
+        {
+          "t": "net",
+          "c": "#3c4a64",
+          "n": "TCP 443",
+          "d": "与真实站点同端口,可同 IP"
+        }
+      ],
+      "encWhere": "加密职责:<b>外层 TLS,且身份由真实网站背书</b>。审查者验证证书 → 验的是真实网站的证书,无法证伪。",
+      "badges": [
+        "内容加密 ✅",
+        "真实证书链 ✅",
+        "防重放 ✅ TLS",
+        "抗主动探测 ✅"
+      ],
+      "points": [
+        "REALITY 的巧思:握手用真实目标站(如 <code>cloudflare.com</code>)的公钥完成 X25519 协商;合法客户端被服务器接管进代理,探测者的连接被原样转给真实网站。",
+        "于是「验证证书」「抓取网页」「比对指纹」三板斧全部失效:探测者看到的就是那个真实网站。",
+        "AnyTLS 换思路:检测器靠「TLS 记录长度嵌套」识别 TLS-in-TLS,AnyTLS 把记录随机化重组,让统计特征退化为噪声。"
+      ],
+      "anim": {
+        "speed": 88,
+        "weak": 55,
+        "loss": 0.15,
+        "label": "REALITY TLS 记录",
+        "color": "#c084fc",
+        "retrans": true
+      },
+      "probe": {
+        "level": "safe",
+        "text": "🟢 探测者的连接被中继给真实网站:拿到真实 CA 签发的证书和真实网页内容,指纹与直接访问完全一致 → 探测无法区分,当前最强抗探测方案。"
+      },
+      "cmp": {
+        "fast": [
+          88,
+          "TLS 单层"
+        ],
+        "weak": [
+          55,
+          "TCP 仍限速"
+        ],
+        "hide": [
+          95,
+          "证书/内容全真"
+        ],
+        "real": [
+          98,
+          "就是真实网站"
+        ]
+      },
+      "index": 5,
+      "innovationText": "核心创新:借用真实网站的 TLS 身份(REALITY),或随机化分帧消除双层 TLS 特征(AnyTLS),对抗主动探测。",
+      "encWhereText": "加密职责:外层 TLS,且身份由真实网站背书。审查者验证证书 -> 验的是真实网站的证书,无法证伪。",
+      "pointsText": [
+        "REALITY 的巧思:握手用真实目标站(如 cloudflare.com)的公钥完成 X25519 协商;合法客户端被服务器接管进代理,探测者的连接被原样转给真实网站。",
+        "于是「验证证书」「抓取网页」「比对指纹」三板斧全部失效:探测者看到的就是那个真实网站。",
+        "AnyTLS 换思路:检测器靠「TLS 记录长度嵌套」识别 TLS-in-TLS,AnyTLS 把记录随机化重组,让统计特征退化为噪声。"
+      ],
+      "probeText": "探测者的连接被中继给真实网站:拿到真实 CA 签发的证书和真实网页内容,指纹与直接访问完全一致 -> 探测无法区分,当前最强抗探测方案。"
+    },
+    {
+      "key": "xhttp",
+      "color": "#f97316",
+      "gen": "第六代",
+      "year": "2024–",
+      "name": "XHTTP + 抗量子 REALITY",
+      "proto": "XHTTP",
+      "innovation": "核心创新:<b>把代理流量拆成普通 HTTP 请求,藏进 CDN 的正常访客里</b>;叠加<b>抗量子密钥交换与 ECH</b>,让流量在协议、统计、密码三个层面同时消失。",
+      "layers": [
+        {
+          "t": "enc",
+          "c": "#f97316",
+          "n": "VLESS 指令 + ECH(加密 SNI)",
+          "d": "请求域名也被加密,审查者看不到你在访问哪个站点"
+        },
+        {
+          "t": "tls",
+          "c": "#f97316",
+          "n": "XHTTP 传输:X25519MLKEM768 + ML-DSA-65",
+          "d": "上下行走不同 HTTP 连接,抗量子密钥交换 + 后量子证书验证"
+        },
+        {
+          "t": "net",
+          "c": "#3c4a64",
+          "n": "TCP 443 · CDN 边缘节点",
+          "d": "源站 IP 隐藏在 Cloudflare 等 CDN 之后"
+        }
+      ],
+      "encWhere": "加密职责:<b>外层 TLS + CDN 代管身份</b>。流量混在 CDN 的海量正常访客里,连「目标 IP 是代理」这个事实都不存在。",
+      "badges": [
+        "内容加密 ✅",
+        "CDN 分流 ✅",
+        "抗量子密钥 ✅",
+        "抗主动探测 ✅"
+      ],
+      "points": [
+        "XHTTP(前身 SplitHTTP,2024.12 发布)把上行和下行拆到不同的 HTTP 请求里,可直接走 CDN 回源——借的是 CDN 边缘节点的真实证书与真实流量画像。",
+        "REALITY 在 v25.5.16 起支持 <code>X25519MLKEM768</code> 抗量子密钥交换、v25.7.26 起支持 <code>ML-DSA-65</code> 后量子证书验证:防的是「现在记录、以后解密」。",
+        "ECH 加密 ClientHello 里的 SNI,审查者连你在访问哪个域名都看不到;配合 CDN 后,「封锁代理 IP」这个手段直接失效。"
+      ],
+      "anim": {
+        "speed": 86,
+        "weak": 58,
+        "loss": 0.12,
+        "label": "XHTTP 请求",
+        "color": "#f97316",
+        "retrans": true
+      },
+      "probe": {
+        "level": "safe",
+        "text": "🟢 无正确凭证的请求被 CDN 边缘当成普通访客:返回 CDN 的真实证书与缓存内容;源站不可见 → 探测目标不存在,无从封起。"
+      },
+      "cmp": {
+        "fast": [
+          86,
+          "经 CDN 一跳"
+        ],
+        "weak": [
+          58,
+          "受 CDN 质量影响"
+        ],
+        "hide": [
+          92,
+          "混入海量正常流量"
+        ],
+        "real": [
+          96,
+          "CDN 真实身份"
+        ]
+      },
+      "index": 6,
+      "innovationText": "核心创新:把代理流量拆成普通 HTTP 请求,藏进 CDN 的正常访客里;叠加抗量子密钥交换与 ECH,让流量在协议、统计、密码三个层面同时消失。",
+      "encWhereText": "加密职责:外层 TLS + CDN 代管身份。流量混在 CDN 的海量正常访客里,连「目标 IP 是代理」这个事实都不存在。",
+      "pointsText": [
+        "XHTTP(前身 SplitHTTP,2024.12 发布)把上行和下行拆到不同的 HTTP 请求里,可直接走 CDN 回源--借的是 CDN 边缘节点的真实证书与真实流量画像。",
+        "REALITY 在 v25.5.16 起支持 X25519MLKEM768 抗量子密钥交换、v25.7.26 起支持 ML-DSA-65 后量子证书验证:防的是「现在记录、以后解密」。",
+        "ECH 加密 ClientHello 里的 SNI,审查者连你在访问哪个域名都看不到;配合 CDN 后,「封锁代理 IP」这个手段直接失效。"
+      ],
+      "probeText": "无正确凭证的请求被 CDN 边缘当成普通访客:返回 CDN 的真实证书与缓存内容;源站不可见 -> 探测目标不存在,无从封起。"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "probe",
+      "t": "主动探测攻击",
+      "d": "审查者逐代直连服务器,比对证书与网页内容",
+      "net": "normal",
+      "steps": [
+        {
+          "wait": 900,
+          "status": "审查者对每个代理 IP 发起 TLS 握手,记录返回的证书与内容"
+        },
+        {
+          "gen": 0,
+          "wait": 800,
+          "probe": "def",
+          "level": "risk",
+          "v": "返回无语义加密响应,无任何网站结构 → 统计 + 主动探测判定为代理,IP 列入黑名单"
+        },
+        {
+          "gen": 1,
+          "wait": 800,
+          "probe": "def",
+          "level": "risk",
+          "v": "伪装层响应「像 HTTP」但握手不遵循 TLS 状态机 → 深度探测暴露,连带前置 IP 一起被封"
+        },
+        {
+          "gen": 2,
+          "wait": 800,
+          "probe": "vless",
+          "level": "mid",
+          "v": "拿到 ACME 证书链,域名与落地 IP 不符 → 关联分析命中,端口被重点关照"
+        },
+        {
+          "gen": 3,
+          "wait": 800,
+          "probe": "quic",
+          "level": "mid",
+          "v": "QUIC Retry 无有效语义 → 无法证实,但 UDP 443 直接被限速处理"
+        },
+        {
+          "gen": 4,
+          "wait": 800,
+          "probe": "reality",
+          "level": "safe",
+          "v": "探测连接被中继给真实网站:真实 CA 证书 + 真实网页 → 探测者无功而返"
+        },
+        {
+          "gen": 5,
+          "wait": 800,
+          "level": "safe",
+          "v": "请求被 CDN 边缘当成普通访客,返回 CDN 的真实证书与缓存内容 → 源站不可见,探测目标不存在"
+        },
+        {
+          "status": "六代测完:REALITY 与 XHTTP 让探测者拿到了「正常网站」",
+          "last": true
+        }
+      ]
+    },
+    {
+      "id": "dpi",
+      "t": "深度包检测",
+      "d": "统计分类器扫包长/时序/握手特征",
+      "net": "weak",
+      "steps": [
+        {
+          "wait": 900,
+          "status": "DPI 集群上线:对流做包长分布、时序不对称、TLS 指纹(JA3/JA4)分类"
+        },
+        {
+          "gen": 0,
+          "wait": 1100,
+          "level": "risk",
+          "v": "包长分布与真实 HTTPS 显著偏离 → 分类器置信度 0.97,流量被 RST"
+        },
+        {
+          "gen": 1,
+          "wait": 1100,
+          "level": "risk",
+          "v": "混淆层改变了外貌,但「TLS-in-TLS」的记录长度嵌套仍是硬特征 → 识别"
+        },
+        {
+          "gen": 2,
+          "wait": 1100,
+          "level": "mid",
+          "v": "真 TLS 握手,分类器难以定罪;JA3 指纹库命中少数派实现 → 存疑,持续观察"
+        },
+        {
+          "gen": 3,
+          "wait": 1100,
+          "level": "mid",
+          "v": "QUIC 指纹小众 + UDP 443 显眼 → 按协议特征处置,不看内容"
+        },
+        {
+          "gen": 4,
+          "wait": 1100,
+          "level": "safe",
+          "v": "握手指纹 = 真实浏览器,证书 = 真实网站 → 与访问真实网站不可区分"
+        },
+        {
+          "gen": 5,
+          "wait": 1100,
+          "level": "safe",
+          "v": "流量混入 CDN 海量正常访客,SNI 被 ECH 加密 → 分类器连「这是代理流量」的特征都无从提取"
+        },
+        {
+          "status": "DPI 结论:统计特征是 SS/SSR 的死穴;真 TLS 起步即可免疫,CDN + ECH 让检测目标本身消失",
+          "last": true
+        }
+      ]
+    },
+    {
+      "id": "udp",
+      "t": "UDP 封锁",
+      "d": "第四代被按协议打击,不看内容",
+      "net": "weak",
+      "steps": [
+        {
+          "wait": 800,
+          "status": "正常运行中…"
+        },
+        {
+          "gen": 3,
+          "wait": 1400,
+          "status": "防火墙规则更新:udp/443 限速 50kbps"
+        },
+        {
+          "wait": 1200,
+          "level": "risk",
+          "v": "QUIC 连接超时,握手无法完成 → Hysteria2 / TUIC 直接掉线(被「按协议」而非「按内容」打击)"
+        },
+        {
+          "gen": 4,
+          "wait": 900,
+          "status": "回落策略:切换 REALITY(TCP 443)"
+        },
+        {
+          "wait": 500,
+          "level": "safe",
+          "v": "TCP 443 照常可用,探测仍返回真实网站 → 业务恢复"
+        },
+        {
+          "status": "启示:QUIC 系的软肋不在加密,在 UDP 本身;需要 TCP 回落方案兜底",
+          "last": true
+        }
+      ]
+    },
+    {
+      "id": "weaknet",
+      "t": "弱网远距离",
+      "d": "300ms RTT · 高丢包环境",
+      "net": "weak",
+      "mul": 0.5,
+      "steps": [
+        {
+          "wait": 1000,
+          "status": "链路劣化:RTT 300ms,丢包 8%,开启弱网模拟"
+        },
+        {
+          "gen": 0,
+          "wait": 2400,
+          "level": "risk",
+          "v": "TCP 队头阻塞 + 退避重传 → 有效吞吐崩塌,包在轨道上成串停滞"
+        },
+        {
+          "gen": 1,
+          "wait": 2400,
+          "level": "risk",
+          "v": "混淆层叠加开销,弱网下雪上加霜 → 比 SS 更慢"
+        },
+        {
+          "gen": 2,
+          "wait": 2400,
+          "level": "mid",
+          "v": "真 TLS 省掉一层加密,略好;但 TCP 的队头阻塞仍在"
+        },
+        {
+          "gen": 4,
+          "wait": 2400,
+          "level": "mid",
+          "v": "REALITY 同为 TCP 栈,表现与 VLESS 相当 → 加密不是瓶颈,传输层才是"
+        },
+        {
+          "gen": 3,
+          "watch": 2800,
+          "level": "safe",
+          "v": "QUIC 按流独立重传 + Brutal 拥塞控制不退让 → 速度几乎不受影响,对比肉眼可见"
+        },
+        {
+          "gen": 5,
+          "watch": 2400,
+          "level": "mid",
+          "v": "XHTTP 经 CDN 一跳,受 CDN 节点质量影响 → 表现中等,但源站隐藏带来的稳定性是额外收益"
+        },
+        {
+          "status": "结论:弱网下拉开差距的是传输层(QUIC vs TCP),不是加密强度",
+          "last": true
+        }
+      ]
+    }
+  ]
+}

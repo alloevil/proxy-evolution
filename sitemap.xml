@@ -9,4 +9,16 @@
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://alloevil.github.io/proxy-evolution/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://github.com/alloevil/proxy-evolution/blob/main/README.en.md"/>
   </url>
+  <url>
+    <loc>https://alloevil.github.io/proxy-evolution/data.json</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://alloevil.github.io/proxy-evolution/llms.txt</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
 </urlset>

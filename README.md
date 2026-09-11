@@ -112,6 +112,20 @@ python3 -m http.server 8000
 - **视觉**:玻璃拟态 + mesh 渐变 + 噪点颗粒;每代主色驱动全站 CSS 变量;切代 crossfade、对比区 FLIP 动画(Web Animations API)
 - **数据驱动**:六代协议全部参数(速度、丢包率、弱网倍率、探测判定、剧本步骤)集中在一处 `GENS` / `PRESETS` 数组,便于增补新协议
 
+## Agent / 机器可读
+
+| 端点 | 用途 |
+|---|---|
+| [`data.json`](https://alloevil.github.io/proxy-evolution/data.json) | 完整数据集:六代协议(协议栈、徽章、讲解要点、动画参数、探测判定、对比分值)+ 四个剧本的分步事件。含 `innovationText` / `pointsText` / `probeText` 等**去 HTML 纯文本字段**,LLM 可直接引用 |
+| [`llms.txt`](https://alloevil.github.io/proxy-evolution/llms.txt) | 面向 LLM 的摘要:六代演进、关键概念、参数对照表、剧本结局表 |
+| `robots.txt` | 显式放行 GPTBot / ClaudeBot / PerplexityBot / Google-Extended / Bytespider / CCBot |
+
+`data.json` 由 `build-data.py` 从 `index.html` 内嵌的 `GENS` / `PRESETS` 数组生成(HTML 是单一事实来源,JSON 不会漂移):
+
+```bash
+python3 build-data.py    # 修改 index.html 数据后重新生成 data.json
+```
+
 ## 说明与免责
 
 - 对比区各项分值为**相对示意值**,用于建立直觉,非基准测试数据。

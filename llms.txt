@@ -33,9 +33,41 @@ License: MIT · Single HTML file · Zero dependencies · Works offline
 - Four censorship scenario scripts: active probe attack, deep packet inspection, UDP blockade, weak long-haul link (RTT 300ms + 8% loss)
 - Comparison panel: four metrics (peak speed, weak-network performance, probe resistance, realism) with hover highlight and click-to-sort
 
+## Six-generation parameter table
+
+All values below are **relative illustrative scores (0–100)** for building intuition, not benchmark data. Packet speed is the actual animation speed used in the visualization (px/s), so the visual speed difference *is* the data.
+
+| # | Generation | Year | Peak speed | Weak network | Probe resistance | Realism | Packet speed (normal / weak, px/s) | Packet loss tolerance | Probe verdict |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | Shadowsocks (SS) | 2012 | 80 | 45 | 25 | 15 | 80 / 44 | 20% retransmit | risk — identifiable |
+| 2 | SSR / VMess | 2015 | 75 | 40 | 50 | 30 | 75 / 40 | 22% retransmit | risk — identifiable |
+| 3 | VLESS / Trojan | 2020 | 88 | 55 | 70 | 70 | 88 / 55 | 15% retransmit | mid — partially exposed |
+| 4 | Hysteria2 / TUIC | 2021 | 95 | 92 | 55 | 45 | 95 / **128** (faster!) | 3%, no retransmit marker | mid — partially exposed |
+| 5 | REALITY / AnyTLS | 2023 | 88 | 55 | 95 | 98 | 88 / 55 | 15% retransmit | safe — indistinguishable |
+| 6 | XHTTP + post-quantum REALITY | 2024 | 86 | 58 | 92 | 96 | 86 / 58 | 12% retransmit | safe — indistinguishable |
+
+Notable: under packet loss, generation 4 (QUIC) **speeds up** (95 -> 128 px/s) because Hysteria2's Brutal congestion control refuses to back off, while all TCP-stack generations (1, 2, 3, 5, 6) roughly halve. This is the single most visible difference in the animation.
+
+## Censorship scenario outcomes
+
+Four canned scripts; each narrates its steps in real time.
+
+| Scenario id | Title | Network | Plot | Ending verdicts |
+|---|---|---|---|---|
+| `probe` | 主动探测攻击 (Active probe attack) | normal | Censor connects to each generation, comparing certificate and content | gen1 risk, gen2 risk, gen3 mid, gen4 mid, gen5 safe, gen6 safe |
+| `dpi` | 深度包检测 (Deep packet inspection) | weak | Classifier scans packet-length distribution / timing / JA3-JA4 fingerprints | gen1 risk, gen2 risk, gen3 mid, gen4 mid, gen5 safe, gen6 safe |
+| `udp` | UDP 封锁 (UDP blockade) | weak | udp/443 throttled to 50kbps; generation 4 drops and falls back to REALITY (TCP) | gen4 risk -> gen5 safe (recovered) |
+| `weaknet` | 弱网远距离 (Weak long-haul link) | weak, 0.5x speed | RTT 300ms + 8% loss | gen1 risk, gen2 risk, gen3 mid, gen5 mid, gen4 safe (QUIC unaffected), gen6 mid (CDN hop) |
+
+## Machine-readable data
+
+- **data.json** — full dataset: all six generations (protocol stack layers, badges, explanation points, animation parameters, probe verdicts, comparison scores) and all four scenario scripts (step-by-step events). Text fields are duplicated as `innovationText` / `encWhereText` / `pointsText` / `probeText` with HTML stripped, for direct quoting.
+  URL: https://alloevil.github.io/proxy-evolution/data.json
+- **sitemap.xml** / **robots.txt** at the same origin.
+
 ## Technical
 
-Single `index.html`, vanilla JS + CSS, no dependencies, no build step. Animation uses requestAnimationFrame with a watchdog that self-heals if the loop dies. All six generations' data (speed, loss rate, verdicts, scenario steps) lives in a single GENS / PRESETS array.
+Single `index.html`, vanilla JS + CSS, no dependencies, no build step. Animation uses requestAnimationFrame with a watchdog that self-heals if the loop dies. All six generations' data (speed, loss rate, verdicts, scenario steps) lives in a single GENS / PRESETS array; `data.json` is generated from it by `build-data.py` so the two never drift.
 
 ## Caveats
 

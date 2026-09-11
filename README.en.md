@@ -113,6 +113,20 @@ python3 -m http.server 8000
 - **Visuals**: glassmorphism + mesh gradients + film grain; each generation's accent drives the site-wide CSS variable; generation switches use crossfades; the comparison panel uses FLIP animation (Web Animations API)
 - **Data-driven**: all six generations' parameters (speed, loss rate, weak-network multiplier, probe verdicts, scenario steps) live in a single `GENS` / `PRESETS` array, so adding a new protocol is one array entry
 
+## Agent / machine-readable
+
+| Endpoint | Purpose |
+|---|---|
+| [`data.json`](https://alloevil.github.io/proxy-evolution/data.json) | Full dataset: all six generations (protocol stack layers, badges, explanation points, animation parameters, probe verdicts, comparison scores) plus all four scenario scripts as step-by-step events. Includes `innovationText` / `pointsText` / `probeText` — **HTML-stripped plain-text fields** an LLM can quote directly |
+| [`llms.txt`](https://alloevil.github.io/proxy-evolution/llms.txt) | LLM-oriented summary: six-generation evolution, key concepts, parameter comparison table, scenario outcome table |
+| `robots.txt` | Explicitly allows GPTBot / ClaudeBot / PerplexityBot / Google-Extended / Bytespider / CCBot |
+
+`data.json` is generated from the `GENS` / `PRESETS` arrays embedded in `index.html` by `build-data.py` — the HTML stays the single source of truth, so the JSON can never drift:
+
+```bash
+python3 build-data.py    # regenerate data.json after editing data in index.html
+```
+
 ## Notes & disclaimer
 
 - Comparison scores are **relative illustrative values** meant to build intuition, not benchmark data.

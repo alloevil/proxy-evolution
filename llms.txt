@@ -9,7 +9,7 @@ License: MIT · Single HTML file · Zero dependencies · Works offline
 
 ## The six generations
 
-1. **Shadowsocks (SS, 2012)** — disguises proxy traffic as ordinary encrypted traffic. Lightweight SOCKS5 encryption, but statistical features (packet-length distribution, handshake timing) let ML classifiers identify it.
+1. **Shadowsocks (SS, 2012)** — replaces the plaintext SOCKS5 forwarding with symmetric encryption; it imitates no real protocol. Lightweight and stateless, but the first packet is high-entropy and the entropy of the first 32 packet lengths gives traffic analysis a handle (the sssniff tool detects SS/SSR exactly this way).
 2. **ShadowsocksR / VMess (2015)** — adds obfuscation (HTTP/TLS disguise, WebSocket) and replay protection (VMess timestamps). Weakness: "TLS-in-TLS" record-length nesting is a detection signature.
 3. **VLESS (2020) / Trojan (2018)** — moves encryption to outer TLS 1.3; VLESS itself is just instructions. Trojan forwards unauthenticated visitors to a preset endpoint (by default the local HTTP server, usually configured as a real site). Weakness: TLS-stack fingerprints (JA3/JA4 come from the ClientHello, not the certificate) may differ from a real browser, and self-signed certificates fail validation.
 4. **Hysteria2 / TUIC (2022–2023)** — QUIC-based (UDP). Head-of-line freedom is stream-level, not packet-level (streams sharing one lost UDP packet are blocked together); Hysteria2's Brutal congestion control refuses to back off on loss and slightly over-sends past the configured bandwidth, so it barely slows down on weak networks — but only when a bandwidth is configured. Weakness: UDP/443 is conspicuous and easily throttled or blocked by protocol.
@@ -40,7 +40,7 @@ All values below are **relative illustrative scores (0–100)** for building int
 | # | Generation | Year | Peak speed | Weak network | Probe resistance | Realism | Packet speed (normal / weak, px/s) | Packet loss tolerance | Probe verdict |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | Shadowsocks (SS) | 2012 | 80 | 45 | 25 | 15 | 80 / 44 | 20% retransmit | risk — identifiable |
-| 2 | SSR / VMess | 2015 | 75 | 40 | 50 | 30 | 75 / 40 | 22% retransmit | risk — identifiable |
+| 2 | SSR / VMess | 2015 | 75 | 40 | 50 | 30 | 75 / 40 | 22% retransmit | mid — partially exposed |
 | 3 | VLESS / Trojan | 2018–2020 | 88 | 55 | 70 | 70 | 88 / 55 | 15% retransmit | mid — partially exposed |
 | 4 | Hysteria2 / TUIC | 2022–2023 | 95 | 92 | 55 | 45 | 95 / **128** (faster!) | 3%, no retransmit marker | mid — partially exposed |
 | 5 | REALITY / AnyTLS | 2023 / 2025 | 88 | 55 | 95 | 98 | 88 / 55 | 15% retransmit | safe — indistinguishable |
@@ -55,7 +55,7 @@ Four canned scripts; each narrates its steps in real time.
 | Scenario id | Title | Network | Plot | Ending verdicts |
 |---|---|---|---|---|
 | `probe` | 主动探测攻击 (Active probe attack) | normal | Censor connects to each generation, comparing certificate and content | gen1 risk, gen2 mid, gen3 mid, gen4 mid, gen5 safe, gen6 safe |
-| `dpi` | 深度包检测 (Deep packet inspection) | weak | Classifier scans packet-length distribution / timing / JA3-JA4 fingerprints | gen1 risk, gen2 risk, gen3 mid, gen4 mid, gen5 safe, gen6 safe |
+| `dpi` | 深度包检测 (Deep packet inspection) | weak | Classifier scans packet-length entropy / timing / JA3-JA4 fingerprints (only where a ClientHello exists) | gen1 risk, gen2 risk, gen3 mid, gen4 mid, gen5 safe, gen6 safe |
 | `udp` | UDP 封锁 (UDP blockade) | weak | udp/443 throttled to 50kbps; generation 4 is throttled and the client switches to a REALITY/XHTTP (TCP) node (client-side fallback) | gen4 risk -> gen5 safe (recovered) |
 | `weaknet` | 弱网远距离 (Weak long-haul link) | weak, 0.5x speed | RTT 300ms + 8% loss | gen1 risk, gen2 risk, gen3 mid, gen5 mid, gen4 safe (QUIC unaffected), gen6 mid (CDN hop) |
 

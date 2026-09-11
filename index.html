@@ -612,21 +612,21 @@
 const GENS = [
 {
   key:"ss", color:"#fbbf24", gen:"第一代", year:"2012", name:"Shadowsocks", proto:"SS",
-  innovation:"核心创新:<b>把代理流量伪装成普通加密流量</b>——SOCKS5 的轻量加密转发,内容不可读。",
+  innovation:"核心创新:<b>把 SOCKS5 代理由明文转发改为对称加密转发</b>——得到高熵、不可读的字节流;它不模拟任何真实协议的外形。",
   layers:[
     {t:"enc", c:"#fbbf24", n:"Shadowsocks 流密码密文(2012 原版)", d:"AES-CFB / RC4 等流密码;AEAD(ChaCha20-Poly1305 / AES-GCM)是 2017 年 SIP004 才加入"},
-    {t:"net", c:"#3c4a64", n:"TCP", d:"与普通 HTTPS 流量共用传输形态"}
+    {t:"net", c:"#3c4a64", n:"TCP", d:"同为 TCP 上的字节流,但没有 TLS/HTTP 记录层,首包即高熵密文"}
   ],
   encWhere:"加密职责:<b>协议自身</b>。外层没有 TLS,流量长得像「一段无法解读的 TCP」。",
-  badges:["内容加密 ✅","身份认证 ✗","防重放 ✗","抗主动探测 ✗"],
+  badges:["内容加密 ✅","身份认证 ✗(仅报文级)","防重放 ✗","抗主动探测 ✗"],
   points:[
     "把 SOCKS5 流量用对称密钥加密后转发,服务器无状态、开销极小,速度快。",
-    "但「像加密流量」≠「像正常的加密流量」:<code>包长分布 / 握手时序 / 上下行不对称</code> 等统计特征会偏离真实 HTTPS,被动统计/熵分析即可区分。",
-    "服务器对任何连接都返回无语义的加密乱码——真实 HTTPS 站点不会这样,这本身就是一个特征。"
+    "但「加密」不等于「不可疑」:首包即高熵密文,前 32 个包长的熵值明显偏离普通 HTTPS,被动流量分析即可区分(一手工具 <code>sssniff</code> 正是用包长熵检测 SS/SSR)。",
+    "服务端对无法通过认证/解密的连接不做任何有效响应,也不会返回网站结构——它没有 Trojan / REALITY 那样的回落站点可伪装。"
     ,"补一笔时间线:AEAD(SIP004,2017)补上了完整性与认证(标签校验失败即丢弃),但完整的重放防护要到 SIP022(2022)才被强制——服务端需缓存盐值并检查时间窗。"
   ],
   anim:{speed:80, weak:44, loss:0.20, label:"SS 密文包", color:"#fbbf24", retrans:true},
-  probe:{level:"risk", text:"🔴 探测者拿到一段「有意义但无语义」的加密响应,且不呈现任何网站结构。统计 + 主动探测可判定为代理 → 风险:端口被封。"},
+  probe:{level:"risk", text:"🔴 探测连接得不到有效响应,也没有可伪装的站点;识别主要来自被动统计(首包高熵、包长熵)而非服务端返回内容 → 风险:端口被封。"},
   cmp:{fast:[80,"TCP 裸跑"], weak:[45,"丢包整队重传"], hide:[25,"特征统计可辨"], real:[15,"无网站语义"]}
 },
 {
@@ -635,14 +635,14 @@ const GENS = [
   layers:[
     {t:"enc", c:"#fb7185", n:"混淆层 · HTTP / TLS 伪装 / WebSocket", d:"把密文再包成看似 HTTP 的形态"},
     {t:"enc", c:"#fb7185", n:"VMess 载荷 + 时间戳", d:"时间戳绑定请求,窗口外直接丢弃 → 防重放"},
-    {t:"net", c:"#3c4a64", n:"TCP(常配合 WebSocket / mKCP)", d:"WS 伪装可套 CDN 中转"}
+    {t:"net", c:"#3c4a64", n:"TCP(常配合 WebSocket / mKCP)", d:"WebSocket 可再套真 TLS 挂 CDN——约 2018 年起的部署实践,非 2015 年的协议能力"}
   ],
   encWhere:"加密职责:<b>协议自身 + 一层伪装壳</b>。加密仍在内层,混淆只改「外貌」,不改本质。",
   badges:["内容加密 ✅","混淆伪装 ⚠️","防重放 ✅","抗主动探测 ⚠️"],
   points:[
     "SSR 引入协议混淆与流量伪装;VMess 加入用户 ID + 时间戳,重放请求会被时间窗直接拒绝。",
-    "配合 <code>WebSocket + CDN</code> 后,流量可混入 CDN 的正常 HTTPS 流量中,被动识别难度大增。",
-    "致命弱点仍在:<b>套了 TLS 壳却不是真 TLS</b>——「双层 TLS」的记录长度与时序,成为新一代检测点。"
+    "后续部署常把 WebSocket 再套一层真 TLS 挂到 CDN 上(约 2018 年起),流量才真正混入普通 HTTPS;这一步晚于 2015,是工程实践而非协议规范。",
+    "致命弱点仍在:<b>套了 TLS 壳却不是真 TLS</b>——obfs 插件手工拼装 ClientHello 与记录分帧,与真实 TLS 状态机不一致,可被直接比对识破。"
   ],
   anim:{speed:75, weak:40, loss:0.22, label:"混淆密文包", color:"#fb7185", retrans:true},
   probe:{level:"mid", text:"🟡 伪装层让响应「像 HTTP」,但握手不遵循真实 TLS 状态机;深度主动探测(伪造 ClientHello / 异常帧)仍可暴露。"},
@@ -1058,7 +1058,7 @@ const PRESETS = [
 
 { id:"dpi", t:"深度包检测", d:"统计分类器扫包长/时序/握手特征", net:"weak", steps:[
   { wait:900, status:"DPI 集群上线:对流做包长分布、时序不对称、TLS 指纹(JA3/JA4)分类" },
-  { gen:0, wait:1100, level:"risk", v:"包长分布与真实 HTTPS 显著偏离 → 分类器置信度 0.97,流量被 RST" },
+  { gen:0, wait:1100, level:"risk", v:"首包高熵 + 前 32 个包长的熵值显著偏离普通 HTTPS → 被流量分析识别,RST" },
   { gen:1, wait:1100, level:"risk", v:"混淆层改变了外貌,但「TLS-in-TLS」的记录长度嵌套仍是硬特征 → 识别" },
   { gen:2, wait:1100, level:"mid", v:"真 TLS 握手,分类器难以定罪;JA3 指纹库命中少数派实现 → 存疑,持续观察" },
   { gen:3, wait:1100, level:"mid", v:"QUIC 指纹小众 + UDP 443 显眼 → 按协议特征处置,不看内容" },

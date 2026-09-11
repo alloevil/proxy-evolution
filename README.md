@@ -34,7 +34,7 @@
 ## 六代演进
 
 ```
-第一代  Shadowsocks (2012)            把代理流量伪装成普通加密流量
+第一代  Shadowsocks (2012)            把 SOCKS5 明文转发改为对称加密转发(不模拟真实协议外形)
    ↓
 第二代  SSR / VMess (2015)            增加混淆和防重放
    ↓
@@ -70,7 +70,7 @@ REALITY 一代有专属剧场:探测包被转发到真实网站节点,返回「�
 | 剧本 | 剧情 | 结局 |
 |---|---|---|
 | 主动探测攻击 | 审查者逐代直连,比对证书与内容 | 前四代 🔴/🟡,REALITY 与 XHTTP 🟢 |
-| 深度包检测 | 分类器扫包长分布/时序/JA3 指纹 | SS/SSR 🔴,真 TLS + ECH/CDN 让检测目标消失 |
+| 深度包检测 | 分类器扫包长熵/时序/TLS 指纹(JA3/JA4,仅对含 ClientHello 的流量) | SS/SSR 🔴,真 TLS + ECH/CDN 让检测目标消失 |
 | UDP 封锁 | udp/443 限速 50kbps | Hysteria2 被限速/封锁 → 客户端切到 REALITY/XHTTP(TCP)节点恢复(手动/回落配置,非协议自动降级) |
 | 弱网远距离 | RTT 300ms + 8% 丢包 | TCP 系崩塌,QUIC 几乎不受影响 |
 
@@ -128,7 +128,7 @@ python3 build-data.py    # 修改 index.html 数据后重新生成 data.json
 
 ## 说明与免责
 
-- 机制层断言(各代协议「做了什么」)已于 2026-09-11 对照一手来源逐条核实:Shadowsocks 规范(sip004 / sip022)、SSR 与 VMess 源码及文档、Trojan 协议文档、Xray-core(VLESS / REALITY / XHTTP 及其发布说明)、XTLS/REALITY、anytls-go、Hysteria、TUIC、RFC 9000。本轮修正了:REALITY 握手密钥来源(服务器自身密钥对,不是目标站公钥)、Trojan 回落语义(预设端点,非「真实网站」)、JA3/JA4 的归属(ClientHello 指纹,不是证书)、QUIC 队头阻塞的粒度(按流而非按包)、Brutal 语义(按设定带宽略超发,仅在配置带宽时启用)、AnyTLS 年代(2025,不是 2023)、VLESS/Trojan/Hysteria2/TUIC 的年份,以及 SS 条目的时代错位(2012 原版是流密码,AEAD 与重放防护分别在 2017 / 2022 才加入)。
+- 机制层断言(各代协议「做了什么」)已于 2026-09-11 对照一手来源逐条核实:Shadowsocks 规范(sip004 / sip022)、SSR 与 VMess 源码及文档、Trojan 协议文档、Xray-core(VLESS / REALITY / XHTTP 及其发布说明)、XTLS/REALITY、anytls-go、Hysteria、TUIC、RFC 9000。本轮修正了:REALITY 握手密钥来源(服务器自身密钥对,不是目标站公钥)、Trojan 回落语义(预设端点,非「真实网站」)、JA3/JA4 的归属(ClientHello 指纹,不是证书)、QUIC 队头阻塞的粒度(按流而非按包)、Brutal 语义(按设定带宽略超发,仅在配置带宽时启用)、AnyTLS 年代(2025,不是 2023)、VLESS/Trojan/Hysteria2/TUIC 的年份,以及 SS 条目的时代错位(2012 原版是流密码,AEAD 与重放防护分别在 2017 / 2022 才加入)、SS「伪装成普通加密流量」的表述(规范里 SS 不模拟任何协议外形,只是加密转发)。Shadowsocks 的 2012 起始年份属社区记载(PyPI 最早发布 2013-06、GitHub tag 最早 2015),本页沿用社区通行的 2012。
 - 对比区各项分值为**相对示意值**,用于建立直觉,非基准测试数据。
 - 弱网表现基于各协议的拥塞控制与传输层差异:TCP(TLS 系)丢包时整条连接队头阻塞、退避重传;QUIC(Hysteria2 / TUIC)在 UDP 上按流独立重传,Hysteria2 的 Brutal 拥塞控制不因丢包降速(按设定带宽略微超发补偿)。
 - 四个剧本的结局同为示意,不构成对任何协议在真实审查环境下的成败承诺。

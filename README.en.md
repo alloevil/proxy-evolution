@@ -34,7 +34,7 @@ The abstract protocol arms race is made concrete in three ways:
 ## Six generations
 
 ```
-Gen 1  Shadowsocks (2012)             Make proxy traffic look like ordinary encrypted traffic
+Gen 1  Shadowsocks (2012)             Replace plaintext SOCKS5 forwarding with symmetric encryption (no protocol imitation)
   ↓
 Gen 2  SSR / VMess (2015)             Add obfuscation and replay protection
   ↓
@@ -71,7 +71,7 @@ Four canned attack sequences that auto-play while narrating in real time:
 | Scenario | Plot | Ending |
 |---|---|---|
 | Active probe attack | Censor connects to each generation, comparing certificates and content | Gen 1–4 🔴/🟡; REALITY and XHTTP 🟢 |
-| Deep packet inspection | Classifier scans packet-length distribution / timing / JA3 fingerprints | SS/SSR 🔴; real TLS + ECH/CDN makes the detection target vanish |
+| Deep packet inspection | Classifier scans packet-length entropy / timing / TLS fingerprints (JA3/JA4, only where a ClientHello exists) | SS/SSR 🔴; real TLS + ECH/CDN makes the detection target vanish |
 | UDP blockade | udp/443 throttled to 50kbps | Hysteria2 is throttled → the client switches to a REALITY/XHTTP (TCP) node and recovers (a client-side fallback, not an automatic protocol downgrade) |
 | Weak long-haul link | RTT 300ms + 8% packet loss | TCP stacks collapse; QUIC barely affected |
 
@@ -129,7 +129,7 @@ python3 build-data.py    # regenerate data.json after editing data in index.html
 
 ## Notes & disclaimer
 
-- Mechanism-level claims (what each protocol actually does) were verified line by line on 2026-09-11 against primary sources: the Shadowsocks specs (sip004 / sip022), the SSR and VMess sources and docs, the Trojan protocol doc, Xray-core (VLESS / REALITY / XHTTP and its release notes), XTLS/REALITY, anytls-go, Hysteria, TUIC and RFC 9000. That pass corrected the REALITY handshake key source (the server's own keypair, not the target site's public key), Trojan's fallback semantics (a preset endpoint, not "the real site"), the attribution of JA3/JA4 (a ClientHello fingerprint, not a certificate check), the granularity of QUIC head-of-line blocking (per stream, not per packet), Brutal's semantics (over-sends slightly past the configured bandwidth, and only when one is configured), AnyTLS's era (2025, not 2023), the VLESS/Trojan/Hysteria2/TUIC years, and the anachronism in the Shadowsocks entry (the 2012 protocol used stream ciphers; AEAD and full replay protection only arrived in 2017 and 2022).
+- Mechanism-level claims (what each protocol actually does) were verified line by line on 2026-09-11 against primary sources: the Shadowsocks specs (sip004 / sip022), the SSR and VMess sources and docs, the Trojan protocol doc, Xray-core (VLESS / REALITY / XHTTP and its release notes), XTLS/REALITY, anytls-go, Hysteria, TUIC and RFC 9000. That pass corrected the REALITY handshake key source (the server's own keypair, not the target site's public key), Trojan's fallback semantics (a preset endpoint, not "the real site"), the attribution of JA3/JA4 (a ClientHello fingerprint, not a certificate check), the granularity of QUIC head-of-line blocking (per stream, not per packet), Brutal's semantics (over-sends slightly past the configured bandwidth, and only when one is configured), AnyTLS's era (2025, not 2023), the VLESS/Trojan/Hysteria2/TUIC years, and the anachronism in the Shadowsocks entry (the 2012 protocol used stream ciphers; AEAD and full replay protection only arrived in 2017 and 2022). It also dropped the "disguised as ordinary encrypted traffic" framing for Shadowsocks: the spec describes plain encrypted forwarding, with no protocol imitation. The 2012 start year is a community record (earliest PyPI release 2013-06, earliest GitHub tag 2015) and is kept as the conventional dating.
 - Comparison scores are **relative illustrative values** meant to build intuition, not benchmark data.
 - Weak-network behavior follows each protocol's congestion control and transport: TCP (TLS stacks) blocks the whole connection on loss and backs off on retransmit; QUIC (Hysteria2 / TUIC) retransmits per-stream over UDP, and Hysteria2's Brutal congestion control refuses to slow down on loss (it slightly over-sends past the configured bandwidth).
 - The four scenario endings are illustrative too, and promise nothing about any protocol's fate under a real censor.

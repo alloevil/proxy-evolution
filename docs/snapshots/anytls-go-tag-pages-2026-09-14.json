@@ -1,0 +1,17 @@
+{
+  "_snapshot": {
+    "source": "https://github.com/anytls/anytls-go/releases/tag/v0.0.1",
+    "fetched": "2026-09-14",
+    "note": "the two oldest tags' pages (the tags.atom feed only carries the ten most recent); each date is the <relative-time datetime=\"...\"> stamp the page shows under \"released this\"; point-in-time capture committed so claims.json can check the quote offline; the gate does not re-fetch it, freshness is not checked"
+  },
+  "pages": {
+    "v0.0.1": {
+      "page_title": "Release v0.0.1 · anytls/anytls-go · GitHub",
+      "released_this_relative_time": "2025-02-10T13:16:46Z"
+    },
+    "v0.0.2": {
+      "page_title": "Release v0.0.2 · anytls/anytls-go · GitHub",
+      "released_this_relative_time": "2025-02-17T13:27:04Z"
+    }
+  }
+}

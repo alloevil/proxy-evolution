@@ -1,0 +1,112 @@
+# snapshot — Shadowsocks "AEAD ciphers" spec (docs/doc/aead.md)
+# source: https://raw.githubusercontent.com/shadowsocks/shadowsocks-org/main/docs/doc/aead.md
+# fetched:2026-09-14
+# note: point-in-time capture committed so claims.json can check the quote offline; the gate does not re-fetch it, freshness is not checked.
+# repo: https://github.com/shadowsocks/shadowsocks-org
+# truncated: two trailing reference-link lines (two profile URLs) are mangled by this
+# machine's network egress filter and are omitted
+
+# AEAD ciphers
+
+[AEAD] stands for Authenticated Encryption with Associated Data. AEAD ciphers simultaneously provide confidentiality, integrity, and authenticity. They have excellent performance and power efficiency on modern hardware. Users should use AEAD ciphers whenever possible.
+
+The following AEAD ciphers are recommended. Compliant Shadowsocks implementations must support AEAD_CHACHA20_POLY1305. Implementations for devices with hardware AES acceleration should also implement AEAD_AES_128_GCM and AEAD_AES_256_GCM.
+
+<table>
+  <tr><th>Name</th><th>Alias</th><th>Key Size</th><th>Salt Size</th><th>Nonce Size</th><th>Tag Size</th></tr>
+  <tr><td>AEAD_CHACHA20_POLY1305</td><td>chacha20-ietf-poly1305</td><td>32</td><td>32</td><td>12</td><td>16</td></tr>
+  <tr><td>AEAD_AES_256_GCM</td><td>aes-256-gcm</td><td>32</td><td>32</td><td>12</td><td>16</td></tr>
+  <tr><td>AEAD_AES_128_GCM</td><td>aes-128-gcm</td><td>16</td><td>16</td><td>12</td><td>16</td></tr>
+</table>
+
+Please refer to [IANA AEAD registry](https://www.iana.org/assignments/aead-parameters/aead-parameters.xhtml) for naming scheme and specification.
+
+
+The way Shadowsocks using AEAD ciphers is specified in [SIP004] and amended in [SIP007]. [SIP004] was proposed by [@Mygod] with design inspirations from [@wongsyrone], [@Noisyfox] and [@breakwa11]. [SIP007] was proposed by [@riobard] with input from [@madeye], [@Mygod], [@wongsyrone], and many others.
+
+
+## Key Derivation
+
+The master key can be input directly from user or generated from a password. The key derivation is still following EVP_BytesToKey(3) in OpenSSL. The detailed spec can be found [here](https://docs.openssl.org/master/man3/EVP_BytesToKey/)
+
+[HKDF_SHA1] is a function that takes a secret key, a non-secret salt, an info string, and produces a subkey that is cryptographically strong even if the input secret key is weak.
+
+```
+HKDF_SHA1(key, salt, info) => subkey
+```
+
+The info string binds the generated subkey to a specific application context. In our case, it must be the string "ss-subkey" without quotes. 
+
+We derive a per-session subkey from a pre-shared master key using HKDF_SHA1. Salt must be unique through the entire life of the pre-shared master key.
+
+
+## Authenticated Encryption/Decryption
+
+
+AE_encrypt is a function that takes a secret key, a non-secret nonce, a message, and produces ciphertext and authentication tag. Nonce must be unique for a given key in each invocation. 
+
+```
+AE_encrypt(key, nonce, message) => (ciphertext, tag)
+```
+
+AE_decrypt is a function that takes a secret key, non-secret nonce, ciphertext, authentication tag, and produces original message. If any of the input is tampered with, decryption will fail.
+
+```
+AE_decrypt(key, nonce, ciphertext, tag) => message
+```
+
+## TCP
+
+An AEAD encrypted TCP stream starts with a randomly generated salt to derive the per-session subkey, followed by any number of encrypted chunks. Each chunk has the following structure:
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 40" style="display:block;margin:1em auto;width:100%;height:auto;max-width:720px" role="img" aria-label="AEAD TCP chunk: encrypted payload length, length tag, encrypted payload, payload tag">
+  <g fill="none" stroke="currentColor">
+    <rect x="10" y="5" width="700" height="30" rx="3"/>
+    <line x1="230" y1="5" x2="230" y2="35"/>
+    <line x1="330" y1="5" x2="330" y2="35"/>
+    <line x1="570" y1="5" x2="570" y2="35"/>
+  </g>
+  <g fill="currentColor" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" text-anchor="middle">
+    <text x="120" y="24">encrypted payload length</text>
+    <text x="280" y="24">length tag</text>
+    <text x="450" y="24">encrypted payload</text>
+    <text x="640" y="24">payload tag</text>
+  </g>
+</svg>
+
+Payload length is a 2-byte big-endian unsigned integer capped at 0x3FFF. The higher two bits are reserved and must be set to zero. Payload is therefore limited to 16*1024 - 1 bytes. 
+
+The first AEAD encrypt/decrypt operation uses a counting nonce starting from 0. After each encrypt/decrypt operation, the nonce is incremented by one as if it were an unsigned little-endian integer. Note that each TCP chunk involves two AEAD encrypt/decrypt operation: one for the payload length, and one for the payload. Therefore each chunk increases the nonce twice.
+
+
+## UDP
+
+An AEAD encrypted UDP packet has the following structure
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 40" style="display:block;margin:1em auto;width:100%;height:auto;max-width:500px" role="img" aria-label="AEAD UDP packet: salt, encrypted payload, tag">
+  <g fill="none" stroke="currentColor">
+    <rect x="10" y="5" width="480" height="30" rx="3"/>
+    <line x1="110" y1="5" x2="110" y2="35"/>
+    <line x1="390" y1="5" x2="390" y2="35"/>
+  </g>
+  <g fill="currentColor" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" text-anchor="middle">
+    <text x="60" y="24">salt</text>
+    <text x="250" y="24">encrypted payload</text>
+    <text x="440" y="24">tag</text>
+  </g>
+</svg>
+
+The salt is used to derive the per-session subkey and must be generated randomly to ensure uniqueness. Each UDP packet is encrypted/decrypted independently, using the derived subkey and a nonce with all zero bytes.
+
+
+
+[AEAD]: https://en.wikipedia.org/wiki/Authenticated_encryption
+[SIP004]: https://github.com/shadowsocks/shadowsocks-org/issues/30
+[SIP007]: https://github.com/shadowsocks/shadowsocks-org/issues/42
+[@Mygod]: https://github.com/Mygod
+[@madeye]: https://github.com/madeye
+[@wongsyrone]: https://github.com/wongsyrone
+[@breakwa11]: https://github.com/breakwa11
+[@riobard]: https://github.com/riobard
+[@Noisyfox]: https://github.com/noisyfox
+[HKDF_SHA1]: https://tools.ietf.org/html/rfc5869

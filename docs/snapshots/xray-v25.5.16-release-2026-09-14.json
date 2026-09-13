@@ -1,0 +1,21 @@
+{
+  "_snapshot": {
+    "source": "https://api.github.com/repos/XTLS/Xray-core/releases/tags/v25.5.16",
+    "fetched": "2026-09-14",
+    "note": "body excerpt: only the lines matching /X25519MLKEM768|REALITY/; point-in-time capture committed so claims.json can check the quote offline; the gate does not re-fetch it, freshness is not checked"
+  },
+  "tag_name": "v25.5.16",
+  "published_at": "2025-05-16T12:21:07Z",
+  "body_lines": [
+    "## REALITY practice: Support X25519MLKEM768 for TLS' communication",
+    "REALITY 抗量子更新第一弹来袭！升级服务端、客户端至该版本，**REALITY target 支持 X25519MLKEM768 时将自动启用**",
+    "**X25519MLKEM768 可有效预防被“现在记录、以后拿量子计算机解密 TLS 流量”**，此外 https://github.com/XTLS/Xray-core/pull/3813#issuecomment-2885620329",
+    "最近有越来越多的网站开始支持 X25519MLKEM768 了，**所以服务端一定要及时升级，避免新版客户端连不上**",
+    "感谢 @yuhan6665 对 [REALITY](https://github.com/XTLS/REALITY) 仓库的维护，以及 @mingyech @BRUHItsABunny 对 [uTLS](https://github.com/refraction-networking/utls) 仓库的维护",
+    "> 有人觉得这次是 breaking，其实不尽然，因为我发得早，现在已经支持 X25519MLKEM768 的就技术前沿像 CF、Google 这样的，它们都没人偷，等一两个月后其它网站陆续开始支持了，大家的服务端早就升级、兼容了，所以我必须让 v25.5.16 成为新的稳定版",
+    "此外从上个版本开始，auto mode 的 XHTTP TLS 默认改为 packet-up，XHTTP REALITY 默认仍为 stream-one",
+    "**请支持一个 REALITY NFT：https://opensea.io/assets/ethereum/0x5ee362866001613093361eb8569d59c4141b76d1/2**",
+    "* REALITY practice: Support X25519MLKEM768 for TLS' communication by @RPRX in https://github.com/XTLS/Xray-core/commit/7ddc4a2525bc81317e6a4d5075212c155e2a15ea",
+    "* REALITY protocol: Remove ChaCha20-Poly1305 support for REALITY's session id auth by @RPRX in https://github.com/XTLS/Xray-core/commit/09d84c42e9c729c23549ea71b374e154d5365922"
+  ]
+}

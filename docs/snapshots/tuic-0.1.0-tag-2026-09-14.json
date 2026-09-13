@@ -1,0 +1,11 @@
+{
+  "_snapshot": {
+    "source": "https://api.github.com/repos/tuic-protocol/tuic/git/refs/tags/0.1.0",
+    "fetched": "2026-09-14",
+    "note": "tag ref plus the tagged commit's metadata, fetched together; point-in-time capture committed so claims.json can check the quote offline; the gate does not re-fetch it, freshness is not checked"
+  },
+  "ref": "refs/tags/0.1.0",
+  "object_sha": "b97d1a2725d2037219cb604e6b7d1f25be1fd6a5",
+  "commit_committer_date": "2022-03-10T09:32:16Z",
+  "commit_message": "remove the test certificate and private key"
+}

@@ -1,0 +1,10 @@
+{
+  "_snapshot": {
+    "source": "https://github.com/apernet/hysteria/releases/tag/app%2Fv2.0.0",
+    "fetched": "2026-09-14",
+    "note": "fetched from the release page HTML (it redirects to HyNetworks/hysteria): the page <title> plus the <relative-time datetime=\"...\"> stamp shown under \"released this\"; point-in-time capture committed so claims.json can check the quote offline; the gate does not re-fetch it, freshness is not checked"
+  },
+  "page_title": "Release app/v2.0.0 · HyNetworks/hysteria · GitHub",
+  "released_this_relative_time": "2023-09-02T03:32:56Z",
+  "tag": "app/v2.0.0"
+}

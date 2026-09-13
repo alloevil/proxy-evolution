@@ -1,0 +1,11 @@
+{
+  "_snapshot": {
+    "source": "https://github.com/shadowsocks/shadowsocks-org/issues/30",
+    "fetched": "2026-09-14",
+    "note": "point-in-time capture committed so claims.json can check the quote offline; the gate does not re-fetch it, freshness is not checked"
+  },
+  "number": 30,
+  "title": "SIP004 - Support for AEADs implemented by large libraries",
+  "state": "closed",
+  "created_at": "2017-01-12T06:33:02Z"
+}

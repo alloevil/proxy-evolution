@@ -1,0 +1,11 @@
+{
+  "_snapshot": {
+    "source": "https://api.github.com/repos/XTLS/Xray-core/releases/tags/v1.0.0",
+    "fetched": "2026-09-14",
+    "note": "body captured in full (it is short); point-in-time capture committed so claims.json can check the quote offline; the gate does not re-fetch it, freshness is not checked"
+  },
+  "tag_name": "v1.0.0",
+  "name": "Xray-core v1.0.0",
+  "published_at": "2020-11-25T11:03:02Z",
+  "body": "## New Beginning\r\n\r\nXray-core 基于 v2ray-core 修改而来，改动较大，你只需知道：\r\n\r\n- 只有一个可执行文件，含 ctl 的功能，run 为默认指令\r\n- 配置上完全兼容，环境变量和 API 对应要改为 XRAY\r\n- 全平台开放了裸协议的 ReadV，有待更多测试与反馈\r\n- 提供完整的 VLESS & Trojan XTLS 支持，均有 ReadV\r\n\r\n## Credits\r\n\r\nhttps://github.com/XTLS/Xray-core/blob/main/README.md\r\n\r\n- 感谢 @v2fly 项目\r\n- 感谢 @badO1a5A90 的长期性能测试与反馈\r\n- 感谢 @qjebbs 提供合并 ctl 的代码\r\n- 感谢 @teddysun 第一时间打包 docker 镜像\r\n\r\n## Performance\r\n\r\n与 v2ray-core v4.32.1、v4.33.0 的一些 [测试与对比](https://github.com/badO1a5A90/v2ray-doc/blob/main/performance_test/Xray/speed_test_20201124.md)\r\n"
+}

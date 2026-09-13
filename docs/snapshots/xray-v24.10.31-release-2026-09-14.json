@@ -1,0 +1,20 @@
+{
+  "_snapshot": {
+    "source": "https://api.github.com/repos/XTLS/Xray-core/releases/tags/v24.10.31",
+    "fetched": "2026-09-14",
+    "note": "body excerpt: only the lines mentioning XHTTP/SplitHTTP; point-in-time capture committed so claims.json can check the quote offline; the gate does not re-fetch it, freshness is not checked"
+  },
+  "tag_name": "v24.10.31",
+  "published_at": "2024-10-31T08:00:08Z",
+  "body_lines_mentioning_xhttp": [
+    "## XHTTP: The real upload / download splitting #3955 🎃",
+    "[v1.8.16](https://github.com/XTLS/Xray-core/releases/tag/v1.8.16) 第一版 SplitHTTP 发布时，有提到 **拆分连接** 也有助于反审查，但当时的 SplitHTTP 只是逻辑拆分而没有实际拆分。",
+    "**现在，#3955 正式将 SplitHTTP 升级为 XHTTP，实现了真正的上下行分离，给 GFW 针对单个连接的分析带来了麻烦。**",
+    "**XHTTP 也已正式支持 REALITY**，所以，发挥你的想象力，上下行随意组合，万圣节 have fun！",
+    "别急，分离下行的 XMUX #3965、XHTTP 的分享、对 HTTP 传输层的合并等一系列更新也会在接下来的版本中到来。",
+    "**毫无疑问，XHTTP 又开启了一个崭新的时代。**",
+    "此外，XMUX 有了非无限复用的默认值，这可以提升默认配置下 XHTTP 的使用体验。REALITY 服务端的 `dest` 已更名为 `target`，XHTTP 的示例均已采用新名，包括 RAW。WireGuard 出站的 `kernelMode` 已改为 `noKernelTun`。",
+    "* REALITY: Unblock SplitHTTP transport by @mmmray in https://github.com/XTLS/Xray-core/pull/3816",
+    "* XHTTP: The real upload / download splitting by @RPRX in https://github.com/XTLS/Xray-core/pull/3955"
+  ]
+}

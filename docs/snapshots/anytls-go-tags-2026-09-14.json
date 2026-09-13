@@ -1,0 +1,57 @@
+{
+  "_snapshot": {
+    "source": "https://api.github.com/repos/anytls/anytls-go/tags",
+    "fetched": "2026-09-14",
+    "note": "the complete tag list as returned by the tags API (12 tags); the tags' dates are captured in the two snapshots next to this file (tags.atom for the ten most recent, the tag pages for v0.0.1/v0.0.2); point-in-time capture committed so claims.json can check the quote offline; the gate does not re-fetch it, freshness is not checked"
+  },
+  "tags": [
+    {
+      "name": "v0.0.13",
+      "commit_sha": "9666872946857b50a74fdb692896d77b53773cb2"
+    },
+    {
+      "name": "v0.0.12",
+      "commit_sha": "2012ef89768409f45437f1c06a7af5f6eea402ad"
+    },
+    {
+      "name": "v0.0.11",
+      "commit_sha": "a19b20f486e9fc9e47e915fe6ae38c42b86c9e06"
+    },
+    {
+      "name": "v0.0.10",
+      "commit_sha": "19067e907a5bd6217efe927ba867e584ac437d7e"
+    },
+    {
+      "name": "v0.0.9",
+      "commit_sha": "d7adb5c9f1e570b61db347817f1c2f455ae8f498"
+    },
+    {
+      "name": "v0.0.8",
+      "commit_sha": "f9c480aeb47e9e68b9e75d6a522c6d5201dbc1a3"
+    },
+    {
+      "name": "v0.0.7",
+      "commit_sha": "ff6cbe3af6c2befbf6010d5dae75b66472316e53"
+    },
+    {
+      "name": "v0.0.5",
+      "commit_sha": "bcb7b3dc0f74a2ca87c9959b1c3860c555288f1a"
+    },
+    {
+      "name": "v0.0.4",
+      "commit_sha": "3ea76c25301dc74fdbf12a38ce06b8d29d2b455d"
+    },
+    {
+      "name": "v0.0.3",
+      "commit_sha": "ccc6b992e63d1dbf6b81f57e27c9568fa5e7078c"
+    },
+    {
+      "name": "v0.0.2",
+      "commit_sha": "e131fb14079ae9448e46c0fa36760c611699cf15"
+    },
+    {
+      "name": "v0.0.1",
+      "commit_sha": "c237628e582f17680b1c18ccc32875b4a2f81bfb"
+    }
+  ]
+}

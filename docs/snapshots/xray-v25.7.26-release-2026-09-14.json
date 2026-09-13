@@ -1,0 +1,26 @@
+{
+  "_snapshot": {
+    "source": "https://api.github.com/repos/XTLS/Xray-core/releases/tags/v25.7.26",
+    "fetched": "2026-09-14",
+    "note": "body excerpt: only the lines matching /ML-DSA-65|ECH|REALITY/; point-in-time capture committed so claims.json can check the quote offline; the gate does not re-fetch it, freshness is not checked"
+  },
+  "tag_name": "v25.7.26",
+  "published_at": "2025-07-26T10:05:43Z",
+  "body_lines": [
+    "## REALITY protocol: Add optional Post-Quantum ML-DSA-65 verification for cert's ExtraExtensions https://github.com/XTLS/Xray-core/pull/4915 & TLS client & server: Support ECH https://github.com/XTLS/Xray-core/pull/3813",
+    "**[REALITY](https://github.com/XTLS/REALITY) 抗量子更新第二弹来袭！本次更新为 REALITY 协议加上了可选的、抗量子的 ML-DSA-65 签名验签机制，向后兼容，详情见 https://github.com/XTLS/Xray-core/pull/4915 ，注意目标网站证书链总长度需 3500+，VLESS 分享链接标准 https://github.com/XTLS/Xray-core/discussions/716 已更新 REALITY `pqv`**",
+    "该版本修复了 post-handshake records 的日志问题 https://github.com/XTLS/Xray-core/issues/4845 、端口范围问题 https://github.com/XTLS/Xray-core/issues/4843 ，将启动时探测改为并发并优化了缓存机制 https://github.com/XTLS/REALITY/commit/e62c4aed0d577e9e42578d3b229cf7a256534cda 、改为用三种 ALPN 进行探测 https://github.com/XTLS/REALITY/commit/05a351a645211662691aeac82a9e328ef628eccc ，已经 cover 绝大多数客户端指纹",
+    "**时机成熟后，该版本终于合并了 TLS ECH 功能 https://github.com/XTLS/Xray-core/pull/3813 ，文档见 [TLSObject](https://xtls.github.io/config/transport.html#tlsobject) ，VLESS 分享链接标准 https://github.com/XTLS/Xray-core/discussions/716 已更新 TLS `ech`**",
+    "本次久违地放出了一些 REALITY NFT 和几个 Project X NFT",
+    "**请支持一个 REALITY NFT：https://opensea.io/assets/ethereum/0x5ee362866001613093361eb8569d59c4141b76d1/2**",
+    "* REALITY server: Three types of ALPN for post-handshake records detection & imitation; Two fixes by @RPRX in https://github.com/XTLS/Xray-core/commit/1785178762eda8edb3d594e6c2b14761fdd66ca9",
+    "* REALITY protocol: Add optional Post-Quantum ML-DSA-65 verification for cert's ExtraExtensions by @RPRX in https://github.com/XTLS/Xray-core/pull/4915",
+    "* Update github.com/xtls/reality to 20250723121014 by @RPRX in https://github.com/XTLS/Xray-core/commit/4433641e30dab19ce6655e6e7fffc61cf29ac01f",
+    "* REALITY config: Allow `mldsa65` fields to be empty by @Fangliding in https://github.com/XTLS/Xray-core/pull/4924",
+    "* REALITY config: Convert mldsa65Seed to its private key later by @RPRX in https://github.com/XTLS/Xray-core/commit/31b508d372da061fd1d55e130f323a4343963843",
+    "* REALITY client: Fix log when printing \"is using X25519MLKEM768...\" by @Fangliding in https://github.com/XTLS/Xray-core/pull/4929",
+    "* Update github.com/xtls/reality to 20250725142056 by @RPRX in https://github.com/XTLS/Xray-core/commit/caee152adf5f5d0a9fa216069494514cade846a1",
+    "* REALITY config: `mldsa65Seed` and `privateKey` can not be the same value by @RPRX in https://github.com/XTLS/Xray-core/commit/5f93ff6c3a97deef7f6bcf5a41adb466da4a81a0",
+    "* TLS client & server: Support Encrypted Client Hello (ECH) by @Fangliding @yuhan6665 in https://github.com/XTLS/Xray-core/pull/3813"
+  ]
+}

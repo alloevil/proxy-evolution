@@ -1,8 +1,8 @@
 {
   "$comment": "机制层断言的收据 + 对外数字的可执行收据。每条 claim 带一手来源(规范/源码/RFC/官方发布说明)的原文引用;`receipts` 是面向文档的检查(哪个文件里必须出现/必须不出现什么),由 verify.py 执行,并额外做 data.json 漂移与禁用措辞检查;`check` 是面向数字的收据(cmd + expect,或 manual + 理由),由 verify-claims 执行,见 .github/workflows/claims.yml。",
   "project": "proxy-evolution",
-  "updated": "2026-09-13",
-  "sources_note": "一手来源:shadowsocks-org 规范(sip004/sip022/aead/stream/what-is-shadowsocks)、shadowsocksrr/shadowsocksr(manyuser 分支源码)、v2fly 文档与 v2ray-core 源码(vmess validator.go / encoding/server.go)、trojan-gfw/trojan protocol.md、XTLS/Xray-core(发布说明、REALITY 文档、splithttp 传输)、XTLS/REALITY、anytls/anytls-go、apernet(HyNetworks)/hysteria、tuic-protocol/tuic、RFC 9000、madeye/sssniff、salesforce/ja3。未能取得原文的:gfw.report(超时)、NDSS 2019 Frolov & Wustrow PDF(404)——相关表述已改为源码可直接佐证的说法,不引用该论文。",
+  "updated": "2026-09-14",
+  "sources_note": "一手来源:shadowsocks-org 规范(sip004/sip022/aead/stream/what-is-shadowsocks)、shadowsocksrr/shadowsocksr(manyuser 分支源码)、v2fly 文档与 v2ray-core 源码(vmess validator.go / encoding/server.go)、trojan-gfw/trojan protocol.md、XTLS/Xray-core(发布说明、REALITY 文档、splithttp 传输)、XTLS/REALITY、anytls/anytls-go、apernet(HyNetworks)/hysteria、tuic-protocol/tuic、RFC 9000、madeye/sssniff、salesforce/ja3。未能取得原文的:gfw.report(超时)、NDSS 2019 Frolov & Wustrow PDF(404)——相关表述已改为源码可直接佐证的说法,不引用该论文。 凡本机可抓的上游原文都已提交为 docs/snapshots/ 下带 source 与 fetched 日期的时间点快照,check 命令解析快照复算数字,门禁不重新联网抓取、也不检查快照新鲜度;取不到一手来源的仍写 check.manual 并写明缺哪份产物。",
   "banned_phrases": [
     "机器学习分类器",
     "握手时序",
@@ -22,16 +22,20 @@
       "verdict": "confirmed",
       "value": "流密码(2012)→ AEAD(SIP004,2017)",
       "metric": "第一代的加密方式,以及 AEAD加入的规范版本与年份",
-      "method": "对照 shadowsocks-org stream.md / aead.md原文;仓库内只有 index.html的层描述复述",
-      "repro": "curl -s https://raw.githubusercontent.com/shadowsocks/shadowsocks-org/main/docs/doc/aead.md | grep -i SIP004",
-      "evidence": "index.html(generations[0].layers[0].d)",
-      "as_of": "2026-09-13",
+      "method": "aead.md 与 stream.md 全文、加 SIP004 议题元数据三份快照,以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。检查命令断言 stream.md 里写着流密码「completely broken and will be removed soon」、aead.md 里写着 AEAD 由 SIP004 规定、议题 30 开立于 2017-01,再断言 data.json 第一代的层描述写着同一年份。",
+      "repro": "python3 -c \"print(open('docs/snapshots/shadowsocks-aead-2026-09-14.md',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/shadowsocks-aead-2026-09-14.md(2026-09-14 抓取) + docs/snapshots/shadowsocks-stream-2026-09-14.md(2026-09-14 抓取) + docs/snapshots/shadowsocks-sip004-issue-30-2026-09-14.json(2026-09-14 抓取) · index.html(generations[0].layers[0].d)",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://github.com/shadowsocks/shadowsocks-org/blob/main/docs/doc/stream.md",
         "quote": "'Stream ciphers are completely broken and will be removed soon.' · aead.md: 'The way Shadowsocks using AEAD ciphers is specified in [SIP004]'"
       },
       "check": {
-        "manual": "2017与 SIP004只写在上游规范里(shadowsocks-org/docs/doc/aead.md),仓库没有提交物能重算该日期;同一条里的2012由 generation-years 命令重算,文档措辞由 receipts + verify.py 守护"
+        "cmd": "python3 -c \"import json, pathlib\nS = pathlib.Path('docs/snapshots')\naead = (S / 'shadowsocks-aead-2026-09-14.md').read_text(encoding='utf-8')\nstream = (S / 'shadowsocks-stream-2026-09-14.md').read_text(encoding='utf-8')\niss = json.loads((S / 'shadowsocks-sip004-issue-30-2026-09-14.json').read_text(encoding='utf-8'))\nassert 'Stream ciphers are completely broken and will be removed soon' in stream\nassert 'specified in [SIP004]' in aead\nassert iss['number'] == 30, iss['number']\nassert iss['created_at'][:7] == '2017-01', iss['created_at']\ng = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))['generations'][0]\nneedle = '2017 年 SIP004 才加入'\nassert needle in g['layers'][0]['d'], g['layers'][0]['d']\nprint('stream.md: stream ciphers removed | AEAD @ SIP004 (issues/30, 2017-01-12) | prose: ' + needle)\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "stream.md: stream ciphers removed | AEAD @ SIP004 (issues/30, 2017-01-12) | prose: 2017 年 SIP004 才加入"
+        }
       },
       "receipts": [
         {
@@ -50,16 +54,20 @@
       "verdict": "confirmed",
       "value": "SIP022(2022)才强制完整重放防护;SS徽章「防重放 ✗」",
       "metric": "强制完整重放防护的规范版本与年份",
-      "method": "对照 sip022.md原文;徽章那一半读 data.json 的 badges",
-      "repro": "curl -s https://raw.githubusercontent.com/shadowsocks/shadowsocks-org/main/docs/doc/sip022.md | grep -i 'replay protection'",
-      "evidence": "index.html(generations[0].points[3])",
-      "as_of": "2026-09-13",
+      "method": "sip022.md 摘录快照(标题 + 摘要 + 概览里的重放防护句 + 盐值缓存要求),以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。检查命令断言快照写着 SIP022 / 2022 版、强制完整重放防护、盐值缓存 60 秒,再断言 data.json 第一代要点写着 SIP022(2022)。",
+      "repro": "python3 -c \"print(open('docs/snapshots/shadowsocks-sip022-2026-09-14.md',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/shadowsocks-sip022-2026-09-14.md(2026-09-14 抓取) · index.html(generations[0].points[3])",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://github.com/shadowsocks/shadowsocks-org/blob/main/docs/doc/sip022.md",
         "quote": "'Compared to previous editions of the protocol family, Shadowsocks 2022 allows and mandates full replay protection.' · 'Servers MUST store all incoming salts for 60 seconds.'"
       },
       "check": {
-        "manual": "2022 / SIP022是上游规范日期,仓库无提交物可重算;徽章那一半由 badge-matrix 命令从 data.json 重算"
+        "cmd": "python3 -c \"import json, pathlib\nS = pathlib.Path('docs/snapshots')\ns = (S / 'shadowsocks-sip022-2026-09-14.md').read_text(encoding='utf-8')\nassert 'SIP022 AEAD-2022 Ciphers' in s\nassert 'mandates full replay protection' in s\nassert 'Servers MUST store all incoming salts for 60 seconds' in s\ng = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))['generations'][0]\nassert 'SIP022(2022)' in g['points'][3], g['points'][3]\nprint('SIP022 / 2022 edition mandates full replay protection; salts kept 60s | prose ok')\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "SIP022 / 2022 edition mandates full replay protection; salts kept 60s | prose ok"
+        }
       },
       "receipts": [
         {
@@ -77,17 +85,21 @@
       "verdict": "imprecise -> fixed",
       "value": "不模拟任何真实协议外形",
       "metric": "有无协议外形模拟",
-      "method": "对照 what-is-shadowsocks.md全文——规范没有定义任何外形模拟",
-      "repro": "curl -s https://raw.githubusercontent.com/shadowsocks/shadowsocks-org/main/docs/doc/what-is-shadowsocks.md",
-      "evidence": "index.html / README.md / README.en.md / llms.txt",
-      "as_of": "2026-09-13",
+      "method": "what-is-shadowsocks.md 的全文快照,以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。这条断言建立在「规范里没有」之上,所以提交的是全文而不是摘录:命令在整份快照里检索 imitat / mimic / camouflag / disguis / pretend 五个词根,一个都不许出现,再断言 data.json 的创新句写着同一结论。",
+      "repro": "python3 -c \"print(open('docs/snapshots/shadowsocks-what-is-2026-09-14.md',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/shadowsocks-what-is-2026-09-14.md(2026-09-14 抓取) · index.html / README.md / README.en.md / llms.txt",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://github.com/shadowsocks/shadowsocks-org/blob/main/docs/doc/what-is-shadowsocks.md",
         "quote": "'Shadowsocks is a secure split proxy loosely based on SOCKS5.' 规范全文没有任何协议外形模拟"
       },
       "fix": "创新句、README.md、README.en.md、llms.txt 一并改写",
       "check": {
-        "manual": "结论建立在规范的「没有」之上,只能读上游全文确认;离线命令无法从仓库数据推出,文档措辞由 receipts + verify.py 守护"
+        "cmd": "python3 -c \"import json, pathlib, re\nS = pathlib.Path('docs/snapshots')\ndoc = (S / 'shadowsocks-what-is-2026-09-14.md').read_text(encoding='utf-8')\nassert 'secure split proxy loosely based on' in doc\nbad = [w for w in ('imitat', 'mimic', 'camouflag', 'disguis', 'pretend') if re.search(w, doc, re.I)]\nassert not bad, bad\ng = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))['generations'][0]\nassert '不模拟任何真实协议的外形' in g['innovationText'], g['innovationText']\nprint('full spec text: no imitation/camouflage wording anywhere | prose ok')\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "full spec text: no imitation/camouflage wording anywhere | prose ok"
+        }
       },
       "receipts": [
         {
@@ -123,17 +135,21 @@
       "verdict": "unsupported -> fixed",
       "value": "包长熵(madeye/sssniff:前 32 个包长)",
       "metric": "被动识别的统计量",
-      "method": "对照 sssniff README与源码;被证伪的「机器学习分类器 / 握手时序」列在 banned_phrases",
-      "repro": "curl -s https://raw.githubusercontent.com/madeye/sssniff/master/README.md | grep -i entropy",
-      "evidence": "index.html(generations[0].points[1])",
-      "as_of": "2026-09-13",
+      "method": "sssniff README 的「How it works?」摘录快照,以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。检查命令从快照里正则取出「first <N> packet lengths」的 N,断言它等于 32,再断言 data.json 第一代要点写着「前 32 个包长」。",
+      "repro": "python3 -c \"print(open('docs/snapshots/sssniff-readme-2026-09-14.md',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/sssniff-readme-2026-09-14.md(2026-09-14 抓取) · index.html(generations[0].points[1])",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://github.com/madeye/sssniff",
         "quote": "'It computes entropy of the first 32 packet lengths of each TCP connection. When the entropy is larger than a threshold, the connection is detected as a SSR connection.'"
       },
       "fix": "index 与 llms.txt 改写,剧本里的「置信度 0.97」删除",
       "check": {
-        "manual": "算法与阈值在上游仓库(madeye/sssniff),本仓库只复述结论,无提交物可重算"
+        "cmd": "python3 -c \"import json, pathlib, re\nS = pathlib.Path('docs/snapshots')\ndoc = (S / 'sssniff-readme-2026-09-14.md').read_text(encoding='utf-8')\nn = int(re.search(r'first (\\\\d+) packet lengths', doc).group(1))\nassert n == 32, n\ng = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))['generations'][0]\nassert '前 32 个包长' in g['points'][1], g['points'][1]\nprint('sssniff: entropy of the first 32 packet lengths | prose ok')\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "sssniff: entropy of the first 32 packet lengths | prose ok"
+        }
       },
       "receipts": [
         {
@@ -164,17 +180,21 @@
       "verdict": "unsupported -> fixed",
       "value": "未认证连接无有效响应,也没有回落站点",
       "metric": "未认证连接下的服务端行为",
-      "method": "对照 aead.md:校验失败即丢弃;规范未定义任何未认证连接下的响应",
-      "repro": "curl -s https://raw.githubusercontent.com/shadowsocks/shadowsocks-org/main/docs/doc/aead.md | grep -i tampered",
-      "evidence": "index.html(generations[0].points[2], probe.text)",
-      "as_of": "2026-09-13",
+      "method": "aead.md 全文快照,以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。这条同样建立在「规范里没有」之上:命令断言快照里有「tampered with, decryption will fail」,再在全文里检索 fallback / redirect 两个词,一个都不许出现,最后断言 data.json 的要点与探测文案。",
+      "repro": "python3 -c \"print(open('docs/snapshots/shadowsocks-aead-2026-09-14.md',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/shadowsocks-aead-2026-09-14.md(2026-09-14 抓取) · index.html(generations[0].points[2], probe.text)",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://github.com/shadowsocks/shadowsocks-org/blob/main/docs/doc/aead.md",
         "quote": "'If any of the input is tampered with, decryption will fail.' 规范未定义任何未认证连接下的响应"
       },
       "fix": "points[2] 与 probe 文案改写",
       "check": {
-        "manual": "依据是上游规范里未定义的行为,仓库无提交物可重算"
+        "cmd": "python3 -c \"import json, pathlib, re\nS = pathlib.Path('docs/snapshots')\naead = (S / 'shadowsocks-aead-2026-09-14.md').read_text(encoding='utf-8')\nassert 'If any of the input is tampered with, decryption will fail.' in aead\nassert not re.search(r'fallback|redirect', aead, re.I), 'the spec text mentions a fallback'\ng = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))['generations'][0]\nassert '不做任何有效响应' in g['points'][2], g['points'][2]\nassert '没有可伪装的站点' in g['probeText'], g['probeText']\nprint('tampered input fails decryption; the spec defines no fallback | prose ok')\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "tampered input fails decryption; the spec defines no fallback | prose ok"
+        }
       },
       "receipts": [
         {
@@ -195,16 +215,20 @@
       "verdict": "confirmed",
       "value": "SSR = 2015 年的分支(页面标 2015–2019)",
       "metric": "分支起始年份",
-      "method": "对照 shadowsocksrr/shadowsocksr 源码的版权行",
-      "repro": "curl -s https://raw.githubusercontent.com/shadowsocksrr/shadowsocksr/manyuser/shadowsocks/obfsplugin/obfs_tls.py | grep -i copyright",
-      "evidence": "index.html(generations[1].year)",
-      "as_of": "2026-09-13",
+      "method": "SSR 专有插件 obfs_tls.py 的摘录快照(版权头 + client_encode + server_decode),以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。检查命令断言版权行是「Copyright 2015-2015 breakwa11」,再断言 data.json 第二代的 year 是 2015–2019。",
+      "repro": "python3 -c \"print(open('docs/snapshots/shadowsocksr-obfs_tls-2026-09-14.py',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/shadowsocksr-obfs_tls-2026-09-14.py(2026-09-14 抓取) · index.html(generations[1].year)",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://github.com/shadowsocksrr/shadowsocksr",
         "quote": "'Copyright 2015-2015 breakwa11' 出现在 SSR 专有插件 shadowsocks/obfsplugin/auth.py 与 obfs_tls.py"
       },
       "check": {
-        "manual": "2015 来自上游源码版权行;页面上的 2015–2019 标签由 generation-years 命令重算"
+        "cmd": "python3 -c \"import json, pathlib\nS = pathlib.Path('docs/snapshots')\nsrc = (S / 'shadowsocksr-obfs_tls-2026-09-14.py').read_text(encoding='utf-8')\nassert 'Copyright 2015-2015 breakwa11' in src\ng = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))['generations'][1]\nassert g['year'] == '2015–2019', g['year']\nprint('obfs_tls.py: Copyright 2015-2015 breakwa11 | page year 2015–2019')\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "obfs_tls.py: Copyright 2015-2015 breakwa11 | page year 2015–2019"
+        }
       },
       "receipts": [
         {
@@ -220,19 +244,19 @@
       "generation": "2 SSR / VMess",
       "claim": "WebSocket + CDN 是约 2018 年起的部署实践,不是 2015 年的协议能力。",
       "verdict": "imprecise -> fixed",
-      "value": "WebSocket + CDN ≈ 2018 年起的部署实践",
+      "value": "WebSocket + CDN ≈ 2018 年起的部署实践(年份无一手来源,仍为人工判断)",
       "metric": "CDN 前置的性质(部署实践 vs 协议能力)",
-      "method": "对照 v2fly 传输层文档:只列 WebSocket,从未提及 CDN 前置",
-      "repro": "curl -s https://www.v2fly.org/config/transport.html | grep -i websocket",
+      "method": "对照 v2fly 传输层文档(www.v2fly.org 在本机取不到;可读的镜像是 GitHub 上 v2fly/v2fly-github-io 的 docs/config/transport.md):文档列出 WebSocket 传输层,但既不给年份也不提 CDN 前置——也就是说「2015 年的协议能力 vs 后来的部署实践」有依据,「约 2018 年」这个年份没有。",
+      "repro": "curl -s https://raw.githubusercontent.com/v2fly/v2fly-github-io/master/docs/config/transport.md | grep -i websocket",
       "evidence": "index.html(generations[1].points)",
-      "as_of": "2026-09-13",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://www.v2fly.org/config/transport.html",
-        "quote": "一手文档列出 WebSocket 传输层,但从未提及 CDN 前置"
+        "quote": "一手文档列出 WebSocket 传输层,但从未提及 CDN 前置,也没有任何年份(镜像:https://raw.githubusercontent.com/v2fly/v2fly-github-io/master/docs/config/transport.md)"
       },
       "fix": "层与要点都注明时间与性质",
       "check": {
-        "manual": "「约 2018 年起」是对部署史的判断,依据是上游文档的缺失,无提交物可重算"
+        "manual": "缺的产物:能把「WebSocket + CDN 前置 ≈ 2018 年起」这个年份钉住的一手来源。上游客文档(v2fly transport 配置页)只列 WebSocket 传输层,不给年份、也不提 CDN 前置,本机的 www.v2fly.org 取不到(连接超时),GitHub 镜像里同样没有这个年份;仓库内也没有任何提交物能重算它。年份之外的那半(不是 2015 年的协议能力)由 receipts + verify.py 守护。"
       },
       "receipts": [
         {
@@ -250,16 +274,20 @@
       "verdict": "imprecise -> fixed",
       "value": "obfs 手工拼装 ClientHello 与记录分帧",
       "metric": "TLS-in-TLS 的实现方式",
-      "method": "对照 SSR manyuser 分支 obfs_tls.py 源码",
-      "repro": "curl -s https://raw.githubusercontent.com/shadowsocksrr/shadowsocksr/manyuser/shadowsocks/obfsplugin/obfs_tls.py | grep -n 'x17'",
-      "evidence": "index.html(generations[1].points)",
-      "as_of": "2026-09-13",
+      "method": "obfs_tls.py 的摘录快照,以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。检查命令断言快照里有手工拼装的痕迹:多处长度的 x17 记录分帧、手写的密码套件字节串 001cc02b…、自造的 handshake_status 状态机与解码处的异常分支,再断言 data.json 第二代要点写着「手工拼装 ClientHello 与记录分帧」。",
+      "repro": "python3 -c \"print(open('docs/snapshots/shadowsocksr-obfs_tls-2026-09-14.py',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/shadowsocksr-obfs_tls-2026-09-14.py(2026-09-14 抓取) · index.html(generations[1].points[2])",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://github.com/shadowsocksrr/shadowsocksr/blob/manyuser/shadowsocks/obfsplugin/obfs_tls.py",
         "quote": "obfs_tls.py 手工拼装 ClientHello 字节串与 '\\x17'+version+size 记录分帧,自造状态机"
       },
       "check": {
-        "manual": "证据是上游源码里的字节级实现,本仓库只复述,无提交物可重算"
+        "cmd": "python3 -c \"import json, pathlib\nS = pathlib.Path('docs/snapshots')\nsrc = (S / 'shadowsocksr-obfs_tls-2026-09-14.py').read_text(encoding='utf-8')\nassert src.count('x17') >= 5, src.count('x17')\nassert \\\"struct.pack('>H', size)\\\" in src\nassert '001cc02bc02fcca9cca8' in src\nassert 'self.handshake_status' in src\nassert 'server_decode appdata error' in src\ng = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))['generations'][1]\nassert '手工拼装 ClientHello 与记录分帧' in g['points'][2], g['points'][2]\nprint('obfs_tls: hand-assembled ClientHello + x17 record framing | prose ok')\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "obfs_tls: hand-assembled ClientHello + x17 record framing | prose ok"
+        }
       },
       "receipts": [
         {
@@ -316,17 +344,21 @@
       "verdict": "imprecise -> fixed",
       "value": "未认证连接 → 预设端点(默认本机 HTTP 服务)",
       "metric": "回落目标",
-      "method": "对照 trojan protocol.md 原文",
-      "repro": "curl -s https://raw.githubusercontent.com/trojan-gfw/trojan/master/docs/protocol.md | grep -i preset",
-      "evidence": "index.html(generations[2].layers, points, probe.text)",
-      "as_of": "2026-09-13",
+      "method": "protocol.md 的「Other Protocols」与「Active Detection」两节摘录快照,以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。检查命令断言快照写着「redirected to a preset endpoint」与默认端点 127.0.0.1:80,再断言 data.json 第三代的层与要点。",
+      "repro": "python3 -c \"print(open('docs/snapshots/trojan-protocol-2026-09-14.md',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/trojan-protocol-2026-09-14.md(2026-09-14 抓取) · index.html(generations[2].layers[0], points[1])",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://github.com/trojan-gfw/trojan/blob/master/docs/protocol.md",
         "quote": "'All connection without correct structure and password will be redirected to a preset endpoint' (default 127.0.0.1:80)"
       },
       "fix": "层、要点、probe 文案统一",
       "check": {
-        "manual": "上游规范原文(trojan-gfw/trojan protocol.md),仓库只复述语义,无提交物可重算"
+        "cmd": "python3 -c \"import json, pathlib, re\nS = pathlib.Path('docs/snapshots')\nt = (S / 'trojan-protocol-2026-09-14.md').read_text(encoding='utf-8')\nassert 'redirected to a preset endpoint' in t\nassert re.search(r'by default it is .127\\\\.0\\\\.0\\\\.1:80(?!\\\\d)', t), t[-500:]\ng = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))['generations'][2]\nassert '预设站点(默认本机 HTTP 服务' in g['layers'][0]['d'], g['layers'][0]['d']\nassert '预设站点(默认本机 HTTP 服务' in g['points'][1], g['points'][1]\nprint('preset endpoint, default 127.0.0.1:80 | prose ok')\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "preset endpoint, default 127.0.0.1:80 | prose ok"
+        }
       },
       "receipts": [
         {
@@ -345,16 +377,20 @@
       "verdict": "contradicted -> fixed",
       "value": "JA3/JA4 = ClientHello 指纹,不是证书比对",
       "metric": "指纹的来源字段",
-      "method": "对照 salesforce/ja3 原文:取自 ClientHello",
-      "repro": "curl -s https://raw.githubusercontent.com/salesforce/ja3/master/README.md | grep -i 'client fingerprints'",
-      "evidence": "index.html(JSON-LD FAQ, generations[2].points)",
-      "as_of": "2026-09-13",
+      "method": "salesforce/ja3 README 的摘录快照(定义句 + 哈希的字段表),以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。检查命令断言快照把 JA3 定义为 SSL/TLS 客户端指纹、取的字段是 Client Hello 包里的,并断言这份摘录里不含 certificate 字样,再断言 data.json 第三代要点写着「基于 ClientHello 而非证书」。",
+      "repro": "python3 -c \"print(open('docs/snapshots/ja3-readme-2026-09-14.md',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/ja3-readme-2026-09-14.md(2026-09-14 抓取) · index.html(JSON-LD FAQ, generations[2].points[2])",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://github.com/salesforce/ja3",
         "quote": "'JA3 is a method for creating SSL/TLS client fingerprints' —— 取自 ClientHello 字段"
       },
       "check": {
-        "manual": "定义在上游仓库(salesforce/ja3),本仓库无提交物可重算"
+        "cmd": "python3 -c \"import json, pathlib\nS = pathlib.Path('docs/snapshots')\nj = (S / 'ja3-readme-2026-09-14.md').read_text(encoding='utf-8')\nassert 'SSL/TLS client fingerprints' in j\nassert 'fields in the Client Hello packet' in j\nassert 'certificate' not in j.lower(), 'the snapshot talks about certificates'\ng = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))['generations'][2]\nassert '基于 ClientHello 而非证书' in g['points'][2], g['points'][2]\nprint('JA3 = Client Hello fields, no certificate comparison | prose ok')\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "JA3 = Client Hello fields, no certificate comparison | prose ok"
+        }
       },
       "receipts": [
         {
@@ -372,16 +408,20 @@
       "verdict": "imprecise -> fixed",
       "value": "VLESS 2020 / Trojan 2018-03(v1.0.0)",
       "metric": "两个协议的起始年份",
-      "method": "对照 trojan v1.0.0 tag 日期与 Xray v1.0.0 发布说明",
-      "repro": "curl -s https://api.github.com/repos/trojan-gfw/trojan/git/refs/tags/v1.0.0",
-      "evidence": "index.html(generations[2].year = 2018–2020)",
-      "as_of": "2026-09-13",
+      "method": "Xray-core v1.0.0 发布说明(tag_name / published_at / body)与 trojan v1.0.0 tag 指向的提交元数据两份快照,以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。检查命令断言 Xray v1.0.0 发布于 2020-11 且说明里含 VLESS、trojan v1.0.0 的提交日期是 2018-03,再断言 data.json 第三代的 year 是 2018–2020。",
+      "repro": "python3 -c \"print(open('docs/snapshots/xray-v1.0.0-release-2026-09-14.json',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/xray-v1.0.0-release-2026-09-14.json(2026-09-14 抓取) + docs/snapshots/trojan-v1.0.0-tag-2026-09-14.json(2026-09-14 抓取) · index.html(generations[2].year)",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://github.com/trojan-gfw/trojan/releases/tag/v1.0.0",
         "quote": "v1.0.0 tag 2018-03-21;Xray v1.0.0(2020-11)发布说明含 'VLESS & Trojan XTLS 支持'"
       },
       "check": {
-        "manual": "发布 tag 日期在上游(需网络),仓库无提交物可重算;页面上的 2018–2020 标签由 generation-years 重算"
+        "cmd": "python3 -c \"import json, pathlib\nS = pathlib.Path('docs/snapshots')\nrel = json.loads((S / 'xray-v1.0.0-release-2026-09-14.json').read_text(encoding='utf-8'))\ntag = json.loads((S / 'trojan-v1.0.0-tag-2026-09-14.json').read_text(encoding='utf-8'))\nassert rel['published_at'][:7] == '2020-11', rel['published_at']\nassert 'VLESS' in rel['body']\nassert tag['commit_committer_date'][:7] == '2018-03', tag['commit_committer_date']\ng = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))['generations'][2]\nassert g['year'] == '2018–2020', g['year']\nprint('VLESS: Xray-core v1.0.0 2020-11-25 | Trojan: tag v1.0.0 2018-03-21 | page year 2018–2020')\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "VLESS: Xray-core v1.0.0 2020-11-25 | Trojan: tag v1.0.0 2018-03-21 | page year 2018–2020"
+        }
       },
       "receipts": [
         {
@@ -399,16 +439,20 @@
       "verdict": "contradicted -> fixed",
       "value": "TUIC 0.1.0 = 2022-03;Hysteria2 = 2023-09-02",
       "metric": "两个 QUIC 协议的起始时间",
-      "method": "对照 tuic 0.1.0 提交与 hysteria app/v2.0.0 tag",
-      "repro": "curl -s https://api.github.com/repos/tuic-protocol/tuic/git/refs/tags/0.1.0",
-      "evidence": "index.html(generations[3].year = 2022–2023)",
-      "as_of": "2026-09-13",
+      "method": "tuic 0.1.0 tag 指向的提交元数据,与 hysteria app/v2.0.0 发布页上「released this」的时间戳两份快照,以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。(抓取时 GitHub API 已限流,故 hysteria 一侧取的是发布页 HTML 上的 relative-time,日期与 API 的 tagger date 一致。)检查命令断言 TUIC 0.1.0 提交于 2022-03-10、Hysteria2 app/v2.0.0 发布于 2023-09-02,再断言 data.json 第四代的 year 与 llms.txt。",
+      "repro": "python3 -c \"print(open('docs/snapshots/tuic-0.1.0-tag-2026-09-14.json',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/tuic-0.1.0-tag-2026-09-14.json(2026-09-14 抓取) + docs/snapshots/hysteria2-v2.0.0-release-2026-09-14.json(2026-09-14 抓取) · index.html(generations[3].year)",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://github.com/tuic-protocol/tuic/commits/0.1.0",
         "quote": "TUIC tag 0.1.0 提交于 2022-03;Hysteria app/v2.0.0 tag 提交于 2023-09-02"
       },
       "check": {
-        "manual": "上游 tag 提交时间(需网络),仓库无提交物可重算;页面上的 2022–2023 标签由 generation-years 重算"
+        "cmd": "python3 -c \"import json, pathlib\nS = pathlib.Path('docs/snapshots')\ntu = json.loads((S / 'tuic-0.1.0-tag-2026-09-14.json').read_text(encoding='utf-8'))\nhy = json.loads((S / 'hysteria2-v2.0.0-release-2026-09-14.json').read_text(encoding='utf-8'))\nassert tu['commit_committer_date'][:10] == '2022-03-10', tu['commit_committer_date']\nassert hy['released_this_relative_time'][:10] == '2023-09-02', hy['released_this_relative_time']\ng = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))['generations'][3]\nassert g['year'] == '2022–2023', g['year']\nassert 'Hysteria2 / TUIC (2022–2023)' in pathlib.Path('llms.txt').read_text(encoding='utf-8')\nprint('TUIC 0.1.0 2022-03-10 | Hysteria2 app/v2.0.0 2023-09-02 | page year 2022–2023')\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "TUIC 0.1.0 2022-03-10 | Hysteria2 app/v2.0.0 2023-09-02 | page year 2022–2023"
+        }
       },
       "receipts": [
         {
@@ -432,16 +476,20 @@
       "verdict": "imprecise -> fixed",
       "value": "队头阻塞的自由度按流,而非按包",
       "metric": "QUIC 丢包阻塞的粒度",
-      "method": "对照 RFC 9000 §13.3 原文",
-      "repro": "curl -s https://www.rfc-editor.org/rfc/rfc9000.txt | grep -A2 'blocks all those streams'",
-      "evidence": "index.html(generations[3].points)",
-      "as_of": "2026-09-13",
+      "method": "RFC 9000 §13 的摘录快照(2026-09-14 从 rfc-editor 的 txt 抓取),以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。检查命令断言快照里有「only streams with data in that packet are blocked」与「blocks all those streams」,再断言 data.json 第四代要点。注:被引的那段在 §13 的引言里而非 §13.3(§13.3 是 Retransmission of Information),source 已按 txt 的实际分节改到 §13。",
+      "repro": "python3 -c \"print(open('docs/snapshots/rfc9000-section-13-2026-09-14.txt',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/rfc9000-section-13-2026-09-14.txt(2026-09-14 抓取) · index.html(generations[3].points[0])",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://www.rfc-editor.org/rfc/rfc9000.html#section-13.3",
         "quote": "'when data from multiple streams is included in a single QUIC packet, loss of that packet blocks all those streams.'"
       },
       "check": {
-        "manual": "RFC 原文不在仓库内(需网络),无提交物可重算"
+        "cmd": "python3 -c \"import json, pathlib\nS = pathlib.Path('docs/snapshots')\nr = ' '.join((S / 'rfc9000-section-13-2026-09-14.txt').read_text(encoding='utf-8').split())\nassert 'only streams with data in that packet are blocked' in r\nassert 'blocks all those streams' in r\ng = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))['generations'][3]\nassert '同一 UDP 包内的多条流会一起被阻塞' in g['points'][0], g['points'][0]\nprint('RFC 9000 §13: loss blocks only the streams carried in that packet | prose ok')\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "RFC 9000 §13: loss blocks only the streams carried in that packet | prose ok"
+        }
       },
       "receipts": [
         {
@@ -460,16 +508,20 @@
       "verdict": "imprecise -> fixed",
       "value": "Brutal:按设定带宽发送、丢包时略超发;仅在配置带宽时启用",
       "metric": "拥塞控制语义",
-      "method": "对照 hysteria 官方文档 Full-Server-Config 原文",
-      "repro": "curl -s https://hysteria.network/docs/advanced/Full-Server-Config/ | grep -i 'loss compensation'",
-      "evidence": "index.html(generations[3].points)",
-      "as_of": "2026-09-13",
+      "method": "hysteria 官方 Full-Server-Config 的四段原文摘录快照,以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。检查命令断言快照里有 loss compensation、按设定带宽略快补偿、固定速率模型、以及「不用 Brutal 时走配置的非 Brutal 控制器」,再断言 data.json 第四代要点写着「按设定带宽略微超发补偿」「仅在配置了带宽时启用」。",
+      "repro": "python3 -c \"print(open('docs/snapshots/hysteria2-full-server-config-brutal-2026-09-14.md',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/hysteria2-full-server-config-brutal-2026-09-14.md(2026-09-14 抓取) · index.html(generations[3].points[1])",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://hysteria.network/docs/advanced/Full-Server-Config/",
         "quote": "'Brutal congestion control has a \"loss compensation\" mechanism: when there is packet loss, it attempts to send slightly faster than the set bandwidth'"
       },
       "check": {
-        "manual": "语义只在上游文档里;仓库数据只有弱网倍率(128 vs 95),不含「仅在配置带宽时启用」这一前提,无提交物可重算"
+        "cmd": "python3 -c \"import json, pathlib\nS = pathlib.Path('docs/snapshots')\nh = (S / 'hysteria2-full-server-config-brutal-2026-09-14.md').read_text(encoding='utf-8')\nassert 'loss compensation' in h\nassert 'slightly faster than the set bandwidth' in h\nassert 'fixed rate model' in h\nassert 'configured non-Brutal controller' in h\ng = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))['generations'][3]\nassert '按设定带宽略微超发补偿' in g['points'][1], g['points'][1]\nassert '仅在配置了带宽时启用' in g['points'][1], g['points'][1]\nprint('Brutal: fixed rate + loss compensation, only with bandwidth set | prose ok')\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "Brutal: fixed rate + loss compensation, only with bandwidth set | prose ok"
+        }
       },
       "receipts": [
         {
@@ -488,16 +540,20 @@
       "verdict": "imprecise -> fixed",
       "value": "UDP 封锁时由客户端切到 TCP 节点,不是协议自动降级",
       "metric": "回落动作的归属(策略 vs 协议能力)",
-      "method": "对照 v1.hysteria 文档:只有 faketcp / 混淆,没有内建自动 TCP 回落;udp 剧本里也标为「回落策略」",
-      "repro": "curl -s https://v1.hysteria.network/docs/advanced-usage/ | grep -i faketcp",
-      "evidence": "index.html(scenarios[udp].steps[3-4])",
-      "as_of": "2026-09-13",
+      "method": "hysteria v1 文档 Advanced Usage 页的正文全文快照(去掉了站点导航),以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。检查命令断言文中 protocol 的取值只有 udp / wechat-video / faketcp 这类显式配置项,再在全文里检索 automatic 与 fallback 两个词,一个都不许出现;最后断言 data.json 的 udp 剧本里那一步是「回落策略:切换 REALITY(TCP 443)」——即回落是剧本里的客户端动作,不是协议内建。",
+      "repro": "python3 -c \"print(open('docs/snapshots/hysteria-v1-advanced-usage-2026-09-14.md',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/hysteria-v1-advanced-usage-2026-09-14.md(2026-09-14 抓取) · index.html(scenarios[udp].steps[3-4]) · README.md",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://v1.hysteria.network/docs/advanced-usage/",
         "quote": "一手文档提供 Salamander/Gecko 混淆与 faketcp,没有内建自动 TCP 回落"
       },
       "check": {
-        "manual": "依据是上游文档的缺失 + 剧本动作(策略而非协议能力),无提交物可重算"
+        "cmd": "python3 -c \"import json, pathlib, re\nS = pathlib.Path('docs/snapshots')\ndoc = (S / 'hysteria-v1-advanced-usage-2026-09-14.md').read_text(encoding='utf-8')\nbody = doc.split(chr(10) + chr(10), 1)[1]\nassert '\\\"udp\\\", \\\"wechat-video\\\", \\\"faketcp\\\"' in body, 'the protocol option list changed'\nassert 'automatic' not in body.lower(), 'the page documents an automatic mode'\nassert not re.search(r'TCP[^.]{0,60}fall ?back', body, re.I), 'the page documents a TCP fallback'\nd = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))\nsteps = [s for sc in d['scenarios'] if sc['id'] == 'udp' for s in sc['steps']]\nassert any('切换 REALITY(TCP 443)' in str(s.get('status', '')) for s in steps), steps\nprint('hysteria v1: faketcp is an explicit protocol, no automatic TCP fallback | udp script: client switches to REALITY (TCP 443)')\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "hysteria v1: faketcp is an explicit protocol, no automatic TCP fallback | udp script: client switches to REALITY (TCP 443)"
+        }
       },
       "receipts": [
         {
@@ -521,17 +577,21 @@
       "verdict": "contradicted -> fixed",
       "value": "X25519 用服务器自身密钥对;探测者被中继给真实网站",
       "metric": "REALITY 握手密钥来源与探测连接去向",
-      "method": "对照 XTLS REALITY 文档与 Xray-core 源码",
-      "repro": "curl -s https://xtls.github.io/config/transports/reality.html",
-      "evidence": "index.html(JSON-LD FAQ, generations[4].layers)",
-      "as_of": "2026-09-13",
+      "method": "Xray 传输配置文档 REALITY 页的摘录快照(password 字段说明 + 鉴权失败流量的 WARNING),以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。检查命令断言快照写着 password 是「服务端私钥对应的公钥」、鉴权失败的流量会「直接转发至 target」,再断言 data.json 第五代要点与 llms.txt 的同一说法。",
+      "repro": "python3 -c \"print(open('docs/snapshots/xray-reality-transport-2026-09-14.md',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/xray-reality-transport-2026-09-14.md(2026-09-14 抓取) · index.html(JSON-LD FAQ, generations[4].layers/points) · llms.txt",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://xtls.github.io/config/transports/reality.html",
         "quote": "password 是服务器私钥对应的公钥;目标站提供 TLS 外观并接收被中继的探测连接"
       },
       "fix": "JSON-LD / FAQ / 面板三处全部改写",
       "check": {
-        "manual": "上游文档 / 源码(xtls.github.io、XTLS/Xray-core),仓库只复述,无提交物可重算"
+        "cmd": "python3 -c \"import json, pathlib\nS = pathlib.Path('docs/snapshots')\nr = (S / 'xray-reality-transport-2026-09-14.md').read_text(encoding='utf-8')\nassert '服务端私钥对应的公钥' in r, r\nassert '直接转发 至 target' in r, r\ng = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))['generations'][4]\nassert '客户端用服务器公钥' in g['points'][0], g['points'][0]\nassert '探测者的连接被转发给真实目标站' in g['points'][0], g['points'][0]\nassert \\\"the server's own keypair\\\" in pathlib.Path('llms.txt').read_text(encoding='utf-8')\nprint(\\\"REALITY: password = the server's own keypair; failed auth forwarded to target | prose ok\\\")\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "REALITY: password = the server's own keypair; failed auth forwarded to target | prose ok"
+        }
       },
       "receipts": [
         {
@@ -555,20 +615,24 @@
     {
       "id": "anytls.year",
       "generation": "5 REALITY / AnyTLS",
-      "claim": "AnyTLS 是 2025 年的协议,不是 2023。",
+      "claim": "AnyTLS 是 2025 年的协议:anytls-go 最早的 tag 是 v0.0.1(2025-02-10),v0.0.7 / v0.0.8 分别是 2025-03-27 / 2025-04-09。",
       "verdict": "imprecise -> fixed",
-      "value": "AnyTLS = 2025(v0.0.7 / v0.0.8;protocol v2 记 2025-04)",
+      "value": "AnyTLS = 2025(最早 tag v0.0.1, 2025-02-10;v0.0.7 2025-03-27 / v0.0.8 2025-04-09)",
       "metric": "协议起始年份",
-      "method": "对照 anytls-go tags",
-      "repro": "curl -s https://api.github.com/repos/anytls/anytls-go/tags",
-      "evidence": "README.md / llms.txt(REALITY (2023) / AnyTLS (2025))",
-      "as_of": "2026-09-13",
+      "method": "tags API 返回的完整 tag 列表、tags.atom 里最近十个 tag 的日期、以及 v0.0.1 / v0.0.2 两个 tag 页上的发布日期(后两者是因为 API 限流与 feed 只带十个才补的)三份快照,以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。检查命令断言最早的 tag 是 v0.0.1 且发布于 2025-02-10、v0.0.2 是 2025-02-17、feed 里十个日期都不早于 2025-02-19、v0.0.7 / v0.0.8 是 2025-03-27 / 2025-04-09,再断言 README 里写着 AnyTLS (2025)。更正:原 value 写「最早 tag v0.0.7」不实——tags 列表里 v0.0.1–v0.0.13 都在,最早的是 v0.0.1;年份 2025 不变。",
+      "repro": "python3 -c \"print(open('docs/snapshots/anytls-go-tags-2026-09-14.json',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/anytls-go-tags-2026-09-14.json(2026-09-14 抓取) + docs/snapshots/anytls-go-tags-2026-09-14.atom(2026-09-14 抓取) + docs/snapshots/anytls-go-tag-pages-2026-09-14.json(2026-09-14 抓取) · README.md / llms.txt(REALITY (2023) / AnyTLS (2025))",
+      "as_of": "2026-09-14",
       "source": {
-        "url": "https://github.com/anytls/anytls-go/tags",
-        "quote": "最早 tag v0.0.7(2025-03)、v0.0.8(2025-04);protocol v2 记为 2025-04"
+        "url": "https://api.github.com/repos/anytls/anytls-go/tags",
+        "quote": "tags 列表(v0.0.1 … v0.0.13)里最早的是 v0.0.1,页面日期 2025-02-10;v0.0.7 / v0.0.8 的日期是 2025-03-27 / 2025-04-09(docs/snapshots/anytls-go-tags-2026-09-14.json · .atom · anytls-go-tag-pages-2026-09-14.json)"
       },
       "check": {
-        "manual": "上游 tag 日期(需网络);README/llms.txt 里的「AnyTLS (2025)」字样由 receipts + verify.py 守护,年份本身无提交物可重算"
+        "cmd": "python3 -c \"import json, pathlib, re\nS = pathlib.Path('docs/snapshots')\ntags = json.loads((S / 'anytls-go-tags-2026-09-14.json').read_text(encoding='utf-8'))\npages = json.loads((S / 'anytls-go-tag-pages-2026-09-14.json').read_text(encoding='utf-8'))['pages']\natom = (S / 'anytls-go-tags-2026-09-14.atom').read_text(encoding='utf-8')\nnames = sorted(t['name'] for t in tags['tags'])\nassert names[0] == 'v0.0.1', names[0]\nassert pages['v0.0.1']['released_this_relative_time'][:10] == '2025-02-10', pages['v0.0.1']\nassert pages['v0.0.2']['released_this_relative_time'][:10] == '2025-02-17', pages['v0.0.2']\nentries = atom.split('<entry>')[1:]\ndates = [re.search(r'<updated>(\\\\d{4}-\\\\d{2}-\\\\d{2})', e).group(1) for e in entries]\nassert len(dates) == 10, len(dates)\nassert min(dates) >= '2025-02-19', min(dates)\nassert '2025-03-27' in dates and '2025-04-09' in dates, dates\nassert 'AnyTLS (2025)' in pathlib.Path('README.md').read_text(encoding='utf-8')\nprint('earliest tag v0.0.1 2025-02-10 | v0.0.7 2025-03-27 | v0.0.8 2025-04-09 | prose AnyTLS (2025)')\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "earliest tag v0.0.1 2025-02-10 | v0.0.7 2025-03-27 | v0.0.8 2025-04-09 | prose AnyTLS (2025)"
+        }
       },
       "receipts": [
         {
@@ -588,20 +652,24 @@
     {
       "id": "xhttp.intro",
       "generation": "6 XHTTP + post-quantum REALITY",
-      "claim": "XHTTP 前身 SplitHTTP,2024.12 更名;上下行拆成不同 HTTP 请求,可走 CDN。",
+      "claim": "XHTTP 前身是 SplitHTTP:v24.10.31(2024-10-31)的发布说明里正式把 SplitHTTP 升级为 XHTTP,实现真正的上下行分离,可走 CDN。",
       "verdict": "confirmed",
-      "value": "SplitHTTP → XHTTP 更名于 2024.12",
+      "value": "SplitHTTP → XHTTP:v24.10.31(2024-10-31)正式升级,上下行真正分离",
       "metric": "更名时间与上下行拆分形态",
-      "method": "对照 XTLS/Xray-core discussion 4113",
-      "repro": "curl -s https://github.com/XTLS/Xray-core/discussions/4113 | grep -i xhttp",
-      "evidence": "index.html(generations[5].points)",
-      "as_of": "2026-09-13",
+      "method": "v24.10.31 发布说明里提到 XHTTP/SplitHTTP 的行,与讨论 4113 的开头段两份快照,以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。检查命令断言 v24.10.31 发布于 2024-10-31 且写着「正式将 SplitHTTP 升级为 XHTTP」「真正的上下行分离」,讨论 4113 里写着「更名为 XHTTP」「过 CDN」,再断言 data.json 第六代要点写着上下行拆到不同 HTTP 请求。更正:更名的时点是 v24.10.31(2024-10-31)的发布说明,原 value 的「2024.12」是讨论 4113 的发布日(2024-12-05);index.html 正文(「前身 SplitHTTP,2024.12 发布」)与 receipts 里那条仍是「2024.12 发布」,待一并改到 2024.10。",
+      "repro": "python3 -c \"print(open('docs/snapshots/xray-v24.10.31-release-2026-09-14.json',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/xray-v24.10.31-release-2026-09-14.json(2026-09-14 抓取) + docs/snapshots/xray-discussion-4113-xhttp-2026-09-14.md(2026-09-14 抓取) · index.html(generations[5].points[0])",
+      "as_of": "2026-09-14",
       "source": {
-        "url": "https://github.com/XTLS/Xray-core/discussions/4113",
-        "quote": "SplitHTTP mid-2024, renamed XHTTP Dec 2024;代码里的 Go 协议名仍是 splithttp"
+        "url": "https://api.github.com/repos/XTLS/Xray-core/releases/tags/v24.10.31",
+        "quote": "'现在,#3955 正式将 SplitHTTP 升级为 XHTTP,实现了真正的上下行分离'(v24.10.31, 2024-10-31);讨论 4113『XHTTP: Beyond REALITY』:'首次大规模实现了 QUIC H3 过 CDN' · '实现了真正的上下行分离并更名为 XHTTP'(2024-12-05)"
       },
       "check": {
-        "manual": "更名时间在上游讨论帖 / 发布说明里(需网络),仓库无提交物可重算"
+        "cmd": "python3 -c \"import json, pathlib\nS = pathlib.Path('docs/snapshots')\nrel = json.loads((S / 'xray-v24.10.31-release-2026-09-14.json').read_text(encoding='utf-8'))\ndis = (S / 'xray-discussion-4113-xhttp-2026-09-14.md').read_text(encoding='utf-8')\nassert rel['published_at'][:10] == '2024-10-31', rel['published_at']\nbody = chr(10).join(rel['body_lines_mentioning_xhttp'])\nassert '正式将 SplitHTTP 升级为 XHTTP' in body, body\nassert 'real upload / download splitting' in body, body\nassert '更名为 XHTTP' in dis, dis\nassert '过 CDN' in dis, dis\ng = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))['generations'][5]\nassert '拆到不同的 HTTP 请求里' in g['points'][0], g['points'][0]\nprint('v24.10.31 (2024-10-31): SplitHTTP upgraded to XHTTP, up/down really split | CDN via discussion 4113')\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "v24.10.31 (2024-10-31): SplitHTTP upgraded to XHTTP, up/down really split | CDN via discussion 4113"
+        }
       },
       "receipts": [
         {
@@ -619,16 +687,20 @@
       "verdict": "confirmed",
       "value": "v25.5.16 起支持 X25519MLKEM768;v25.7.26 起支持 ECH + ML-DSA-65",
       "metric": "抗量子能力加入的版本",
-      "method": "对照 Xray-core release notes",
-      "repro": "curl -s https://api.github.com/repos/XTLS/Xray-core/releases/tags/v25.5.16",
-      "evidence": "index.html(generations[5].layers, points)",
-      "as_of": "2026-09-13",
+      "method": "v25.5.16 / v25.7.26 两份发布说明快照(tag_name、published_at 与提到相关算法的行),以上均为 2026-09-14 抓取的时间点快照——门禁不重新联网抓取,快照的新鲜度不检查;检查命令解析快照复算数字。检查命令断言 v25.5.16 发布于 2025-05-16 且说明里有 X25519MLKEM768、v25.7.26 发布于 2025-07-26 且说明里有 ML-DSA-65 与 ECH,再断言 data.json 第六代要点写着这两个版本。",
+      "repro": "python3 -c \"print(open('docs/snapshots/xray-v25.5.16-release-2026-09-14.json',encoding='utf-8').read())\"",
+      "evidence": "docs/snapshots/xray-v25.5.16-release-2026-09-14.json(2026-09-14 抓取) + docs/snapshots/xray-v25.7.26-release-2026-09-14.json(2026-09-14 抓取) · index.html(generations[5].layers/points)",
+      "as_of": "2026-09-14",
       "source": {
         "url": "https://github.com/XTLS/Xray-core/releases/tag/v25.5.16",
         "quote": "'REALITY practice: Support X25519MLKEM768 for TLS' communication'(v25.5.16, 2025-05-16);v25.7.26 说明含 ML-DSA-65 验证与 TLS ECH"
       },
       "check": {
-        "manual": "版本号在上游发布说明里(需网络);仓库内只有算法名(第六代协议栈),不含版本,无提交物可重算"
+        "cmd": "python3 -c \"import json, pathlib\nS = pathlib.Path('docs/snapshots')\na = json.loads((S / 'xray-v25.5.16-release-2026-09-14.json').read_text(encoding='utf-8'))\nb = json.loads((S / 'xray-v25.7.26-release-2026-09-14.json').read_text(encoding='utf-8'))\nassert a['published_at'][:10] == '2025-05-16', a['published_at']\nassert any('X25519MLKEM768' in l for l in a['body_lines']), a['body_lines']\nassert b['published_at'][:10] == '2025-07-26', b['published_at']\nbl = chr(10).join(b['body_lines'])\nassert 'ML-DSA-65' in bl and 'ECH' in bl, bl\ng = json.loads(pathlib.Path('data.json').read_text(encoding='utf-8'))['generations'][5]\nassert 'v25.5.16 起支持' in g['points'][1], g['points'][1]\nassert 'v25.7.26 起支持' in g['points'][1], g['points'][1]\nprint('v25.5.16 2025-05-16: X25519MLKEM768 | v25.7.26 2025-07-26: ML-DSA-65 + ECH | prose ok')\"",
+        "timeout": 60,
+        "expect": {
+          "equals": "v25.5.16 2025-05-16: X25519MLKEM768 | v25.7.26 2025-07-26: ML-DSA-65 + ECH | prose ok"
+        }
       },
       "receipts": [
         {
@@ -1097,24 +1169,47 @@
       }
     },
     {
+      "id": "snapshot-index",
+      "generation": "全局",
+      "claim": "docs/snapshots/ 下每个引用的上游快照都带 source URL 与抓取日期——没有日期的「时间点」既不能判断新鲜度,也不能当收据。",
+      "verdict": "confirmed",
+      "value": "每个快照都带 source + fetched 日期",
+      "metric": "docs/snapshots/ 下每个文件的首部字段",
+      "method": "遍历 docs/snapshots/ 下的每个文件,断言都出现 source 与 fetched YYYY-MM-DD 两个字段(JSON 快照写在 _snapshot 里,文本快照写在前几行注释里),并打印文件数。",
+      "repro": "python3 -c \"import pathlib;print(sorted(p.name for p in pathlib.Path('docs/snapshots').iterdir()))\"",
+      "evidence": "docs/snapshots/*",
+      "as_of": "2026-09-14",
+      "source": {
+        "url": "docs/snapshots/",
+        "quote": "每个快照首部:source: <上游 URL> / fetched: <YYYY-MM-DD>,并在 note 里写明这是时间点抓取、新鲜度不检查"
+      },
+      "check": {
+        "cmd": "python3 -c \"import pathlib, re\nfiles = sorted(pathlib.Path('docs/snapshots').iterdir())\nassert files, 'no snapshots committed'\ntexts = {p.name: p.read_text(encoding='utf-8') for p in files}\nmissing_date = [n for n, t in texts.items() if not re.search(r'(fetched|\\\"fetched\\\"):\\\\s*\\\"?\\\\d{4}-\\\\d{2}-\\\\d{2}', t)]\nassert not missing_date, missing_date\nmissing_src = [n for n, t in texts.items() if not re.search(r'(source|\\\"source\\\"):\\\\s*\\\\S', t)]\nassert not missing_src, missing_src\nprint(str(len(files)) + ' snapshot files, each carrying a source URL and a fetch date')\"",
+        "expect": {
+          "regex": "^\\d+ snapshot files, each carrying a source URL and a fetch date$"
+        },
+        "timeout": 60
+      }
+    },
+    {
       "id": "ci-schedule",
       "generation": "全局",
       "claim": "数字收据门禁在每次 push / PR 以及每周一 06:17 UTC 由 .github/workflows/claims.yml 跑一遍。",
       "verdict": "confirmed",
-      "value": "push + PR + 每周一 06:17 UTC",
+      "value": "push + PR + 每周一 06:17 UTC(本仓库的动作钉在 alloevil/verify-claims@v0.1.1)",
       "metric": "workflow 的触发器与 action 版本钉子",
-      "method": "读 .github/workflows/claims.yml:必须有 push / pull_request / cron 三种触发器与固定的 alloevil/verify-claims@v0.1.0",
+      "method": "读 .github/workflows/claims.yml:必须有 push / pull_request / cron 三种触发器,并把本仓库自己的动作钉在已发布的 alloevil/verify-claims@v0.1.1(该 pin 在 79352f1 由 v0.1.0 改为 v0.1.1,本 claim 当时没跟着改,门禁因此在 HEAD 上是红的)。",
       "repro": "python3 -c \"import pathlib;print(pathlib.Path('.github/workflows/claims.yml').read_text())\"",
       "evidence": ".github/workflows/claims.yml",
-      "as_of": "2026-09-13",
+      "as_of": "2026-09-14",
       "source": {
         "url": ".github/workflows/claims.yml",
-        "quote": "on: push / pull_request / schedule cron «17 6 * * 1»;steps: uses alloevil/verify-claims@v0.1.0"
+        "quote": "on: push / pull_request / schedule cron «17 6 * * 1»;steps: uses alloevil/verify-claims@v0.1.1"
       },
       "check": {
-        "cmd": "python3 -c \"\nimport pathlib, re\nt = pathlib.Path('.github/workflows/claims.yml').read_text(encoding='utf-8')\nassert 'alloevil/verify-claims@v0.1.0' in t, 'action 的版本钉子不见了'\nassert re.search(r'cron:.{0,3}17 6 \\* \\* 1', t), '每周兜底的 cron 不见了'\nassert re.search(r'^  push:', t, re.M), 'push 触发不见了'\nassert re.search(r'^  pull_request:', t, re.M), 'PR 触发不见了'\nprint('weekly 17 6 * * 1 | pin alloevil/verify-claims@v0.1.0 | push+PR')\n\"",
+        "cmd": "python3 -c \"import pathlib, re\nt = pathlib.Path('.github/workflows/claims.yml').read_text(encoding='utf-8')\npin = re.search(r'alloevil/verify-claims@(v[0-9.]+)', t)\nassert pin, 'no alloevil/verify-claims pin in the workflow'\nassert pin.group(1) == 'v0.1.1', pin.group(1)\nassert re.search(r'cron:.{0,3}17 6 \\* \\* 1', t), 'weekly cron gone'\nassert re.search(r'^  push:', t, re.M), 'push trigger gone'\nassert re.search(r'^  pull_request:', t, re.M), 'PR trigger gone'\nprint('weekly 17 6 * * 1 | pin alloevil/verify-claims@' + pin.group(1) + ' | push+PR')\"",
         "expect": {
-          "equals": "weekly 17 6 * * 1 | pin alloevil/verify-claims@v0.1.0 | push+PR"
+          "equals": "weekly 17 6 * * 1 | pin alloevil/verify-claims@v0.1.1 | push+PR"
         },
         "timeout": 30
       }

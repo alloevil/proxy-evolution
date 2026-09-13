@@ -1,0 +1,11 @@
+{
+  "_snapshot": {
+    "source": "https://api.github.com/repos/trojan-gfw/trojan/git/refs/tags/v1.0.0",
+    "fetched": "2026-09-14",
+    "note": "tag ref plus the tagged commit's metadata, fetched together; point-in-time capture committed so claims.json can check the quote offline; the gate does not re-fetch it, freshness is not checked"
+  },
+  "ref": "refs/tags/v1.0.0",
+  "object_sha": "bd73330248972dad6a726fab11a4488d4416bb80",
+  "commit_committer_date": "2018-03-21T17:12:55Z",
+  "commit_message": "Remove unnecessary dependencies"
+}

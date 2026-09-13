@@ -1,0 +1,111 @@
+<!-- snapshot — anytls/anytls-go tags feed (tags.atom)
+     source: https://github.com/anytls/anytls-go/tags.atom
+     fetched:2026-09-14
+     note: point-in-time capture committed so claims.json can check the quote offline; the gate does not re-fetch it, freshness is not checked.
+     the feed carries the ten most recent tags with their update dates -->
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xml:lang="en-US">
+  <id>tag:github.com,2008:https://github.com/anytls/anytls-go/releases</id>
+  <link type="text/html" rel="alternate" href="https://github.com/anytls/anytls-go/releases"/>
+  <link type="application/atom+xml" rel="self" href="https://github.com/anytls/anytls-go/releases.atom"/>
+  <title>Tags from anytls-go</title>
+  <updated>2026-06-27T09:16:40Z</updated>
+  <entry>
+    <id>tag:github.com,2008:Repository/929691357/v0.0.13</id>
+    <updated>2026-06-27T09:35:22Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/anytls/anytls-go/releases/tag/v0.0.13"/>
+    <title>v0.0.13</title>
+    <content></content>
+    <author>
+      <name>anytls</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/198425817?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/929691357/v0.0.12</id>
+    <updated>2026-01-12T09:42:56Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/anytls/anytls-go/releases/tag/v0.0.12"/>
+    <title>v0.0.12</title>
+    <content></content>
+    <author>
+      <name>anytls</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/198425817?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/929691357/v0.0.11</id>
+    <updated>2025-09-22T07:32:59Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/anytls/anytls-go/releases/tag/v0.0.11"/>
+    <title>v0.0.11</title>
+    <content></content>
+    <author>
+      <name>anytls</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/198425817?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/929691357/v0.0.10</id>
+    <updated>2025-09-22T07:36:58Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/anytls/anytls-go/releases/tag/v0.0.10"/>
+    <title>v0.0.10</title>
+    <content></content>
+    <author>
+      <name>anytls</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/198425817?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/929691357/v0.0.9</id>
+    <updated>2025-09-21T00:29:00Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/anytls/anytls-go/releases/tag/v0.0.9"/>
+    <title>v0.0.9</title>
+    <content></content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/929691357/v0.0.8</id>
+    <updated>2025-04-09T01:35:11Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/anytls/anytls-go/releases/tag/v0.0.8"/>
+    <title>v0.0.8</title>
+    <content></content>
+    <author>
+      <name>anytls</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/198425817?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/929691357/v0.0.7</id>
+    <updated>2025-03-27T05:36:43Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/anytls/anytls-go/releases/tag/v0.0.7"/>
+    <title>v0.0.7</title>
+    <content></content>
+    <author>
+      <name>anytls</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/198425817?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/929691357/v0.0.5</id>
+    <updated>2025-03-11T07:20:52Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/anytls/anytls-go/releases/tag/v0.0.5"/>
+    <title>v0.0.5</title>
+    <content></content>
+    <author>
+      <name>anytls</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/198425817?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/929691357/v0.0.4</id>
+    <updated>2025-02-24T10:42:46Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/anytls/anytls-go/releases/tag/v0.0.4"/>
+    <title>v0.0.4</title>
+    <content></content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/929691357/v0.0.3</id>
+    <updated>2025-02-19T07:24:28Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/anytls/anytls-go/releases/tag/v0.0.3"/>
+    <title>v0.0.3</title>
+    <content></content>
+  </entry>
+</feed>

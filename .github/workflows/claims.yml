@@ -1,0 +1,17 @@
+name: claims
+# 跑 claims.json 背后那批收据：每个对外数字都必须还能被它旁边那条命令打印出来。
+# 除了 push 之外每周再兜一次 —— 数据会在没人提交的情况下变。
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "17 6 * * 1"
+permissions:
+  contents: read
+jobs:
+  verify:
+    name: published numbers still reproduce
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: alloevil/verify-claims@v0.1.0

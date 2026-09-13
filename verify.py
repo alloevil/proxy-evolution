@@ -5,7 +5,9 @@
       python3 verify.py --json     # 机器可读输出
 
 检查三件事:
-1. 每条 claim 的 check:指定文件里必须出现/必须不出现指定文本;
+1. 每条 claim 的 receipts:指定文件里必须出现/必须不出现指定文本;
+   (claims.json 里另有可执行的 check(cmd/expect),那是对外数字的收据,由 verify-claims 跑,
+    见 .github/workflows/claims.yml;本脚本只管文档措辞与生成物一致)
 2. banned_phrases:被证伪的措辞不得在任何文本文件里复发;
 3. data.json 是否与 index.html 同步(index.html 是唯一事实源,data.json 由 build-data.py 生成)。
 它不重新判断协议本身(那是上游来源的事),只保证「改过的错不再回来、生成物不漂移」。
@@ -38,7 +40,7 @@ def run_checks():
         src = c.get("source", {})
         if not src.get("url") or not src.get("quote"):
             problems.append("receipt incomplete: source url/quote missing")
-        for chk in c.get("check", []):
+        for chk in c.get("receipts", []):
             name = chk["file"]
             if name not in files:
                 problems.append(f"unknown file: {name}")
@@ -86,7 +88,7 @@ def main():
                           "results": results}, ensure_ascii=False))
         return 1 if failures else 0
     print(f"proxy-evolution-verify  {ROOT}")
-    print(f"checked_on: {DOC['checked_on']} · {len(DOC['claims'])} claims · "
+    print(f"updated: {DOC.get('updated', '?')} · {len(DOC['claims'])} claims · "
           f"{len(DOC.get('banned_phrases', []))} banned phrases\n")
     for r in results:
         mark = "✓" if r["level"] == "ok" else "✗"

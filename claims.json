@@ -1,7 +1,7 @@
 {
-  "$comment": "机制层断言的收据。每条 claim 带一手来源(规范/源码/RFC/官方发布说明)的原文引用,以及三个面向文档的 check(哪个文件里必须出现/必须不出现什么)。verify.py 执行这些检查,并额外做 data.json 漂移与禁用措辞检查。",
+  "$comment": "机制层断言的收据 + 对外数字的可执行收据。每条 claim 带一手来源(规范/源码/RFC/官方发布说明)的原文引用;`receipts` 是面向文档的检查(哪个文件里必须出现/必须不出现什么),由 verify.py 执行,并额外做 data.json 漂移与禁用措辞检查;`check` 是面向数字的收据(cmd + expect,或 manual + 理由),由 verify-claims 执行,见 .github/workflows/claims.yml。",
   "project": "proxy-evolution",
-  "checked_on": "2026-09-11",
+  "updated": "2026-09-13",
   "sources_note": "一手来源:shadowsocks-org 规范(sip004/sip022/aead/stream/what-is-shadowsocks)、shadowsocksrr/shadowsocksr(manyuser 分支源码)、v2fly 文档与 v2ray-core 源码(vmess validator.go / encoding/server.go)、trojan-gfw/trojan protocol.md、XTLS/Xray-core(发布说明、REALITY 文档、splithttp 传输)、XTLS/REALITY、anytls/anytls-go、apernet(HyNetworks)/hysteria、tuic-protocol/tuic、RFC 9000、madeye/sssniff、salesforce/ja3。未能取得原文的:gfw.report(超时)、NDSS 2019 Frolov & Wustrow PDF(404)——相关表述已改为源码可直接佐证的说法,不引用该论文。",
   "banned_phrases": [
     "机器学习分类器",
@@ -20,12 +20,20 @@
       "generation": "1 Shadowsocks",
       "claim": "2012 原版是流密码;AEAD 是 2017 年 SIP004 才加入。",
       "verdict": "confirmed",
+      "value": "流密码(2012)→ AEAD(SIP004,2017)",
+      "metric": "第一代的加密方式,以及 AEAD加入的规范版本与年份",
+      "method": "对照 shadowsocks-org stream.md / aead.md原文;仓库内只有 index.html的层描述复述",
+      "repro": "curl -s https://raw.githubusercontent.com/shadowsocks/shadowsocks-org/main/docs/doc/aead.md | grep -i SIP004",
+      "evidence": "index.html(generations[0].layers[0].d)",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://github.com/shadowsocks/shadowsocks-org/blob/main/docs/doc/stream.md",
         "quote": "'Stream ciphers are completely broken and will be removed soon.' · aead.md: 'The way Shadowsocks using AEAD ciphers is specified in [SIP004]'"
       },
-      "fix": "",
-      "check": [
+      "check": {
+        "manual": "2017与 SIP004只写在上游规范里(shadowsocks-org/docs/doc/aead.md),仓库没有提交物能重算该日期;同一条里的2012由 generation-years 命令重算,文档措辞由 receipts + verify.py 守护"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -40,12 +48,20 @@
       "generation": "1 Shadowsocks",
       "claim": "完整的重放防护到 SIP022(2022)才强制;徽章「防重放 ✗」对 2012 与 2017 两代都成立。",
       "verdict": "confirmed",
+      "value": "SIP022(2022)才强制完整重放防护;SS徽章「防重放 ✗」",
+      "metric": "强制完整重放防护的规范版本与年份",
+      "method": "对照 sip022.md原文;徽章那一半读 data.json 的 badges",
+      "repro": "curl -s https://raw.githubusercontent.com/shadowsocks/shadowsocks-org/main/docs/doc/sip022.md | grep -i 'replay protection'",
+      "evidence": "index.html(generations[0].points[3])",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://github.com/shadowsocks/shadowsocks-org/blob/main/docs/doc/sip022.md",
         "quote": "'Compared to previous editions of the protocol family, Shadowsocks 2022 allows and mandates full replay protection.' · 'Servers MUST store all incoming salts for 60 seconds.'"
       },
-      "fix": "",
-      "check": [
+      "check": {
+        "manual": "2022 / SIP022是上游规范日期,仓库无提交物可重算;徽章那一半由 badge-matrix 命令从 data.json 重算"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -59,12 +75,21 @@
       "generation": "1 Shadowsocks",
       "claim": "SS 不模拟任何真实协议外形,只是把 SOCKS5 明文转发改为加密转发。",
       "verdict": "imprecise -> fixed",
+      "value": "不模拟任何真实协议外形",
+      "metric": "有无协议外形模拟",
+      "method": "对照 what-is-shadowsocks.md全文——规范没有定义任何外形模拟",
+      "repro": "curl -s https://raw.githubusercontent.com/shadowsocks/shadowsocks-org/main/docs/doc/what-is-shadowsocks.md",
+      "evidence": "index.html / README.md / README.en.md / llms.txt",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://github.com/shadowsocks/shadowsocks-org/blob/main/docs/doc/what-is-shadowsocks.md",
         "quote": "'Shadowsocks is a secure split proxy loosely based on SOCKS5.' 规范全文没有任何协议外形模拟"
       },
       "fix": "创新句、README.md、README.en.md、llms.txt 一并改写",
-      "check": [
+      "check": {
+        "manual": "结论建立在规范的「没有」之上,只能读上游全文确认;离线命令无法从仓库数据推出,文档措辞由 receipts + verify.py 守护"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -96,12 +121,21 @@
       "generation": "1 Shadowsocks",
       "claim": "识别依据是包长熵,不是「机器学习分类器」也不是「握手时序」。",
       "verdict": "unsupported -> fixed",
+      "value": "包长熵(madeye/sssniff:前 32 个包长)",
+      "metric": "被动识别的统计量",
+      "method": "对照 sssniff README与源码;被证伪的「机器学习分类器 / 握手时序」列在 banned_phrases",
+      "repro": "curl -s https://raw.githubusercontent.com/madeye/sssniff/master/README.md | grep -i entropy",
+      "evidence": "index.html(generations[0].points[1])",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://github.com/madeye/sssniff",
         "quote": "'It computes entropy of the first 32 packet lengths of each TCP connection. When the entropy is larger than a threshold, the connection is detected as a SSR connection.'"
       },
       "fix": "index 与 llms.txt 改写,剧本里的「置信度 0.97」删除",
-      "check": [
+      "check": {
+        "manual": "算法与阈值在上游仓库(madeye/sssniff),本仓库只复述结论,无提交物可重算"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -128,12 +162,21 @@
       "generation": "1 Shadowsocks",
       "claim": "服务端对无法解密的连接不做有效响应;没有可伪装的回落站点。",
       "verdict": "unsupported -> fixed",
+      "value": "未认证连接无有效响应,也没有回落站点",
+      "metric": "未认证连接下的服务端行为",
+      "method": "对照 aead.md:校验失败即丢弃;规范未定义任何未认证连接下的响应",
+      "repro": "curl -s https://raw.githubusercontent.com/shadowsocks/shadowsocks-org/main/docs/doc/aead.md | grep -i tampered",
+      "evidence": "index.html(generations[0].points[2], probe.text)",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://github.com/shadowsocks/shadowsocks-org/blob/main/docs/doc/aead.md",
         "quote": "'If any of the input is tampered with, decryption will fail.' 规范未定义任何未认证连接下的响应"
       },
       "fix": "points[2] 与 probe 文案改写",
-      "check": [
+      "check": {
+        "manual": "依据是上游规范里未定义的行为,仓库无提交物可重算"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -150,12 +193,20 @@
       "generation": "2 SSR / VMess",
       "claim": "SSR 是 2015 年的分支,不是 2017 年才出现。",
       "verdict": "confirmed",
+      "value": "SSR = 2015 年的分支(页面标 2015–2019)",
+      "metric": "分支起始年份",
+      "method": "对照 shadowsocksrr/shadowsocksr 源码的版权行",
+      "repro": "curl -s https://raw.githubusercontent.com/shadowsocksrr/shadowsocksr/manyuser/shadowsocks/obfsplugin/obfs_tls.py | grep -i copyright",
+      "evidence": "index.html(generations[1].year)",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://github.com/shadowsocksrr/shadowsocksr",
         "quote": "'Copyright 2015-2015 breakwa11' 出现在 SSR 专有插件 shadowsocks/obfsplugin/auth.py 与 obfs_tls.py"
       },
-      "fix": "",
-      "check": [
+      "check": {
+        "manual": "2015 来自上游源码版权行;页面上的 2015–2019 标签由 generation-years 命令重算"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -169,12 +220,21 @@
       "generation": "2 SSR / VMess",
       "claim": "WebSocket + CDN 是约 2018 年起的部署实践,不是 2015 年的协议能力。",
       "verdict": "imprecise -> fixed",
+      "value": "WebSocket + CDN ≈ 2018 年起的部署实践",
+      "metric": "CDN 前置的性质(部署实践 vs 协议能力)",
+      "method": "对照 v2fly 传输层文档:只列 WebSocket,从未提及 CDN 前置",
+      "repro": "curl -s https://www.v2fly.org/config/transport.html | grep -i websocket",
+      "evidence": "index.html(generations[1].points)",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://www.v2fly.org/config/transport.html",
         "quote": "一手文档列出 WebSocket 传输层,但从未提及 CDN 前置"
       },
       "fix": "层与要点都注明时间与性质",
-      "check": [
+      "check": {
+        "manual": "「约 2018 年起」是对部署史的判断,依据是上游文档的缺失,无提交物可重算"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -188,12 +248,20 @@
       "generation": "2 SSR / VMess",
       "claim": "弱点表述改为源码可证的版本:obfs 手工拼 ClientHello/记录分帧,与真实 TLS 状态机不一致。",
       "verdict": "imprecise -> fixed",
+      "value": "obfs 手工拼装 ClientHello 与记录分帧",
+      "metric": "TLS-in-TLS 的实现方式",
+      "method": "对照 SSR manyuser 分支 obfs_tls.py 源码",
+      "repro": "curl -s https://raw.githubusercontent.com/shadowsocksrr/shadowsocksr/manyuser/shadowsocks/obfsplugin/obfs_tls.py | grep -n 'x17'",
+      "evidence": "index.html(generations[1].points)",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://github.com/shadowsocksrr/shadowsocksr/blob/manyuser/shadowsocks/obfsplugin/obfs_tls.py",
         "quote": "obfs_tls.py 手工拼装 ClientHello 字节串与 '\\x17'+version+size 记录分帧,自造状态机"
       },
-      "fix": "",
-      "check": [
+      "check": {
+        "manual": "证据是上游源码里的字节级实现,本仓库只复述,无提交物可重算"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -207,12 +275,25 @@
       "generation": "2 SSR / VMess",
       "claim": "SSR 的主动探测判定统一为 mid(与自身 probe 文案、徽章、剧本一致)。",
       "verdict": "contradicted -> fixed",
+      "value": "第二代探测判定 = mid,且与 probe 剧本同代步骤一致",
+      "metric": "data.json 里 generations[1].probe.level 与 probe 剧本该代的 level",
+      "method": "读 data.json:第二代自身的探测判定必须与其在 probe 剧本里的判定同档",
+      "repro": "python3 -c \"import json;d=json.load(open('data.json'));print(d['generations'][1]['probe']['level'], d['scenarios'][0]['steps'][1]['level'])\"",
+      "evidence": "data.json(generations[1].probe.level, scenarios[0].steps[1].level)",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://github.com/shadowsocksrr/shadowsocksr/blob/manyuser/shadowsocks/obfsplugin/obfs_tls.py",
         "quote": "decode_error_return() 对握手不匹配返回固定 'E'*2048 —— 可指纹化,故为「部分暴露」而非「可被识别」"
       },
       "fix": "llms.txt 参数表 risk → mid;PRESETS probe 步骤 risk → mid",
-      "check": [
+      "check": {
+        "cmd": "python3 -c \"\nimport json\nd = json.load(open('data.json'))\ng = d['generations'][1]\nstep = next(x for x in d['scenarios'][0]['steps'] if x.get('gen') == 1)\nassert g['probe']['level'] == step['level'] == 'mid', (g['probe']['level'], step['level'])\nprint(g['probe']['level'], step['level'])\n\"",
+        "expect": {
+          "equals": "mid mid"
+        },
+        "timeout": 60
+      },
+      "receipts": [
         {
           "file": "llms.txt",
           "must_contain": [
@@ -233,12 +314,21 @@
       "generation": "3 VLESS / Trojan",
       "claim": "Trojan 把未认证连接送到预设端点(默认本机 HTTP 服务),不保证是真实网站。",
       "verdict": "imprecise -> fixed",
+      "value": "未认证连接 → 预设端点(默认本机 HTTP 服务)",
+      "metric": "回落目标",
+      "method": "对照 trojan protocol.md 原文",
+      "repro": "curl -s https://raw.githubusercontent.com/trojan-gfw/trojan/master/docs/protocol.md | grep -i preset",
+      "evidence": "index.html(generations[2].layers, points, probe.text)",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://github.com/trojan-gfw/trojan/blob/master/docs/protocol.md",
         "quote": "'All connection without correct structure and password will be redirected to a preset endpoint' (default 127.0.0.1:80)"
       },
       "fix": "层、要点、probe 文案统一",
-      "check": [
+      "check": {
+        "manual": "上游规范原文(trojan-gfw/trojan protocol.md),仓库只复述语义,无提交物可重算"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -253,12 +343,20 @@
       "generation": "3 VLESS / Trojan",
       "claim": "JA3/JA4 是 ClientHello 指纹,不是证书比对。",
       "verdict": "contradicted -> fixed",
+      "value": "JA3/JA4 = ClientHello 指纹,不是证书比对",
+      "metric": "指纹的来源字段",
+      "method": "对照 salesforce/ja3 原文:取自 ClientHello",
+      "repro": "curl -s https://raw.githubusercontent.com/salesforce/ja3/master/README.md | grep -i 'client fingerprints'",
+      "evidence": "index.html(JSON-LD FAQ, generations[2].points)",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://github.com/salesforce/ja3",
         "quote": "'JA3 is a method for creating SSL/TLS client fingerprints' —— 取自 ClientHello 字段"
       },
-      "fix": "",
-      "check": [
+      "check": {
+        "manual": "定义在上游仓库(salesforce/ja3),本仓库无提交物可重算"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -272,12 +370,20 @@
       "generation": "3 VLESS / Trojan",
       "claim": "VLESS 2020,Trojan 2018(v1.0.0,2018-03)。",
       "verdict": "imprecise -> fixed",
+      "value": "VLESS 2020 / Trojan 2018-03(v1.0.0)",
+      "metric": "两个协议的起始年份",
+      "method": "对照 trojan v1.0.0 tag 日期与 Xray v1.0.0 发布说明",
+      "repro": "curl -s https://api.github.com/repos/trojan-gfw/trojan/git/refs/tags/v1.0.0",
+      "evidence": "index.html(generations[2].year = 2018–2020)",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://github.com/trojan-gfw/trojan/releases/tag/v1.0.0",
         "quote": "v1.0.0 tag 2018-03-21;Xray v1.0.0(2020-11)发布说明含 'VLESS & Trojan XTLS 支持'"
       },
-      "fix": "",
-      "check": [
+      "check": {
+        "manual": "发布 tag 日期在上游(需网络),仓库无提交物可重算;页面上的 2018–2020 标签由 generation-years 重算"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -291,12 +397,20 @@
       "generation": "4 Hysteria2 / TUIC",
       "claim": "TUIC 0.1.0 是 2022-03,Hysteria2 首发 2023-09-02,不是 2021。",
       "verdict": "contradicted -> fixed",
+      "value": "TUIC 0.1.0 = 2022-03;Hysteria2 = 2023-09-02",
+      "metric": "两个 QUIC 协议的起始时间",
+      "method": "对照 tuic 0.1.0 提交与 hysteria app/v2.0.0 tag",
+      "repro": "curl -s https://api.github.com/repos/tuic-protocol/tuic/git/refs/tags/0.1.0",
+      "evidence": "index.html(generations[3].year = 2022–2023)",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://github.com/tuic-protocol/tuic/commits/0.1.0",
         "quote": "TUIC tag 0.1.0 提交于 2022-03;Hysteria app/v2.0.0 tag 提交于 2023-09-02"
       },
-      "fix": "",
-      "check": [
+      "check": {
+        "manual": "上游 tag 提交时间(需网络),仓库无提交物可重算;页面上的 2022–2023 标签由 generation-years 重算"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -316,12 +430,20 @@
       "generation": "4 Hysteria2 / TUIC",
       "claim": "QUIC 的队头阻塞自由度是按流而非按包。",
       "verdict": "imprecise -> fixed",
+      "value": "队头阻塞的自由度按流,而非按包",
+      "metric": "QUIC 丢包阻塞的粒度",
+      "method": "对照 RFC 9000 §13.3 原文",
+      "repro": "curl -s https://www.rfc-editor.org/rfc/rfc9000.txt | grep -A2 'blocks all those streams'",
+      "evidence": "index.html(generations[3].points)",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://www.rfc-editor.org/rfc/rfc9000.html#section-13.3",
         "quote": "'when data from multiple streams is included in a single QUIC packet, loss of that packet blocks all those streams.'"
       },
-      "fix": "",
-      "check": [
+      "check": {
+        "manual": "RFC 原文不在仓库内(需网络),无提交物可重算"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -336,12 +458,20 @@
       "generation": "4 Hysteria2 / TUIC",
       "claim": "Brutal 按设定带宽发送、丢包时略超发;仅在配置带宽时启用。",
       "verdict": "imprecise -> fixed",
+      "value": "Brutal:按设定带宽发送、丢包时略超发;仅在配置带宽时启用",
+      "metric": "拥塞控制语义",
+      "method": "对照 hysteria 官方文档 Full-Server-Config 原文",
+      "repro": "curl -s https://hysteria.network/docs/advanced/Full-Server-Config/ | grep -i 'loss compensation'",
+      "evidence": "index.html(generations[3].points)",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://hysteria.network/docs/advanced/Full-Server-Config/",
         "quote": "'Brutal congestion control has a \"loss compensation\" mechanism: when there is packet loss, it attempts to send slightly faster than the set bandwidth'"
       },
-      "fix": "",
-      "check": [
+      "check": {
+        "manual": "语义只在上游文档里;仓库数据只有弱网倍率(128 vs 95),不含「仅在配置带宽时启用」这一前提,无提交物可重算"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -356,12 +486,20 @@
       "generation": "4 Hysteria2 / TUIC",
       "claim": "UDP 封锁剧本是客户端切到 TCP 节点,不是 Hysteria2 自动降级。",
       "verdict": "imprecise -> fixed",
+      "value": "UDP 封锁时由客户端切到 TCP 节点,不是协议自动降级",
+      "metric": "回落动作的归属(策略 vs 协议能力)",
+      "method": "对照 v1.hysteria 文档:只有 faketcp / 混淆,没有内建自动 TCP 回落;udp 剧本里也标为「回落策略」",
+      "repro": "curl -s https://v1.hysteria.network/docs/advanced-usage/ | grep -i faketcp",
+      "evidence": "index.html(scenarios[udp].steps[3-4])",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://v1.hysteria.network/docs/advanced-usage/",
         "quote": "一手文档提供 Salamander/Gecko 混淆与 faketcp,没有内建自动 TCP 回落"
       },
-      "fix": "",
-      "check": [
+      "check": {
+        "manual": "依据是上游文档的缺失 + 剧本动作(策略而非协议能力),无提交物可重算"
+      },
+      "receipts": [
         {
           "file": "README.md",
           "must_contain": [
@@ -381,12 +519,21 @@
       "generation": "5 REALITY / AnyTLS",
       "claim": "REALITY 的 X25519 用服务器自身密钥对(客户端 password 即服务器公钥);目标站真实证书只到被中继的连接。",
       "verdict": "contradicted -> fixed",
+      "value": "X25519 用服务器自身密钥对;探测者被中继给真实网站",
+      "metric": "REALITY 握手密钥来源与探测连接去向",
+      "method": "对照 XTLS REALITY 文档与 Xray-core 源码",
+      "repro": "curl -s https://xtls.github.io/config/transports/reality.html",
+      "evidence": "index.html(JSON-LD FAQ, generations[4].layers)",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://xtls.github.io/config/transports/reality.html",
         "quote": "password 是服务器私钥对应的公钥;目标站提供 TLS 外观并接收被中继的探测连接"
       },
       "fix": "JSON-LD / FAQ / 面板三处全部改写",
-      "check": [
+      "check": {
+        "manual": "上游文档 / 源码(xtls.github.io、XTLS/Xray-core),仓库只复述,无提交物可重算"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -410,12 +557,20 @@
       "generation": "5 REALITY / AnyTLS",
       "claim": "AnyTLS 是 2025 年的协议,不是 2023。",
       "verdict": "imprecise -> fixed",
+      "value": "AnyTLS = 2025(v0.0.7 / v0.0.8;protocol v2 记 2025-04)",
+      "metric": "协议起始年份",
+      "method": "对照 anytls-go tags",
+      "repro": "curl -s https://api.github.com/repos/anytls/anytls-go/tags",
+      "evidence": "README.md / llms.txt(REALITY (2023) / AnyTLS (2025))",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://github.com/anytls/anytls-go/tags",
         "quote": "最早 tag v0.0.7(2025-03)、v0.0.8(2025-04);protocol v2 记为 2025-04"
       },
-      "fix": "",
-      "check": [
+      "check": {
+        "manual": "上游 tag 日期(需网络);README/llms.txt 里的「AnyTLS (2025)」字样由 receipts + verify.py 守护,年份本身无提交物可重算"
+      },
+      "receipts": [
         {
           "file": "README.md",
           "must_contain": [
@@ -435,12 +590,20 @@
       "generation": "6 XHTTP + post-quantum REALITY",
       "claim": "XHTTP 前身 SplitHTTP,2024.12 更名;上下行拆成不同 HTTP 请求,可走 CDN。",
       "verdict": "confirmed",
+      "value": "SplitHTTP → XHTTP 更名于 2024.12",
+      "metric": "更名时间与上下行拆分形态",
+      "method": "对照 XTLS/Xray-core discussion 4113",
+      "repro": "curl -s https://github.com/XTLS/Xray-core/discussions/4113 | grep -i xhttp",
+      "evidence": "index.html(generations[5].points)",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://github.com/XTLS/Xray-core/discussions/4113",
         "quote": "SplitHTTP mid-2024, renamed XHTTP Dec 2024;代码里的 Go 协议名仍是 splithttp"
       },
-      "fix": "",
-      "check": [
+      "check": {
+        "manual": "更名时间在上游讨论帖 / 发布说明里(需网络),仓库无提交物可重算"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -454,12 +617,20 @@
       "generation": "6 XHTTP + post-quantum REALITY",
       "claim": "REALITY 自 v25.5.16 支持 X25519MLKEM768;v25.7.26 前后加入 ECH 与 ML-DSA-65。",
       "verdict": "confirmed",
+      "value": "v25.5.16 起支持 X25519MLKEM768;v25.7.26 起支持 ECH + ML-DSA-65",
+      "metric": "抗量子能力加入的版本",
+      "method": "对照 Xray-core release notes",
+      "repro": "curl -s https://api.github.com/repos/XTLS/Xray-core/releases/tags/v25.5.16",
+      "evidence": "index.html(generations[5].layers, points)",
+      "as_of": "2026-09-13",
       "source": {
         "url": "https://github.com/XTLS/Xray-core/releases/tag/v25.5.16",
         "quote": "'REALITY practice: Support X25519MLKEM768 for TLS' communication'(v25.5.16, 2025-05-16);v25.7.26 说明含 ML-DSA-65 验证与 TLS ECH"
       },
-      "fix": "",
-      "check": [
+      "check": {
+        "manual": "版本号在上游发布说明里(需网络);仓库内只有算法名(第六代协议栈),不含版本,无提交物可重算"
+      },
+      "receipts": [
         {
           "file": "index.html",
           "must_contain": [
@@ -468,6 +639,485 @@
           ]
         }
       ]
+    },
+    {
+      "id": "six-generations",
+      "generation": "全局",
+      "claim": "全站一致宣称六代演进:README「六代演进」、index.html 的 <title>「翻墙协议六代演进」、llms.txt「six generations」。",
+      "verdict": "confirmed",
+      "value": "6 代",
+      "metric": "data.json 里 generations 数组的长度",
+      "method": "读 data.json 数代数,并确认 README.md / index.html / llms.txt 三份对外文档都写着六代",
+      "repro": "python3 -c \"import json;print(len(json.load(open('data.json'))['generations']))\"",
+      "evidence": "data.json(generations)",
+      "as_of": "2026-09-13",
+      "source": {
+        "url": "data.json / README.md / index.html / llms.txt",
+        "quote": "「从 Shadowsocks 到 XHTTP:六代抗审查协议的演进」·<title>翻墙协议六代演进 · 交互图解</title>·「six generations of anti-censorship proxy protocols」"
+      },
+      "check": {
+        "cmd": "python3 -c \"\nimport json, re\nd = json.load(open('data.json'))\nn = len(d['generations'])\ndocs = {f: open(f, encoding='utf-8').read() for f in ('README.md', 'index.html', 'llms.txt')}\nassert n == 6, n\nlost = [f for f, t in docs.items() if not re.search('六代|six generations', t, re.I)]\nassert not lost, lost\nprint('generations=%d docs=%d' % (n, len(docs)))\n\"",
+        "expect": {
+          "equals": "generations=6 docs=3"
+        },
+        "timeout": 60
+      }
+    },
+    {
+      "id": "four-scenarios",
+      "generation": "全局",
+      "claim": "四个审查环境剧本(主动探测攻击 / 深度包检测 / UDP 封锁 / 弱网远距离)自动播放并实时推进剧情。",
+      "verdict": "confirmed",
+      "value": "4 个剧本(probe / dpi / udp / weaknet)",
+      "metric": "data.json 里 scenarios 数组的长度与 id",
+      "method": "读 data.json 数剧本并核对 id 集合,再确认 README.md / llms.txt 都写着四个",
+      "repro": "python3 -c \"import json;print([s['id'] for s in json.load(open('data.json'))['scenarios']])\"",
+      "evidence": "data.json(scenarios)",
+      "as_of": "2026-09-13",
+      "source": {
+        "url": "data.json / README.md / llms.txt",
+        "quote": "「四个罐装攻击序列,自动播放并实时推进剧情」·「Four censorship scenario scripts」"
+      },
+      "check": {
+        "cmd": "python3 -c \"\nimport json\nd = json.load(open('data.json'))\ns = d['scenarios']\nids = [x['id'] for x in s]\nassert ids == ['probe', 'dpi', 'udp', 'weaknet'], ids\nreadme = open('README.md', encoding='utf-8').read()\nllms = open('llms.txt', encoding='utf-8').read()\nassert '四个罐装攻击序列' in readme, 'README 不再写四个剧本'\nassert 'Four censorship scenario scripts' in llms, 'llms.txt 不再写四个剧本'\nprint('scenarios=%d ids=%s' % (len(s), ','.join(ids)))\n\"",
+        "expect": {
+          "equals": "scenarios=4 ids=probe,dpi,udp,weaknet"
+        },
+        "timeout": 60
+      }
+    },
+    {
+      "id": "generation-years",
+      "generation": "全局",
+      "claim": "六代的年份标注:2012 / 2015–2019 / 2018–2020 / 2022–2023 / 2023– / 2024–(README hero 与页面同源)。",
+      "verdict": "confirmed",
+      "value": "2012 / 2015–2019 / 2018–2020 / 2022–2023 / 2023– / 2024–",
+      "metric": "每一代 generations[*].year",
+      "method": "从 data.json 读六个 year 字段,并逐条确认 README hero 的 alt 文本里写着同一个年份",
+      "repro": "python3 -c \"import json;print([g['year'] for g in json.load(open('data.json'))['generations']])\"",
+      "evidence": "data.json(generations[*].year)",
+      "as_of": "2026-09-13",
+      "source": {
+        "url": "data.json(generations[*].year) / README.md hero alt",
+        "quote": "「Shadowsocks(2012)、SSR / VMess(2015–2019)、VLESS / Trojan(2018–2020)、Hysteria2 / TUIC(2022–2023)、REALITY / AnyTLS(2023–)、XHTTP + 抗量子 REALITY(2024–)」"
+      },
+      "check": {
+        "cmd": "python3 -c \"\nimport json\nd = json.load(open('data.json'))\nreadme = open('README.md', encoding='utf-8').read()\nyears = [g['year'] for g in d['generations']]\nassert len(years) == 6, years\nmissing = [y for y in years if y not in readme]\nassert not missing, missing\nprint(' | '.join(years))\n\"",
+        "expect": {
+          "equals": "2012 | 2015–2019 | 2018–2020 | 2022–2023 | 2023– | 2024–"
+        },
+        "timeout": 60
+      },
+      "receipts": [
+        {
+          "file": "README.md",
+          "must_contain": [
+            "Shadowsocks(2012)、SSR / VMess(2015–2019)、VLESS / Trojan(2018–2020)、Hysteria2 / TUIC(2022–2023)、REALITY / AnyTLS(2023–)、XHTTP + 抗量子 REALITY(2024–)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "parameter-table",
+      "generation": "全局",
+      "claim": "llms.txt 的六代参数表(峰值 / 弱网 / 抗探测 / 真实度分值、包速 正常/弱网 px/s、探测判定)逐行来自 data.json。",
+      "verdict": "confirmed",
+      "value": "6 行 × 4 个分值 + 包速(正常/弱网)+ 探测判定",
+      "metric": "data.json 里每代的 cmp 四项、anim.speed / anim.weak、probe.level",
+      "method": "逐代打印四个对比分值、两个包速与探测判定,与 llms.txt 参数表对照",
+      "repro": "verify-claims --root . run --only parameter-table",
+      "evidence": "data.json(generations[*].cmp, .anim, .probe.level)",
+      "as_of": "2026-09-13",
+      "source": {
+        "url": "llms.txt(六代参数表) / data.json",
+        "quote": "「|1 | Shadowsocks (SS) |2012 |80 |45 |25 |15 |80 / 44 |20% retransmit | risk — identifiable |」等六行;「Packet speed is the actual animation speed used in the visualization (px/s)」"
+      },
+      "check": {
+        "cmd": "python3 -c \"\nimport json\nd = json.load(open('data.json'))\nrows = ['%d %s %d/%d/%d/%d %d/%d %s' % (g['index'], g['name'], g['cmp']['fast'][0],\n        g['cmp']['weak'][0], g['cmp']['hide'][0], g['cmp']['real'][0],\n        g['anim']['speed'], g['anim']['weak'], g['probe']['level'])\n        for g in d['generations']]\nassert len(rows) == 6, rows\nprint('\\n'.join(rows))\n\"",
+        "expect": {
+          "equals": "1 Shadowsocks 80/45/25/15 80/44 risk\n2 SSR / VMess 75/40/50/30 75/40 mid\n3 VLESS / Trojan 88/55/70/70 88/55 mid\n4 Hysteria2 / TUIC 95/92/55/45 95/128 mid\n5 REALITY / AnyTLS 88/55/95/98 88/55 safe\n6 XHTTP + 抗量子 REALITY 86/58/92/96 86/58 safe"
+        },
+        "timeout": 60
+      },
+      "receipts": [
+        {
+          "file": "llms.txt",
+          "must_contain": [
+            "| 1 | Shadowsocks (SS) | 2012 | 80 | 45 | 25 | 15 | 80 / 44 | 20% retransmit | risk — identifiable |",
+            "| 4 | Hysteria2 / TUIC | 2022–2023 | 95 | 92 | 55 | 45 | 95 / **128** (faster!) | 3%, no retransmit marker | mid — partially exposed |"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quic-speeds-up-on-loss",
+      "generation": "4 Hysteria2 / TUIC",
+      "claim": "弱网丢包下第四代(QUIC)反而加速(95 → 128 px/s),其余五代(TCP 栈)包速腰斩。",
+      "verdict": "confirmed",
+      "value": "QUIC 95 → 128 px/s;TCP 五代各降到约一半",
+      "metric": "每代 anim.speed 与 anim.weak 的比值",
+      "method": "读 data.json:第四代弱网包速必须 > 1.2× 正常包速,其余五代必须 < 0.7× 正常包速",
+      "repro": "verify-claims --root . run --only quic-speeds-up-on-loss",
+      "evidence": "data.json(generations[*].anim)",
+      "as_of": "2026-09-13",
+      "source": {
+        "url": "llms.txt(Notable 段) / data.json",
+        "quote": "「under packet loss, generation 4 (QUIC) **speeds up** (95 -> 128 px/s) ... while all TCP-stack generations (1, 2, 3, 5, 6) roughly halve」"
+      },
+      "check": {
+        "cmd": "python3 -c \"\nimport json\nd = json.load(open('data.json'))\ngs = d['generations']\nq = gs[3]\ntcp = [g for g in gs if g is not q]\nassert q['proto'] == 'QUIC', q['proto']\nassert q['anim']['weak'] > 1.2 * q['anim']['speed'], 'QUIC 弱网下不再加速'\nassert all(g['anim']['weak'] < 0.7 * g['anim']['speed'] for g in tcp), '有 TCP 代不再腰斩'\nprint('QUIC %d->%d;TCP %s' % (q['anim']['speed'], q['anim']['weak'],\n      ' '.join('%d->%d' % (g['anim']['speed'], g['anim']['weak']) for g in tcp)))\n\"",
+        "expect": {
+          "equals": "QUIC 95->128;TCP 80->44 75->40 88->55 88->55 86->58"
+        },
+        "timeout": 60
+      },
+      "receipts": [
+        {
+          "file": "llms.txt",
+          "must_contain": [
+            "generation 4 (QUIC) **speeds up** (95 -> 128 px/s)",
+            "all TCP-stack generations (1, 2, 3, 5, 6) roughly halve"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "verdict-levels",
+      "generation": "全局",
+      "claim": "主动探测判定分三档:可被识别 / 部分暴露 / 无法区分。",
+      "verdict": "confirmed",
+      "value": "3 档(risk / mid / safe)",
+      "metric": "data.json 里 verdictLevels 的档数",
+      "method": "读 data.json 数 verdictLevels 的键,并确认键就是 risk / mid / safe",
+      "repro": "python3 -c \"import json;print(sorted(json.load(open('data.json'))['verdictLevels']))\"",
+      "evidence": "data.json(verdictLevels)",
+      "as_of": "2026-09-13",
+      "source": {
+        "url": "README.md / llms.txt(参数表 Probe verdict 列) / data.json",
+        "quote": "「判定分三档」·参数表列值「risk — identifiable」「mid — partially exposed」「safe — indistinguishable」"
+      },
+      "check": {
+        "cmd": "python3 -c \"\nimport json\nd = json.load(open('data.json'))\nv = d['verdictLevels']\nassert len(v) == 3, v\nassert sorted(v) == ['mid', 'risk', 'safe'], sorted(v)\nprint('%d %s' % (len(v), ' '.join(sorted(v))))\n\"",
+        "expect": {
+          "equals": "3 mid risk safe"
+        },
+        "timeout": 60
+      },
+      "receipts": [
+        {
+          "file": "README.md",
+          "must_contain": [
+            "判定分三档"
+          ]
+        },
+        {
+          "file": "llms.txt",
+          "must_contain": [
+            "risk — identifiable",
+            "safe — indistinguishable"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "comparison-metrics",
+      "generation": "全局",
+      "claim": "对比区是四维指标:峰值速度 / 弱网表现 / 抗主动探测 / 伪装真实度。",
+      "verdict": "confirmed",
+      "value": "4 维(fast / weak / hide / real)",
+      "metric": "data.json 里 metrics 的键数",
+      "method": "读 data.json 数 metrics 的维度,并确认键与顺序 fast / weak / hide / real",
+      "repro": "python3 -c \"import json;print(list(json.load(open('data.json'))['metrics']))\"",
+      "evidence": "data.json(metrics)",
+      "as_of": "2026-09-13",
+      "source": {
+        "url": "README.md / llms.txt / data.json",
+        "quote": "「四维指标(峰值速度 / 弱网表现 / 抗主动探测 / 伪装真实度)」·「four metrics (peak speed, weak-network performance, probe resistance, realism)」"
+      },
+      "check": {
+        "cmd": "python3 -c \"\nimport json\nd = json.load(open('data.json'))\nm = d['metrics']\nassert list(m) == ['fast', 'weak', 'hide', 'real'], list(m)\nprint('%d %s' % (len(m), ' '.join(m)))\n\"",
+        "expect": {
+          "equals": "4 fast weak hide real"
+        },
+        "timeout": 60
+      },
+      "receipts": [
+        {
+          "file": "README.md",
+          "must_contain": [
+            "四维指标(峰值速度 / 弱网表现 / 抗主动探测 / 伪装真实度)"
+          ]
+        },
+        {
+          "file": "llms.txt",
+          "must_contain": [
+            "four metrics (peak speed, weak-network performance, probe resistance, realism)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scenario-probe-endings",
+      "generation": "全局 · 剧本",
+      "claim": "主动探测攻击剧本的结局:前四代 risk/mid,REALITY 与 XHTTP 为 safe。",
+      "verdict": "confirmed",
+      "value": "gen1 risk · gen2 mid · gen3 mid · gen4 mid · gen5 safe · gen6 safe",
+      "metric": "scenarios[probe].steps 里每一步的 gen 与 level",
+      "method": "沿剧本步骤走 gen 与 level,打印「代数:判定」序列;步骤缺 gen 时沿用上一个",
+      "repro": "verify-claims --root . run --only scenario-probe-endings",
+      "evidence": "data.json(scenarios[probe].steps)",
+      "as_of": "2026-09-13",
+      "source": {
+        "url": "llms.txt(剧本结局表) / data.json",
+        "quote": "「| `probe` | 主动探测攻击 (Active probe attack) | normal | ... | gen1 risk, gen2 mid, gen3 mid, gen4 mid, gen5 safe, gen6 safe |」"
+      },
+      "check": {
+        "cmd": "python3 -c \"\nimport json\nd = json.load(open('data.json'))\ns = next(x for x in d['scenarios'] if x['id'] == 'probe')\ncur, out = 0, []\nfor st in s['steps']:\n    if 'gen' in st:\n        cur = st['gen']\n    if 'level' in st:\n        out.append('%d:%s' % (cur + 1, st['level']))\nassert out, 'no verdict steps'\nprint(' '.join(out))\n\"",
+        "expect": {
+          "equals": "1:risk 2:mid 3:mid 4:mid 5:safe 6:safe"
+        },
+        "timeout": 60
+      },
+      "receipts": [
+        {
+          "file": "llms.txt",
+          "must_contain": [
+            "gen1 risk, gen2 mid, gen3 mid, gen4 mid, gen5 safe, gen6 safe"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scenario-dpi-endings",
+      "generation": "全局 · 剧本",
+      "claim": "深度包检测剧本的结局:SS/SSR 为 risk,真 TLS 之后转 mid,safe 从 REALITY 开始。",
+      "verdict": "confirmed",
+      "value": "gen1 risk · gen2 risk · gen3 mid · gen4 mid · gen5 safe · gen6 safe",
+      "metric": "scenarios[dpi].steps 里每一步的 gen 与 level",
+      "method": "沿剧本步骤走 gen 与 level,打印「代数:判定」序列",
+      "repro": "verify-claims --root . run --only scenario-dpi-endings",
+      "evidence": "data.json(scenarios[dpi].steps)",
+      "as_of": "2026-09-13",
+      "source": {
+        "url": "llms.txt(剧本结局表) / data.json",
+        "quote": "「| `dpi` | 深度包检测 (Deep packet inspection) | weak | Classifier scans packet-length entropy / timing / JA3-JA4 fingerprints ... | gen1 risk, gen2 risk, gen3 mid, gen4 mid, gen5 safe, gen6 safe |」"
+      },
+      "check": {
+        "cmd": "python3 -c \"\nimport json\nd = json.load(open('data.json'))\ns = next(x for x in d['scenarios'] if x['id'] == 'dpi')\ncur, out = 0, []\nfor st in s['steps']:\n    if 'gen' in st:\n        cur = st['gen']\n    if 'level' in st:\n        out.append('%d:%s' % (cur + 1, st['level']))\nassert out, 'no verdict steps'\nprint(' '.join(out))\n\"",
+        "expect": {
+          "equals": "1:risk 2:risk 3:mid 4:mid 5:safe 6:safe"
+        },
+        "timeout": 60
+      },
+      "receipts": [
+        {
+          "file": "llms.txt",
+          "must_contain": [
+            "gen1 risk, gen2 risk, gen3 mid, gen4 mid, gen5 safe, gen6 safe"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scenario-udp-endings",
+      "generation": "全局 · 剧本",
+      "claim": "UDP 封锁剧本:第四代被判 risk 掉线,客户端切 TCP 节点后以第五代 safe 恢复。",
+      "verdict": "confirmed",
+      "value": "gen4 risk → gen5 safe(恢复)",
+      "metric": "scenarios[udp].steps 里每一步的 gen 与 level",
+      "method": "沿剧本步骤走 gen 与 level(切换动作的步骤自带 gen),打印「代数:判定」序列",
+      "repro": "verify-claims --root . run --only scenario-udp-endings",
+      "evidence": "data.json(scenarios[udp].steps)",
+      "as_of": "2026-09-13",
+      "source": {
+        "url": "llms.txt(剧本结局表) / data.json",
+        "quote": "「| `udp` | UDP 封锁 (UDP blockade) | weak | udp/443 throttled to 50kbps; generation 4 is throttled and the client switches to a REALITY/XHTTP (TCP) node (client-side fallback) | gen4 risk -> gen5 safe (recovered) |」"
+      },
+      "check": {
+        "cmd": "python3 -c \"\nimport json\nd = json.load(open('data.json'))\ns = next(x for x in d['scenarios'] if x['id'] == 'udp')\ncur, out = 0, []\nfor st in s['steps']:\n    if 'gen' in st:\n        cur = st['gen']\n    if 'level' in st:\n        out.append('%d:%s' % (cur + 1, st['level']))\nassert out, 'no verdict steps'\nprint(' '.join(out))\n\"",
+        "expect": {
+          "equals": "4:risk 5:safe"
+        },
+        "timeout": 60
+      },
+      "receipts": [
+        {
+          "file": "llms.txt",
+          "must_contain": [
+            "gen4 risk -> gen5 safe (recovered)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scenario-weaknet-endings",
+      "generation": "全局 · 剧本",
+      "claim": "弱网远距离剧本的结局:TCP 系崩塌/存疑,第四代(QUIC)safe,第六代受 CDN 一跳影响为 mid。",
+      "verdict": "confirmed",
+      "value": "gen1 risk · gen2 risk · gen3 mid · gen5 mid · gen4 safe · gen6 mid",
+      "metric": "scenarios[weaknet].steps 里每一步的 gen 与 level",
+      "method": "沿剧本步骤走 gen 与 level,保留脚本自身的推进顺序(第四代在第五代之后才被判定)",
+      "repro": "verify-claims --root . run --only scenario-weaknet-endings",
+      "evidence": "data.json(scenarios[weaknet].steps)",
+      "as_of": "2026-09-13",
+      "source": {
+        "url": "llms.txt(剧本结局表) / data.json",
+        "quote": "「| `weaknet` | 弱网远距离 (Weak long-haul link) | weak, 0.5x speed | RTT 300ms + 8% loss | gen1 risk, gen2 risk, gen3 mid, gen5 mid, gen4 safe (QUIC unaffected), gen6 mid (CDN hop) |」"
+      },
+      "check": {
+        "cmd": "python3 -c \"\nimport json\nd = json.load(open('data.json'))\ns = next(x for x in d['scenarios'] if x['id'] == 'weaknet')\ncur, out = 0, []\nfor st in s['steps']:\n    if 'gen' in st:\n        cur = st['gen']\n    if 'level' in st:\n        out.append('%d:%s' % (cur + 1, st['level']))\nassert out, 'no verdict steps'\nprint(' '.join(out))\n\"",
+        "expect": {
+          "equals": "1:risk 2:risk 3:mid 5:mid 4:safe 6:mid"
+        },
+        "timeout": 60
+      },
+      "receipts": [
+        {
+          "file": "llms.txt",
+          "must_contain": [
+            "gen1 risk, gen2 risk, gen3 mid, gen5 mid, gen4 safe (QUIC unaffected), gen6 mid (CDN hop)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "plaintext-fields",
+      "generation": "全局",
+      "claim": "data.json 为每代附带去 HTML 纯文本字段(innovationText / encWhereText / pointsText / probeText),LLM 可直接引用。",
+      "verdict": "confirmed",
+      "value": "6/6 代 × 4 个纯文本字段,均无 HTML 标签",
+      "metric": "每代四个 *Text 字段的非空与无标签情况",
+      "method": "读 data.json,逐代检查四个字段非空且不含 '<'",
+      "repro": "python3 -c \"import json;d=json.load(open('data.json'));print([g['key'] for g in d['generations'] if g.get('pointsText')])\"",
+      "evidence": "data.json(generations[*].*Text)",
+      "as_of": "2026-09-13",
+      "source": {
+        "url": "README.md / llms.txt(机器可读端点) / data.json",
+        "quote": "「含 `innovationText` / `pointsText` / `probeText` 等**去 HTML 纯文本字段**,LLM 可直接引用」·「Text fields are duplicated as `innovationText` / `encWhereText` / `pointsText` / `probeText` with HTML stripped」"
+      },
+      "check": {
+        "cmd": "python3 -c \"\nimport json\nd = json.load(open('data.json'))\nkeys = ['innovationText', 'encWhereText', 'pointsText', 'probeText']\nbad = [g['key'] for g in d['generations']\n       if not all(g.get(k) for k in keys)\n       or '<' in json.dumps([g[k] for k in keys], ensure_ascii=False)]\nassert not bad, bad\nprint('%d/%d' % (len(d['generations']), len(d['generations'])))\n\"",
+        "expect": {
+          "equals": "6/6"
+        },
+        "timeout": 60
+      },
+      "receipts": [
+        {
+          "file": "README.md",
+          "must_contain": [
+            "含 `innovationText` / `pointsText` / `probeText` 等**去 HTML 纯文本字段**"
+          ]
+        },
+        {
+          "file": "llms.txt",
+          "must_contain": [
+            "Text fields are duplicated as `innovationText` / `encWhereText` / `pointsText` / `probeText` with HTML stripped"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "badge-matrix",
+      "generation": "全局",
+      "claim": "徽章矩阵:六代各 4 条;「防重放 ✗」只在第一代,「抗主动探测 ✅」只在第五、六代。",
+      "verdict": "confirmed",
+      "value": "4×6 条徽章;防重放 ✗ @ 第 1 代;抗主动探测 ✅ @ 第 5、6 代",
+      "metric": "data.json 里 generations[*].badges",
+      "method": "逐代数徽章条数,并定位「防重放 ✗」「抗主动探测 ✅」各出现在哪几代",
+      "repro": "python3 -c \"import json;d=json.load(open('data.json'));print([g['badges'] for g in d['generations']][:2])\"",
+      "evidence": "data.json(generations[*].badges)",
+      "as_of": "2026-09-13",
+      "source": {
+        "url": "data.json(generations[*].badges) / index.html(GENS)",
+        "quote": "generations[0].badges = [\"内容加密 ✅\",\"身份认证 ✗(仅报文级)\",\"防重放 ✗\",\"抗主动探测 ✗\"];generations[4]/[5] 含「抗主动探测 ✅」"
+      },
+      "check": {
+        "cmd": "python3 -c \"\nimport json\nd = json.load(open('data.json'))\ngs = d['generations']\nassert all(len(g['badges']) == 4 for g in gs), [len(g['badges']) for g in gs]\nreplay = [g['index'] for g in gs if any('防重放 ✗' in b for b in g['badges'])]\nsafe = [g['index'] for g in gs if any('抗主动探测 ✅' in b for b in g['badges'])]\nassert replay == [1], replay\nassert safe == [5, 6], safe\nprint('4x%d | replay-missing@%s | probe-safe@%s' % (len(gs), replay, safe))\n\"",
+        "expect": {
+          "equals": "4x6 | replay-missing@[1] | probe-safe@[5, 6]"
+        },
+        "timeout": 60
+      },
+      "receipts": [
+        {
+          "file": "index.html",
+          "must_contain": [
+            "\"防重放 ✗\""
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stack-layer-counts",
+      "generation": "全局",
+      "claim": "协议栈面板的层数:第一代 2 层(密文 + TCP),第二至六代各 3 层。",
+      "verdict": "confirmed",
+      "value": "第 1 代 2 层 / 第 2–6 代各 3 层",
+      "metric": "data.json 里 generations[*].layers 的长度",
+      "method": "逐代数协议栈层数,并断言序列就是 2,3,3,3,3,3",
+      "repro": "python3 -c \"import json;print([len(g['layers']) for g in json.load(open('data.json'))['generations']])\"",
+      "evidence": "data.json(generations[*].layers)",
+      "as_of": "2026-09-13",
+      "source": {
+        "url": "data.json(generations[*].layers) / README.md(协议栈面板)",
+        "quote": "「标注每一代「加密发生在哪一层」」;layers 长度 = [2, 3, 3, 3, 3, 3](第一代:密文 + TCP;其余:应用 / 传输 / 网络)"
+      },
+      "check": {
+        "cmd": "python3 -c \"\nimport json\nd = json.load(open('data.json'))\ncounts = [len(g['layers']) for g in d['generations']]\nassert counts == [2, 3, 3, 3, 3, 3], counts\nprint(''.join(str(c) for c in counts))\n\"",
+        "expect": {
+          "equals": "233333"
+        },
+        "timeout": 60
+      }
+    },
+    {
+      "id": "doc-receipts-and-drift",
+      "generation": "全局",
+      "claim": "文档收据门禁全绿:receipts 逐条命中、禁用措辞未复发、data.json 与 index.html 无漂移。",
+      "verdict": "confirmed",
+      "value": "0 error(verify.py --json)",
+      "metric": "verify.py --json 的 summary.error",
+      "method": "跑 verify.py:逐条 receipts + banned_phrases + 重新生成 data.json 比对哈希",
+      "repro": "python3 verify.py --json",
+      "evidence": "verify.py / claims.json(receipts)",
+      "as_of": "2026-09-13",
+      "source": {
+        "url": "verify.py",
+        "quote": "verify.py --json: {\"summary\": {\"ok\": 21, \"error\": 0}} —— receipts 全绿、禁用措辞未复发、data.json 无漂移"
+      },
+      "check": {
+        "cmd": "python3 verify.py --json",
+        "expect": {
+          "contains": [
+            "\"error\": 0"
+          ]
+        },
+        "timeout": 120
+      }
+    },
+    {
+      "id": "ci-schedule",
+      "generation": "全局",
+      "claim": "数字收据门禁在每次 push / PR 以及每周一 06:17 UTC 由 .github/workflows/claims.yml 跑一遍。",
+      "verdict": "confirmed",
+      "value": "push + PR + 每周一 06:17 UTC",
+      "metric": "workflow 的触发器与 action 版本钉子",
+      "method": "读 .github/workflows/claims.yml:必须有 push / pull_request / cron 三种触发器与固定的 alloevil/verify-claims@v0.1.0",
+      "repro": "python3 -c \"import pathlib;print(pathlib.Path('.github/workflows/claims.yml').read_text())\"",
+      "evidence": ".github/workflows/claims.yml",
+      "as_of": "2026-09-13",
+      "source": {
+        "url": ".github/workflows/claims.yml",
+        "quote": "on: push / pull_request / schedule cron «17 6 * * 1»;steps: uses alloevil/verify-claims@v0.1.0"
+      },
+      "check": {
+        "cmd": "python3 -c \"\nimport pathlib, re\nt = pathlib.Path('.github/workflows/claims.yml').read_text(encoding='utf-8')\nassert 'alloevil/verify-claims@v0.1.0' in t, 'action 的版本钉子不见了'\nassert re.search(r'cron:.{0,3}17 6 \\* \\* 1', t), '每周兜底的 cron 不见了'\nassert re.search(r'^  push:', t, re.M), 'push 触发不见了'\nassert re.search(r'^  pull_request:', t, re.M), 'PR 触发不见了'\nprint('weekly 17 6 * * 1 | pin alloevil/verify-claims@v0.1.0 | push+PR')\n\"",
+        "expect": {
+          "equals": "weekly 17 6 * * 1 | pin alloevil/verify-claims@v0.1.0 | push+PR"
+        },
+        "timeout": 30
+      }
     }
   ]
 }

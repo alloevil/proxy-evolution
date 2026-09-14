@@ -12,12 +12,22 @@
 
 ![主界面:第六代 XHTTP,数据包流经审查节点](./screenshot-main.png)
 
+### 看它动起来
+
+**速度即证据** —— SS 慢且重传,切到 QUIC 后在弱网下反而加速(Brutal 拥塞控制不退让):
+
+![流量动画:SS 弱网重传 vs QUIC 不退让](./readme-traffic.gif)
+
 <details>
-<summary>▲ 主界面:数据包以各代协议的真实速度流经「审查节点」</summary>
+<summary>▲ 主动探测剧场 & 六代连测(点击展开)</summary>
 
-点击「发射探测」会触发**主动探测剧场**——第六代把无凭证的请求交给 CDN 边缘,审查者拿到 CDN 的真实证书与缓存内容,连源站都看不到:
+REALITY 把无密码的探测连接原样转给真实网站,审查者拿到真实 CA 签发的证书,无从证伪:
 
-![主动探测剧场:第六代的请求被 CDN 当成普通访客](./screenshot-probe.png)
+![主动探测剧场:REALITY 中继到真实网站](./readme-probe.gif)
+
+六代连测:依次探测六代,把六种判定串成一条演进线:
+
+![六代连测](./readme-sweep.gif)
 
 </details>
 

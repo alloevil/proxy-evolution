@@ -12,12 +12,22 @@
 
 ![Main view: 6th generation XHTTP, packets flowing past the censor node](./screenshot-main.png)
 
+### See it move
+
+**Speed is evidence** — SS crawls and retransmits; switch to QUIC and it actually *speeds up* under packet loss (Brutal congestion control refuses to back off):
+
+![Traffic animation: SS retransmitting under weak net vs QUIC holding speed](./readme-traffic.gif)
+
 <details>
-<summary>▲ Main view: packets travel past the "censor node" at each protocol's real speed</summary>
+<summary>▲ Active probe theater &amp; six-generation sweep (click to expand)</summary>
 
-Clicking "Launch Probe" triggers the **probe theater** — in the 6th generation, unauthenticated requests are handed to the CDN edge; the censor gets the CDN's real certificate and cached content, and never even sees the origin server:
+REALITY relays the unauthenticated probe to the real website; the censor receives that site's real CA-signed certificate and can prove nothing:
 
-![Probe theater: 6th-gen requests treated as ordinary visitors by the CDN](./screenshot-probe.png)
+![Probe theater: REALITY relaying to the real website](./readme-probe.gif)
+
+Six-generation sweep: probe all six in sequence, stringing the verdicts into one evolutionary line:
+
+![Six-generation sweep](./readme-sweep.gif)
 
 </details>
 

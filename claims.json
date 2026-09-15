@@ -1216,10 +1216,10 @@
     },
     {
       "id": "animated-pages-respect-reduced-motion",
-      "claim": "The page animates and it honours `prefers-reduced-motion` — motion here is decoration, and the page must stay complete when it is off.",
+      "claim": "The page animates and it honours `prefers-reduced-motion` — motion here is decoration, and the page must stay complete when it is off. (Animated GIFs are outside its reach: a GIF cannot honour reduced-motion, and the three in the README are a deliberate exception.)",
       "value": "animated and reducible",
       "metric": "pages containing `animation:`/`@keyframes` vs pages containing `prefers-reduced-motion`",
-      "method": "the check walks every committed .html page and covers all three ways a page moves — CSS animations/keyframes, SVG SMIL, and requestAnimationFrame — requiring a `prefers-reduced-motion` reference wherever it finds one. It does not judge what the fallback does, only that a branch exists, because a missing branch is invisible in review and obvious to the person it affects.",
+      "method": "the check walks every committed .html page and covers all three ways a page moves — CSS animations/keyframes, SVG SMIL, and requestAnimationFrame — requiring a `prefers-reduced-motion` reference wherever it finds one. It does not judge what the fallback does, only that a branch exists, because a missing branch is invisible in review and obvious to the person it affects. It does not cover animated GIFs, which no CSS can switch off — the README embeds three of them, and that medium's fallback is the reader's own browser settings, not a branch in this repository.",
       "repro": "grep -c 'prefers-reduced-motion' index.html",
       "evidence": "proxy-evolution/index.html",
       "as_of": "2026-09-15",

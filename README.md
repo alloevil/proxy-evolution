@@ -149,9 +149,7 @@ python3 build-data.py    # 修改 index.html 数据后重新生成 data.json
 - 「抗主动探测」指服务器被直连时能否返回与真实网站完全一致的响应。
 - 本项目仅用于技术原理学习与研究。
 
-<p align="center">
-  <a href="https://github.com/oil-oil/beautify-github-readme"><img src="./assets/readme/made-with-beautify.svg" width="300" alt="README made with beautify-github-readme"></a>
-</p>
+
 
 ## License
 

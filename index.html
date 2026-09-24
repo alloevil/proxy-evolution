@@ -444,6 +444,9 @@
       transition-duration:.01ms!important;scroll-behavior:auto!important}
     .autoplay-bar i{display:none}
   }
+
+/* Keyboard focus must remain visible even when hover is unavailable. */
+:where(a,button,input,select,summary):focus-visible { outline: 3px solid var(--accent, #58a6ff); outline-offset: 3px; }
 </style>
 </head>
 <body>

@@ -202,11 +202,14 @@
   .layout{display:grid;grid-template-columns:1fr 352px;gap:16px;align-items:stretch}
   @media(max-width:1120px){.layout{grid-template-columns:1fr}}
   .glass{
-    background:var(--glass);border:1px solid var(--line);border-radius:16px;
+    background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+    border:1px solid var(--line);border-radius:16px;
     backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);position:relative;overflow:hidden;
+    box-shadow:0 24px 70px -42px rgba(0,0,0,.9),inset 0 1px rgba(255,255,255,.035);
   }
+  .glass:hover{border-color:rgba(255,255,255,.12)}
   .glass::before{content:"";position:absolute;top:0;left:8%;right:8%;height:1px;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent)}
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent)}
   .card{padding:20px 22px}
   .card-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.3em;color:var(--mut);
               text-transform:uppercase;display:flex;align-items:center;gap:10px;margin:0 0 16px;
@@ -216,14 +219,16 @@
   /* 入场动效 */
   .rise{animation:rise .6s cubic-bezier(.22,1,.36,1) both}
   @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-  .d1{animation-delay:.05s}.d2{animation-delay:.13s}.d3{animation-delay:.21s}.d4{animation-delay:.29s}
-
   /* ── 链路动画 ── */
   .track{
     position:relative;height:250px;border-radius:12px;overflow:hidden;
-    background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,0));
-    border:1px solid var(--line);
+    background:
+      radial-gradient(ellipse at 50% 50%,rgba(255,255,255,.035),transparent 68%),
+      linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,0));
+    border:1px solid var(--line);box-shadow:inset 0 0 40px rgba(0,0,0,.18);
   }
+  .track::after{content:"DATA PLANE  /  LIVE LINK";position:absolute;right:14px;bottom:10px;
+    font-family:var(--mono);font-size:8px;letter-spacing:.16em;color:rgba(147,165,194,.36);z-index:2}
   .track .grid-tex{position:absolute;inset:0;opacity:.5;
     background-image:radial-gradient(rgba(255,255,255,.055) 1px,transparent 1px);
     background-size:26px 26px;
@@ -370,9 +375,11 @@
   @keyframes weakflash{0%{border-color:rgba(248,113,113,.7)}100%{border-color:var(--line)}}
   .track.weaksig .wire{opacity:.35;transition:opacity .4s}
 
+.cmp-hint{font-size:10px;color:var(--faint);margin:-8px 0 14px;font-family:var(--mono);letter-spacing:.06em}
   /* ── 对比区 ── */
   .compare{margin-top:18px;padding:22px 24px}
-  .cmp-grid{display:grid;grid-template-columns:128px repeat(5,1fr);gap:14px 16px;align-items:center}
+  .cmp-scroll{overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin}
+  .cmp-grid{display:grid;grid-template-columns:128px repeat(var(--gen-count,6),minmax(132px,1fr));gap:14px 16px;align-items:center;min-width:900px}
   .cmp-h{text-align:center;line-height:1.5}
   .cmp-h .g{font-family:var(--mono);font-size:9px;color:var(--faint);letter-spacing:.14em}
   .cmp-h .p{font-size:11px;color:var(--dim);font-weight:600;margin-top:2px}
@@ -489,13 +496,13 @@
       </div>
       <div class="badges" id="badges"></div>
       <div class="controls">
-        <button class="ctl" id="prevBtn">◀ 上一代</button>
-        <button class="ctl primary" id="playBtn">⏸ 暂停流量</button>
-        <button class="ctl" id="nextBtn">下一代 ▶</button>
+        <button class="ctl" id="prevBtn" aria-label="上一代协议">◀ 上一代</button>
+        <button class="ctl primary" id="playBtn" aria-pressed="false">⏸ 暂停流量</button>
+        <button class="ctl" id="nextBtn" aria-label="下一代协议">下一代 ▶</button>
         <button class="ctl" id="autoBtn">▷ 自动播放</button>
         <div class="net-toggle">
           <span id="netLabel">正常网络</span>
-          <div class="switch" id="netSwitch"></div>
+          <div class="switch" id="netSwitch" role="switch" tabindex="0" aria-checked="false" aria-label="切换弱网模拟"></div>
           <span style="color:#fca5a5">弱网 / 高丢包</span>
         </div>
       </div>
@@ -530,13 +537,14 @@
           </div>
           <div class="ph-btns">
             <button class="ctl" id="chainBtn" style="padding:6px 12px;white-space:nowrap">六代连测</button>
+            <button class="ctl" id="theaterBtn" style="padding:6px 12px;white-space:nowrap">▶ REALITY 剧场</button>
             <div class="tip">
               <button class="ctl primary" id="probeBtn" style="padding:6px 12px;white-space:nowrap">发射探测</button>
               <div class="tip-text">审查者拿到的响应,决定了这个协议能否通过「证书验证 + 网页抓取 + 指纹比对」三板斧——这是 REALITY 一类协议的核心考场。</div>
             </div>
           </div>
         </div>
-        <div class="verdict empty" id="verdict">等待发射探测…</div>
+        <div class="verdict empty" id="verdict" role="status" aria-live="polite" aria-atomic="true">等待发射探测…</div>
       </div>
     </div>
   </div>
@@ -545,12 +553,15 @@
 <section class="glass card rise d3" id="scenPanel">
   <h2 class="card-label">Scenarios · 审查环境剧本</h2>
   <div class="scen-cards" id="scenCards"></div>
-  <div class="scen-note" id="scenNote">播放一段罐装攻击/网络事件序列,观察各代协议的实际反应。</div>
+  <div class="scen-note" id="scenNote" role="status" aria-live="polite" aria-atomic="true">播放一段罐装攻击/网络事件序列,观察各代协议的实际反应。</div>
 </section>
 
 <div class="glass compare rise d4">
   <h2 class="card-label">Comparison · 六代横向对比</h2>
-  <div class="cmp-grid" id="cmpGrid"></div>
+  <p class="cmp-hint">点击指标名排序 · 悬浮查看分值</p>
+  <div class="cmp-scroll" tabindex="0" aria-label="六代协议对比表,可横向滚动">
+    <div class="cmp-grid" id="cmpGrid"></div>
+  </div>
   <div class="foot">
     <b>弱网表现</b>取决于拥塞控制与传输层——TCP(TLS 系)丢包时整条连接队头阻塞、退避重传;QUIC(Hysteria2 / TUIC)在 UDP 上按流独立重传,
     Hysteria2 的 Brutal 拥塞控制不因丢包降速、固定抢占带宽。<b>抗主动探测</b>指服务器被直连时能否返回与真实网站完全一致的响应。
@@ -734,6 +745,7 @@ let cur = 0, playing = true, weakNet = false, auto = false, autoTimer = null;
 const $ = id => document.getElementById(id);
 const track = $("track");
 const ROMAN = ["I","II","III","IV","V","VI"];
+document.documentElement.style.setProperty("--gen-count", GENS.length);
 
 /* ══════════════════ 世代时间轴 ══════════════════ */
 GENS.forEach((g, i) => {
@@ -867,7 +879,7 @@ function renderCompare(animate) {
 }
 
 /* ══════════════════ 流量动画引擎 ══════════════════ */
-let packets = [], fadingPackets = [], rafId = null, lastT = 0, spawnAcc = 0, nextBurst = 0, burstLeft = 0;
+let packets = [], fadingPackets = [], rafId = null, lastT = 0, lastFrameAt = performance.now(), spawnAcc = 0, nextBurst = 0, burstLeft = 0;
 const P = { W: 0, left: 100, right: 0 };
 const RM = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -876,6 +888,12 @@ function measure() {
   P.right = P.W - 100;
 }
 window.addEventListener("resize", measure);
+
+function resetTrafficState() {
+  spawnAcc = 0;
+  nextBurst = 0;
+  burstLeft = 0;
+}
 
 function spawn() {
   const a = GENS[cur].anim;
@@ -913,10 +931,11 @@ function staticSnapshot() {
 
 function tick(t) {
   rafId = requestAnimationFrame(tick);
+  lastFrameAt = performance.now();
   try {
     if (!P.W) measure();
     if (!lastT) { lastT = t; return; }
-    const dt = Math.min(t - lastT, 60); lastT = t;
+    const dt = Math.min(Math.max(t - lastT, 0), 60); lastT = t;
     if (playing && !RM.matches) {
       const base = (weakNet ? GENS[cur].anim.weak : GENS[cur].anim.speed) * (scenMul || 1);
       spawnAcc += dt;
@@ -953,17 +972,26 @@ function tick(t) {
     }
   } catch (e) { console.error("[tick]", e); }
 }
-/* 看门狗:rAF 循环若意外中断,1s 内自动重启;标签页重新可见时重置时钟 */
-setInterval(() => { if (rafId === null) { lastT = 0; rafId = requestAnimationFrame(tick); } }, 1000);
-document.addEventListener("visibilitychange", () => { if (!document.hidden) lastT = 0; });
+/* 看门狗:检测心跳,而不是检查永远不会清空的 requestAnimationFrame id */
+setInterval(() => {
+  if (document.hidden || performance.now() - lastFrameAt < 1500) return;
+  cancelAnimationFrame(rafId);
+  lastT = performance.now();
+  lastFrameAt = performance.now();
+  rafId = requestAnimationFrame(tick);
+}, 1000);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) { lastT = 0; lastFrameAt = performance.now(); }
+});
 function clearPackets() {
   packets.forEach(p => { p.el.style.transition = "opacity .38s"; fadingPackets.push({ el: p.el, t: 0 }); });
   packets = [];
-  spawnAcc = 0;
+  resetTrafficState();
 }
 function clearAllPackets() {
   packets.forEach(p => p.el.remove()); fadingPackets.forEach(f => f.el.remove());
-  packets = []; fadingPackets = []; spawnAcc = 0;
+  packets = []; fadingPackets = [];
+  resetTrafficState();
 }
 
 /* ══════════════════ 主动探测实验 ══════════════════ */
@@ -1111,12 +1139,12 @@ async function scenProbe(g, kind) {
   }
 }
 
-let scenRun = false, scenNet = null;
+let scenRun = false, scenNet = null, scenStep = 0, scenTotal = 0;
 function stopScen() {
   if (!scenRun) return;
   scenRun = false;
   if (scenNet) setNet(scenNet);
-  scenNet = null; scenMul = 1;
+  scenNet = null; scenMul = 1; scenStep = 0; scenTotal = 0;
   document.querySelectorAll(".scen-card").forEach(c => c.classList.remove("on"));
   const n = $("scenNote"); n.classList.remove("live");
   n.textContent = "播放一段罐装攻击/网络事件序列,观察各代协议的实际反应。";
@@ -1126,21 +1154,22 @@ async function runScen(p) {
   if (scenRun) stopScen();
   if (chain) return;
   stopAuto();
-  scenRun = true;
+  scenRun = true; scenStep = 0; scenTotal = p.steps.length;
   if (p.net && p.net !== (weakNet ? "weak" : "normal")) { scenNet = weakNet ? "weak" : "normal"; setNet(p.net); }
   scenMul = p.mul || 1;
   document.querySelectorAll(".scen-card").forEach(c => c.classList.toggle("on", c.dataset.id === p.id));
   const note = $("scenNote"); note.classList.add("live");
   for (const st of p.steps) {
     if (!scenRun) break;
+    scenStep++;
+    note.textContent = `${p.t} · ${scenStep} / ${scenTotal}${st.status ? " · " + st.status : ""}`;
     if (st.gen !== undefined) select(st.gen, true, true);
-    if (st.status) { note.textContent = st.status; }
     if (st.probe) { await scenProbe(GENS[st.gen !== undefined ? st.gen : cur], st.probe); if (!scenRun) break; }
     if (st.level) scenVerdict(st.level, st.v);
     if (st.watch) await sleep(st.watch); else if (st.wait) await sleep(st.wait);
   }
   if (!scenRun) return;
-  note.textContent = "剧本结束 · 点世代卡片或按 ← → 退出";
+  note.textContent = `剧本结束 · ${p.t} · 点世代卡片或按 ← → 退出`;
   scenRun = false; scenMul = 1; scenNet = null;
   document.querySelectorAll(".scen-card").forEach(c => c.classList.remove("on"));
 }
@@ -1188,7 +1217,9 @@ function select(i, keepChain, fromScen, fromUser) {
   const g = GENS[cur];
   document.documentElement.style.setProperty("--accent", g.color);
   document.documentElement.style.setProperty("--accent-soft", g.color + "24");
-  document.querySelectorAll(".gen-btn").forEach((b, k) => b.classList.toggle("active", k === cur));
+  const genButtons = document.querySelectorAll(".gen-btn");
+  genButtons.forEach((b, k) => b.classList.toggle("active", k === cur));
+  genButtons[cur]?.scrollIntoView({ block:"nearest", inline:"center", behavior:RM.matches ? "auto" : "smooth" });
   clearPackets();
   $("realsite").classList.remove("show");
   renderStack(g); renderInfo(g); renderCompare(); replayRise();
@@ -1215,21 +1246,32 @@ $("nextBtn").onclick = () => { stopAuto(); select(cur + 1, false, false, true); 
 $("playBtn").onclick = () => {
   playing = !playing;
   $("playBtn").textContent = playing ? "⏸ 暂停流量" : "▶ 继续流量";
+  $("playBtn").setAttribute("aria-pressed", String(!playing));
 };
 $("probeBtn").onclick = runProbe;
 $("chainBtn").onclick = runChain;
+$("theaterBtn").onclick = () => {
+  if (cur !== 4) select(4, false, false, false);
+  theaterSeen = false;
+  maybeAutoTheater();
+};
 function setNet(mode) {
   const want = mode === "weak";
   if (weakNet === want) return;
   weakNet = want;
   $("netSwitch").classList.toggle("on", weakNet);
+  $("netSwitch").setAttribute("aria-checked", String(weakNet));
   $("netLabel").textContent = weakNet ? "弱网模拟中" : "正常网络";
   clearPackets();
   const t = track.classList;
   t.remove("weaksig"); void track.offsetWidth; t.add("weaksig");
   setTimeout(() => t.remove("weaksig"), 600);
 }
-$("netSwitch").onclick = () => { stopScen(); setNet(weakNet ? "normal" : "weak"); };
+function toggleNetwork() { stopScen(); setNet(weakNet ? "normal" : "weak"); }
+$("netSwitch").onclick = toggleNetwork;
+$("netSwitch").onkeydown = e => {
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleNetwork(); }
+};
 function stopAuto() {
   if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
   auto = false;
